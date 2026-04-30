@@ -2671,7 +2671,7 @@ function validatePhaseAndGo(fromId, toId) {
           ' in <strong>' + phaseData.name + '</strong> ' + (unassigned > 1 ? 'have' : 'has') + ' not been assigned a delivery point.<br><br>' +
           'Please complete all selections before moving to the next phase.' +
         '</p>' +
-        '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" id="phaseModalBtn">OK, I'll complete them</button>';
+        '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" id="phaseModalBtn">OK, Complete Now</button>';
       overlay.appendChild(box);
       document.body.appendChild(overlay);
       overlay.querySelector('#phaseModalBtn').addEventListener('click', function() { overlay.remove(); });
@@ -2846,7 +2846,7 @@ function checkAllAssigned() {
       '<strong style="color:#C53030;font-size:26px;">' + unassigned + '</strong> sub-topic' + (unassigned > 1 ? 's have' : ' has') + ' not been assigned a delivery point.<br><br>' +
       'Please complete all assignments before exporting.' +
     '</p>' +
-    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;letter-spacing:0.3px;" id="checkModalBtn">OK, I'll complete them</button>';
+    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;letter-spacing:0.3px;" id="checkModalBtn">OK, Complete Now</button>';
   overlay.appendChild(box);
   document.body.appendChild(overlay);
   overlay.querySelector('#checkModalBtn').addEventListener('click', function() { overlay.remove(); });

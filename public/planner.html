@@ -2489,7 +2489,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <button class="sh-btn outline" onclick="resetAll()" style="background:rgba(197,48,48,0.2);border-color:rgba(197,48,48,0.4);">↺ Reset</button>
           <button class="sh-btn csv" onclick="submitPlan()">✅ Submit</button>
           <button class="sh-btn outline" onclick="exportCSV()">⬇ Export CSV</button>
-          <button class="sh-btn outline" onclick="window.print()" style="background:rgba(107,168,58,0.25);border-color:rgba(107,168,58,0.5);">🖨 Print</button>
+          <button class="sh-btn outline" onclick="printPlan()" style="background:rgba(107,168,58,0.25);border-color:rgba(107,168,58,0.5);">🖨 Print</button>
           <button class="sh-btn outline" id="downloadPdfBtn" onclick="downloadPDF()" style="background:rgba(27,58,107,0.3);border-color:rgba(99,179,237,0.5);">⬇ Download PDF</button>
         </div>
       </div>
@@ -2801,7 +2801,35 @@ function buildSummary(){
   tbody.innerHTML+=`<tr class="total-row"><td colspan="3">Program Total</td><td style="text-align:center;"></td><td style="text-align:center;">${totalCTH} hrs</td></tr>`;
 }
 
+function checkAllAssigned() {
+  const sels = getSelections();
+  const unassigned = ROWS.filter(function(r) { return !sels[r.idx]; }).length;
+  if (unassigned === 0) return true;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:14px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;';
+  box.innerHTML =
+    '<div style="font-size:48px;margin-bottom:12px;">⚠️</div>' +
+    '<h2 style="color:#0D2145;font-size:18px;margin:0 0 10px;">Incomplete Selections</h2>' +
+    '<p style="color:#555;font-size:14px;margin:0 0 22px;line-height:1.6;">' +
+      '<strong style="color:#C53030;font-size:26px;">' + unassigned + '</strong> sub-topic' + (unassigned > 1 ? 's have' : ' has') + ' not been assigned a delivery point.<br><br>' +
+      'Please complete all assignments before exporting.' +
+    '</p>' +
+    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;letter-spacing:0.3px;" onclick="this.closest(\'div[style*=fixed]\').remove()">OK, I\'ll complete them</button>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  return false;
+}
+function printPlan(){
+  if (!checkAllAssigned()) return;
+  window.print();
+}
+
 function exportCSV(){
+  if (!checkAllAssigned()) return;
   // Force a fresh summary build so getSelections reads the latest DOM state
   try { buildSummary(); } catch(e) {}
 
@@ -2865,6 +2893,7 @@ var _fipLogo = null;
 
 // ─── PDF DOWNLOAD (jsPDF) ───
 function downloadPDF() {
+  if (!checkAllAssigned()) return;
   if (!window.jspdf || !window.jspdf.jsPDF) { window.print(); return; }
 
   const btn = document.getElementById('downloadPdfBtn');

@@ -2923,7 +2923,6 @@ var _fipLogo = null;
 
 // ─── PDF DOWNLOAD (jsPDF) ───
 function downloadPDF() {
-  if (!checkAllAssigned()) return;
   if (!window.jspdf || !window.jspdf.jsPDF) { window.print(); return; }
 
   const btn = document.getElementById('downloadPdfBtn');

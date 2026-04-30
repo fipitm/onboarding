@@ -2466,7 +2466,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 3 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('spec')">← Previous Phase</button><button class="nav-btn success" onclick="showSummaryPage()">View Summary & Export ✓</button><button class="nav-btn primary" onclick="submitPlan()" style="background:#276749;border-color:#276749;">✅ Submit Plan</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('spec')">← Previous Phase</button><button class="nav-btn success" onclick="showSummaryPage()">View Summary & Export ✓</button>
         </div>
       </div>
     </div>
@@ -2487,7 +2487,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
         <button class="sh-back-btn" onclick="hideSummaryPage()">← Back to Planning Form</button>
         <div class="sh-export-btns">
           <button class="sh-btn outline" onclick="resetAll()" style="background:rgba(197,48,48,0.2);border-color:rgba(197,48,48,0.4);">↺ Reset</button>
-          <button class="sh-btn csv" onclick="submitPlan()">✅ Submit</button>
+          
           <button class="sh-btn outline" onclick="exportCSV()">⬇ Export CSV</button>
           <button class="sh-btn outline" onclick="printPlan()" style="background:rgba(107,168,58,0.25);border-color:rgba(107,168,58,0.5);">🖨 Print</button>
           <button class="sh-btn outline" id="downloadPdfBtn" onclick="downloadPDF()" style="background:rgba(27,58,107,0.3);border-color:rgba(99,179,237,0.5);">⬇ Download PDF</button>
@@ -2671,9 +2671,10 @@ function validatePhaseAndGo(fromId, toId) {
           ' in <strong>' + phaseData.name + '</strong> ' + (unassigned > 1 ? 'have' : 'has') + ' not been assigned a delivery point.<br><br>' +
           'Please complete all selections before moving to the next phase.' +
         '</p>' +
-        '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" onclick="this.closest(\'div[style*=fixed]\').remove()">OK, I\'ll complete them</button>';
+        '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" id="phaseModalBtn">OK, I'll complete them</button>';
       overlay.appendChild(box);
       document.body.appendChild(overlay);
+      overlay.querySelector('#phaseModalBtn').addEventListener('click', function() { overlay.remove(); });
       overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
       return;
     }
@@ -2845,9 +2846,10 @@ function checkAllAssigned() {
       '<strong style="color:#C53030;font-size:26px;">' + unassigned + '</strong> sub-topic' + (unassigned > 1 ? 's have' : ' has') + ' not been assigned a delivery point.<br><br>' +
       'Please complete all assignments before exporting.' +
     '</p>' +
-    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;letter-spacing:0.3px;" onclick="this.closest(\'div[style*=fixed]\').remove()">OK, I\'ll complete them</button>';
+    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;letter-spacing:0.3px;" id="checkModalBtn">OK, I'll complete them</button>';
   overlay.appendChild(box);
   document.body.appendChild(overlay);
+  overlay.querySelector('#checkModalBtn').addEventListener('click', function() { overlay.remove(); });
   overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
   return false;
 }

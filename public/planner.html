@@ -37,7 +37,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .hdr{background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 60%,#1E4080 100%);padding:0;position:relative;overflow:hidden;}
 .hdr::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 70% 50%,rgba(107,168,58,0.08) 0%,transparent 70%);pointer-events:none;}
 .hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:24px 44px;position:relative;z-index:1;gap:24px;}
-.hdr-logos{display:flex;align-items:center;gap:20px;flex-shrink:0;}
+.hdr-logos{display:flex;flex-direction:column;align-items:flex-start;gap:8px;flex-shrink:0;}
 .logo-box{background:transparent;padding:4px 0;display:flex;align-items:center;justify-content:center;}
 .logo-box img{height:80px;width:auto;display:block;}
 .logo-sep{width:1px;height:52px;background:rgba(255,255,255,0.2);}
@@ -50,7 +50,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .hdr-input{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.22);border-radius:6px;color:white;font-family:'DM Sans',sans-serif;font-size:12px;padding:7px 12px;width:210px;outline:none;transition:border 0.2s;}
 .hdr-input::placeholder{color:rgba(255,255,255,0.4);}
 .hdr-input:focus{border-color:var(--green-light);background:rgba(255,255,255,0.15);}
-.save-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:4px 12px;font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:0.3px;align-self:flex-end;}
+.save-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:4px 12px;font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:0.3px;}
 .save-dot{width:5px;height:5px;border-radius:50%;background:var(--green-light);animation:pulse 2.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
 .hdr-stripe{height:4px;background:linear-gradient(90deg,transparent 0%,var(--green) 25%,var(--green-light) 50%,var(--green) 75%,transparent 100%);}
@@ -307,7 +307,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
       <div class="logo-box">
         <img src="/fip-logo-white.png" alt="Food Industries Polytechnic">
       </div>
-      
+      <div class="save-badge"><div class="save-dot"></div><span id="saveText">Auto-saving</span></div>
     </div>
     <div class="hdr-titles">
       <div class="hdr-eyebrow">FIP × Almarai Partnership Program</div>
@@ -320,7 +320,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
         <input class="hdr-input" id="responderDesig" type="text" placeholder="Designation" oninput="saveData()">
         <input class="hdr-input" id="responderRegion" type="text" placeholder="Region" oninput="saveData()">
       </div>
-      <div class="save-badge"><div class="save-dot"></div><span id="saveText">Auto-saving</span></div>
     </div>
   </div>
   <div class="hdr-stripe"></div>

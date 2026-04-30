@@ -39,21 +39,6 @@
   function roleGuardUi() {
     if (!currentUser) return;
 
-    const title = document.querySelector(".hdr-h1");
-    if (title) {
-      title.textContent = "FIP Sales Program";
-    }
-
-    const logoImages = document.querySelectorAll(".hdr-logos .logo-box img");
-    if (logoImages.length > 0) {
-      logoImages[0].src = "/fip-logo-login.png";
-      logoImages[0].alt = "Food Industries Polytechnic";
-    }
-    if (logoImages.length > 1) {
-      logoImages[1].closest(".logo-box")?.remove();
-      document.querySelector(".logo-sep")?.remove();
-    }
-
     const logoutBtn = document.createElement("button");
     logoutBtn.textContent = "Logout";
     logoutBtn.className = "gp-summary-btn";

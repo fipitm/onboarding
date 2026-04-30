@@ -636,7 +636,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 7 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn primary" style="background:#4A90C4" onclick="goToPhase('pre')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn primary" style="background:#4A90C4" onclick="validatePhaseAndGo('jd','pre')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -932,7 +932,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 11 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('jd')">← Previous Phase</button><button class="nav-btn primary" style="background:#38A169" onclick="goToPhase('intro')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('jd')">← Previous Phase</button><button class="nav-btn primary" style="background:#38A169" onclick="validatePhaseAndGo('pre','intro')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -1322,7 +1322,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 12 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('pre')">← Previous Phase</button><button class="nav-btn primary" style="background:#63B3ED" onclick="goToPhase('exec')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('pre')">← Previous Phase</button><button class="nav-btn primary" style="background:#63B3ED" onclick="validatePhaseAndGo('intro','exec')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -2050,7 +2050,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 29 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('intro')">← Previous Phase</button><button class="nav-btn primary" style="background:#9F7AEA" onclick="goToPhase('spec')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('intro')">← Previous Phase</button><button class="nav-btn primary" style="background:#9F7AEA" onclick="validatePhaseAndGo('exec','spec')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -2346,7 +2346,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 11 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('exec')">← Previous Phase</button><button class="nav-btn primary" style="background:#ED8936" onclick="goToPhase('closing')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('exec')">← Previous Phase</button><button class="nav-btn primary" style="background:#ED8936" onclick="validatePhaseAndGo('spec','closing')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -2466,7 +2466,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 3 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('spec')">← Previous Phase</button><button class="nav-btn success" onclick="showSummaryPage()">View Summary & Export ✓</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('spec')">← Previous Phase</button><button class="nav-btn success" onclick="showSummaryPage()">View Summary & Export ✓</button><button class="nav-btn primary" onclick="submitPlan()" style="background:#276749;border-color:#276749;">✅ Submit Plan</button>
         </div>
       </div>
     </div>
@@ -2653,6 +2653,34 @@ function updatePhaseProgress(phaseId){
   }
 }
 
+function validatePhaseAndGo(fromId, toId) {
+  var phaseData = PHASES_DATA.find(function(p) { return p.id === fromId; });
+  if (phaseData) {
+    var sels = getSelections();
+    var unassigned = phaseData.rows.filter(function(pair) { return !sels[pair[0]]; }).length;
+    if (unassigned > 0) {
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+      var box = document.createElement('div');
+      box.style.cssText = 'background:#fff;border-radius:14px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;';
+      box.innerHTML =
+        '<div style="font-size:44px;margin-bottom:12px;">⚠️</div>' +
+        '<h2 style="color:#0D2145;font-size:18px;margin:0 0 10px;">Phase Incomplete</h2>' +
+        '<p style="color:#555;font-size:14px;margin:0 0 22px;line-height:1.6;">' +
+          '<strong style="color:#C53030;font-size:26px;">' + unassigned + '</strong> sub-topic' + (unassigned > 1 ? 's' : '') +
+          ' in <strong>' + phaseData.name + '</strong> ' + (unassigned > 1 ? 'have' : 'has') + ' not been assigned a delivery point.<br><br>' +
+          'Please complete all selections before moving to the next phase.' +
+        '</p>' +
+        '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" onclick="this.closest(\'div[style*=fixed]\').remove()">OK, I\'ll complete them</button>';
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+      return;
+    }
+  }
+  if (typeof saveData === 'function') saveData();
+  goToPhase(toId);
+}
 function goToPhase(phaseId){
   document.querySelectorAll('.phase-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.phase-nav-btn').forEach(b=>b.classList.remove('active'));
@@ -3110,14 +3138,20 @@ function downloadPDF() {
 }
 
 function submitPlan() {
-  const selections = getSelections();
-  const unassigned = Object.values(selections).filter(v => v === null).length;
-  if (unassigned > 0) {
-    alert(`Please assign all sub-topics before submitting. ${unassigned} item(s) are still unassigned.`);
-    return;
-  }
-  saveData();
-  alert('Plan submitted successfully.');
+  if (!checkAllAssigned()) return;
+  if (typeof saveData === 'function') saveData();
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:14px;padding:32px 36px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;';
+  box.innerHTML =
+    '<div style="font-size:52px;margin-bottom:12px;">✅</div>' +
+    '<h2 style="color:#276749;font-size:20px;margin:0 0 10px;">Plan Submitted!</h2>' +
+    '<p style="color:#555;font-size:14px;margin:0 0 22px;line-height:1.6;">Your onboarding plan has been saved successfully.<br>You can now export or print your report.</p>' +
+    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" onclick="this.closest('div[style*=fixed]').remove()">Done</button>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
 }
 
 // ─── RESET ALL ───

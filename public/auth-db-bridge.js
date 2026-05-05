@@ -27,14 +27,20 @@
   }
 
   async function requireSession() {
-    const me = await api("/api/auth/me");
-    if (!me.user) {
+    try {
+      const me = await api("/api/auth/me");
+      if (!me.user) {
+        window.location.href = "/login.html";
+        return false;
+      }
+      currentUser = me.user;
+      window.currentUser = me.user;
+      return true;
+    } catch (err) {
+      // Network error or server restart — send back to login
       window.location.href = "/login.html";
       return false;
     }
-    currentUser = me.user;
-    window.currentUser = me.user;
-    return true;
   }
 
   function roleGuardUi() {
@@ -103,6 +109,17 @@
     const desig  = (byId("responderDesig") || {}).value.trim();
     const region = (byId("responderRegion")|| {}).value.trim();
     if (!name || !desig || !region) return;
+
+    const btn = document.querySelector(".profile-start-btn");
+    const origText = btn ? btn.textContent : "Start Planning →";
+
+    // Clear any previous error message
+    const prev = byId("profileErrMsg");
+    if (prev) prev.remove();
+
+    // Loading state
+    if (btn) { btn.disabled = true; btn.textContent = "Starting…"; }
+
     try {
       const result = await api("/api/submissions", {
         method: "POST",
@@ -112,6 +129,25 @@
       const overlay = byId("profileOverlay");
       if (overlay) overlay.style.display = "none";
     } catch (err) {
+      // Restore button
+      if (btn) { btn.disabled = false; btn.textContent = origText; }
+
+      // Show visible error under the button
+      const errEl = document.createElement("p");
+      errEl.id = "profileErrMsg";
+      errEl.style.cssText = "color:#dc2626;font-size:13px;margin-top:10px;text-align:center;font-weight:500;";
+
+      if (err.status === 401 || err.status === 403) {
+        errEl.textContent = "Session expired — redirecting to login…";
+        const form = document.querySelector(".profile-card form");
+        if (form) form.appendChild(errEl);
+        setTimeout(() => { window.location.href = "/login.html"; }, 1800);
+      } else {
+        errEl.textContent = "Could not start — please check your connection and try again.";
+        const form = document.querySelector(".profile-card form");
+        if (form) form.appendChild(errEl);
+      }
+
       console.error("Failed to create submission:", err);
     }
   };

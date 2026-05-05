@@ -14,8 +14,11 @@
     body{font-family:'Roboto',sans-serif;font-size:14px;background:#f2f5f7;color:#404656;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
     a{text-decoration:none;color:inherit;}
 
+    /* ── FIP GREEN TOP STRIPE ── */
+    .top-stripe{height:3px;background:linear-gradient(90deg,#0d2145 0%,#8DC63F 35%,#8DC63F 65%,#0d2145 100%);position:fixed;top:0;left:0;right:0;z-index:1001;}
+
     /* ── TOPBAR ── */
-    .topbar{position:fixed;top:0;left:0;right:0;z-index:999;}
+    .topbar{position:fixed;top:3px;left:0;right:0;z-index:999;}
     .navbar-custom{background:#fff;padding:0 28px;min-height:70px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 0 24px 0 rgba(0,0,0,.06),0 1px 0 0 rgba(0,0,0,.02);}
     .topbar-left{display:flex;align-items:center;gap:12px;width:270px;flex-shrink:0;}
     .tb-logo{display:flex;align-items:center;flex-shrink:0;}
@@ -32,7 +35,7 @@
     .tb-sep{width:1px;height:30px;background:#f0f0f0;}
 
     /* ── SIDEBAR ── */
-    .left-sidenav{position:fixed;top:70px;left:0;bottom:0;width:270px;background:#fff;box-shadow:0 0 24px 0 rgba(0,0,0,.06),0 1px 0 0 rgba(0,0,0,.02);overflow-y:auto;z-index:998;padding:20px 0 40px;}
+    .left-sidenav{position:fixed;top:73px;left:0;bottom:0;width:270px;background:#fff;box-shadow:0 0 24px 0 rgba(0,0,0,.06),0 1px 0 0 rgba(0,0,0,.02);overflow-y:auto;z-index:998;padding:20px 0 40px;}
     .menu-title{padding:10px 24px 5px;color:#a8a8b1;font-size:11px;text-transform:uppercase;font-weight:500;letter-spacing:.8px;}
     .nav-item-f{display:flex;align-items:center;gap:10px;padding:10px 24px;color:#5d5b6f;font-size:13px;font-weight:400;cursor:pointer;border-left:3px solid transparent;transition:all .2s;user-select:none;}
     .nav-item-f:hover{color:#23222f;background:#f8f9fa;}
@@ -45,7 +48,7 @@
     .sb-urole{font-size:10px;color:#a8a8b1;}
 
     /* ── PAGE WRAPPER ── */
-    .page-wrapper{margin-left:270px;padding-top:70px;min-height:100vh;display:flex;flex-direction:column;}
+    .page-wrapper{margin-left:270px;padding-top:73px;min-height:100vh;display:flex;flex-direction:column;}
 
     /* dark navy header area */
     .page-header-area{background:linear-gradient(135deg,#0d2145 0%,#1b3a6b 55%,#0d2145 100%);padding:24px 30px 72px;position:relative;}
@@ -54,9 +57,40 @@
     .breadcrumb-item a{color:rgba(255,255,255,.5);}
     .breadcrumb-item.active{color:rgba(255,255,255,.5);}
     .breadcrumb-item+.breadcrumb-item::before{color:rgba(255,255,255,.3);}
-    .page-header-title{font-size:20px;font-weight:700;color:#fff;margin:5px 0 0;display:flex;align-items:center;gap:10px;}
+    .page-header-row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:5px;}
+    .page-header-title{font-size:20px;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px;}
     .header-pill{background:rgba(141,198,63,.2);color:#8DC63F;border:1px solid rgba(141,198,63,.3);font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;}
-    .page-header-sub{font-size:12px;color:rgba(255,255,255,.45);margin-top:5px;}
+    /* ── Header inline stats ── */
+    .header-stats{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;}
+    .hstat{text-align:right;}
+    .hstat-val{font-size:18px;font-weight:700;color:#fff;line-height:1;}
+    .hstat-lbl{font-size:9px;color:rgba(255,255,255,.4);margin-top:2px;letter-spacing:.5px;text-transform:uppercase;}
+    .hstat-sep{width:1px;background:rgba(255,255,255,.12);min-height:30px;align-self:stretch;}
+    /* ── KPI meta (share badge) ── */
+    .kpi-f-meta{margin-top:5px;}
+    .kpi-share-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;}
+    .k-tot .kpi-share-badge{background:rgba(13,33,69,.07);color:#0d2145;}
+    .k-fip .kpi-share-badge{background:rgba(74,144,196,.10);color:#4a90c4;}
+    .k-alm .kpi-share-badge{background:rgba(27,58,107,.07);color:#1b3a6b;}
+    .k-fld .kpi-share-badge{background:rgba(217,119,6,.10);color:#d97706;}
+    .k-cth .kpi-share-badge{background:rgba(141,198,63,.10);color:#6ba83a;}
+    /* ── Improved distribution bar ── */
+    .dist-bar-new{display:flex;gap:2px;border-radius:6px;overflow:hidden;height:22px;margin:12px 0 10px;}
+    .dseg-new{height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.95);border-radius:3px;transition:width .7s ease;}
+    .dseg-new.f{background:#4a90c4;}.dseg-new.a{background:#1b3a6b;}.dseg-new.fl{background:#d97706;}
+    /* ── Mini proportion bar (per table row) ── */
+    .prop-bar{display:flex;gap:1px;border-radius:3px;overflow:hidden;height:6px;width:90px;}
+    .pb-seg{height:100%;}
+    .pb-f{background:#4a90c4;}.pb-a{background:#1b3a6b;}.pb-fl{background:#d97706;}
+    /* ── Topic progress bar ── */
+    .topic-prog{display:flex;align-items:center;gap:6px;}
+    .topic-bar{width:54px;height:4px;background:#f0f0f0;border-radius:2px;overflow:hidden;flex-shrink:0;}
+    .topic-fill{height:100%;background:#8DC63F;border-radius:2px;}
+    .topic-txt{font-size:11px;color:#a8a8b1;white-space:nowrap;}
+    /* ── Chart subtitle ── */
+    .chart-sub-f{font-size:11px;color:#a8a8b1;margin:-10px 0 14px;}
+    /* ── Section planner fix ── */
+    #sec-planner{margin:-50px -24px 0;height:calc(100vh - 73px);overflow:hidden;}
 
     /* content pulled up over the dark header curve */
     .page-content-inner{padding:0 24px 40px;margin-top:-50px;position:relative;z-index:1;flex:1;}
@@ -143,7 +177,6 @@
     /* ── SECTIONS ── */
     .section{display:none;}
     .section.active{display:block;}
-    #sec-planner{margin:-50px -24px 0;height:calc(100vh - 70px);overflow:hidden;}
     #plannerIframe{width:100%;height:100%;border:none;display:block;}
 
     /* ── MODAL ── */
@@ -186,6 +219,7 @@
   </style>
 </head>
 <body>
+<div class="top-stripe"></div>
 
 <!-- ══ TOPBAR ══════════════════════════════════════════════════════════ -->
 <div class="topbar">
@@ -257,11 +291,19 @@
       <li class="breadcrumb-item"><a href="#">Admin</a></li>
       <li class="breadcrumb-item active" id="breadcrumbPage">Dashboard</li>
     </ol>
-    <div class="page-header-title">
-      <span id="pageTitle">Dashboard</span>
-      <span class="header-pill" id="pageTag" style="display:none"></span>
+    <div class="page-header-row">
+      <div class="page-header-title">
+        <span id="pageTitle">Dashboard</span>
+        <span class="header-pill" id="pageTag" style="display:none"></span>
+      </div>
+      <div class="header-stats" id="headerStats">
+        <div class="hstat"><div class="hstat-val" id="hsSubs">—</div><div class="hstat-lbl">Submissions</div></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><div class="hstat-val" id="hsCth">—</div><div class="hstat-lbl">Avg CTH / Plan</div></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><div class="hstat-val" id="hsFip">—</div><div class="hstat-lbl">FIP Share</div></div>
+      </div>
     </div>
-    <div class="page-header-sub">FIP × Almarai Sales Program — Onboarding Planner</div>
   </div>
 
   <!-- Content pulled over the curve -->
@@ -276,10 +318,10 @@
           <div class="kpi-f k-tot">
             <div class="kpi-f-body">
               <div class="d-flex justify-content-between align-items-start">
-                <div>
+                <div class="flex-1">
                   <div class="kpi-f-label">Total Submissions</div>
                   <div class="kpi-f-value" id="kSubs">—</div>
-                  <div class="kpi-f-sub">Individual plans</div>
+                  <div class="kpi-f-meta"><span class="kpi-share-badge" id="kSubsBadge">Individual plans</span></div>
                 </div>
                 <div class="kpi-f-icon soft-navy"><i class="mdi mdi-clipboard-list-outline"></i></div>
               </div>
@@ -291,10 +333,10 @@
           <div class="kpi-f k-fip">
             <div class="kpi-f-body">
               <div class="d-flex justify-content-between align-items-start">
-                <div>
+                <div class="flex-1">
                   <div class="kpi-f-label">FIP Premises</div>
                   <div class="kpi-f-value" id="kFip">—</div>
-                  <div class="kpi-f-sub" id="kFipPct">CTH</div>
+                  <div class="kpi-f-meta"><span class="kpi-share-badge" id="kFipPct">CTH</span></div>
                 </div>
                 <div class="kpi-f-icon soft-fip"><i class="mdi mdi-office-building-outline"></i></div>
               </div>
@@ -306,10 +348,10 @@
           <div class="kpi-f k-alm">
             <div class="kpi-f-body">
               <div class="d-flex justify-content-between align-items-start">
-                <div>
+                <div class="flex-1">
                   <div class="kpi-f-label">Almarai Premises</div>
                   <div class="kpi-f-value" id="kAlm">—</div>
-                  <div class="kpi-f-sub" id="kAlmPct">CTH</div>
+                  <div class="kpi-f-meta"><span class="kpi-share-badge" id="kAlmPct">CTH</span></div>
                 </div>
                 <div class="kpi-f-icon soft-alm"><i class="mdi mdi-domain"></i></div>
               </div>
@@ -321,10 +363,10 @@
           <div class="kpi-f k-fld">
             <div class="kpi-f-body">
               <div class="d-flex justify-content-between align-items-start">
-                <div>
+                <div class="flex-1">
                   <div class="kpi-f-label">Field Training</div>
                   <div class="kpi-f-value" id="kFld">—</div>
-                  <div class="kpi-f-sub" id="kFldPct">CTH</div>
+                  <div class="kpi-f-meta"><span class="kpi-share-badge" id="kFldPct">CTH</span></div>
                 </div>
                 <div class="kpi-f-icon soft-fld"><i class="mdi mdi-car-outline"></i></div>
               </div>
@@ -336,10 +378,10 @@
           <div class="kpi-f k-cth">
             <div class="kpi-f-body">
               <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <div class="kpi-f-label">Total Program CTH</div>
+                <div class="flex-1">
+                  <div class="kpi-f-label">Avg CTH / Plan</div>
                   <div class="kpi-f-value" id="kTot">—</div>
-                  <div class="kpi-f-sub">All submissions</div>
+                  <div class="kpi-f-meta"><span class="kpi-share-badge" id="kTotBadge">All submissions</span></div>
                 </div>
                 <div class="kpi-f-icon soft-green"><i class="mdi mdi-chart-donut"></i></div>
               </div>
@@ -358,10 +400,10 @@
               <small class="text-muted">All submissions combined</small>
             </div>
             <div class="f-card-body">
-              <div class="dist-bar-f">
-                <div class="dseg-f f" id="segFip" style="width:0%"></div>
-                <div class="dseg-f a" id="segAlm" style="width:0%"></div>
-                <div class="dseg-f fl" id="segFld" style="width:0%"></div>
+              <div class="dist-bar-new">
+                <div class="dseg-new f" id="segFip" style="width:0%"></div>
+                <div class="dseg-new a" id="segAlm" style="width:0%"></div>
+                <div class="dseg-new fl" id="segFld" style="width:0%"></div>
               </div>
               <div class="dist-legend-f">
                 <div class="dleg-f"><div class="dleg-dot-f" style="background:#4a90c4"></div><span id="lFip">FIP</span></div>
@@ -380,7 +422,7 @@
             </div>
             <div class="f-card-body p-0">
               <table class="table mb-0">
-                <thead><tr><th></th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th><th>Submitted</th><th>Total CTH</th></tr></thead>
+                <thead><tr><th></th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th><th>Submitted</th><th>Topics</th><th>Distribution</th><th>Total CTH</th></tr></thead>
                 <tbody id="recentTbody"></tbody>
               </table>
             </div>
@@ -396,15 +438,24 @@
         <div class="col-lg-4">
           <div class="chart-f">
             <h3>Delivery Distribution</h3>
+            <p class="chart-sub-f">Contact hours by delivery point</p>
             <div id="chartDist"></div>
           </div>
         </div>
         <div class="col-lg-8">
           <div class="chart-f">
-            <h3>CTH per Phase — All Submissions</h3>
+            <h3>CTH per Phase</h3>
+            <p class="chart-sub-f">Horizontal — phase names always readable</p>
             <div id="chartPhase"></div>
           </div>
         </div>
+      </div>
+      <div class="f-card">
+        <div class="f-card-header">
+          <h5 class="f-card-title">Submissions Over Time</h5>
+          <small class="text-muted">Monthly submission count trend</small>
+        </div>
+        <div class="f-card-body"><div id="chartLine"></div></div>
       </div>
       <div class="f-card">
         <div class="f-card-header"><h5 class="f-card-title">Phase Breakdown</h5></div>
@@ -451,7 +502,7 @@
               <th style="color:#4a90c4">FIP</th>
               <th style="color:#1b3a6b">Almarai</th>
               <th style="color:#d97706">Field</th>
-              <th>Total CTH</th><th>Actions</th>
+              <th>Total CTH</th><th>Distribution</th><th>Actions</th>
             </tr></thead>
             <tbody id="subTbody"></tbody>
           </table>
@@ -522,6 +573,17 @@
   function avColor(n){return AV_COLORS[(n||'').charCodeAt(0)%AV_COLORS.length];}
   async function logout(){try{await fetch('/api/auth/logout',{method:'POST'});}catch(e){}window.location.href='/login.html';}
 
+  /* ── Helpers: mini proportion bar + topic progress ── */
+  function propBar(fC,aC,flC){
+    const t=fC+aC+flC||1;
+    const pf=Math.round(fC/t*100),pa=Math.round(aC/t*100),pfl=100-pf-pa;
+    return `<div class="prop-bar"><div class="pb-seg pb-f" style="width:${pf}%"></div><div class="pb-seg pb-a" style="width:${pa}%"></div><div class="pb-seg pb-fl" style="width:${pfl}%"></div></div>`;
+  }
+  function topicProg(assigned){
+    const p=Math.round((assigned||0)/73*100);
+    return `<div class="topic-prog"><div class="topic-bar"><div class="topic-fill" style="width:${p}%"></div></div><span class="topic-txt">${assigned||0}/73</span></div>`;
+  }
+
   /* ── Navigation ── */
   function showSection(id,el){
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
@@ -543,19 +605,31 @@
     const pF=tot?Math.round(totF/tot*100):0,pA=tot?Math.round(totA/tot*100):0,pFl=tot?100-pF-pA:0;
     byId('kSubs').textContent=allSubs.length;
     byId('sbBadge').textContent=allSubs.length;
+    byId('kSubsBadge').textContent=allSubs.length===1?'1 submission':allSubs.length+' submissions';
     byId('kFip').textContent=totF;  byId('kFipPct').textContent=pF+'% of total CTH';
     byId('kAlm').textContent=totA;  byId('kAlmPct').textContent=pA+'% of total CTH';
     byId('kFld').textContent=totFl; byId('kFldPct').textContent=pFl+'% of total CTH';
-    byId('kTot').textContent=tot;
-    byId('segFip').style.width=pF+'%'; byId('segAlm').style.width=pA+'%'; byId('segFld').style.width=pFl+'%';
+    byId('kTot').textContent=allSubs.length?Math.round(tot/allSubs.length):0;
+    byId('kTotBadge').textContent='Avg across '+allSubs.length+' plan'+(allSubs.length!==1?'s':'');
+
+    // Header stats
+    if(byId('hsSubs')) byId('hsSubs').textContent=allSubs.length;
+    if(byId('hsCth'))  byId('hsCth').textContent=(allSubs.length?Math.round(tot/allSubs.length):0)+'h';
+    if(byId('hsFip'))  byId('hsFip').textContent=pF+'%';
+
+    // Distribution bar with % labels
+    const setDSeg=(id,pct)=>{const el=byId(id);if(!el)return;el.style.width=pct+'%';el.textContent=pct>8?pct+'%':'';};
+    setDSeg('segFip',pF); setDSeg('segAlm',pA); setDSeg('segFld',pFl);
     byId('lFip').textContent='FIP: '+totF+' CTH ('+pF+'%)';
     byId('lAlm').textContent='Almarai: '+totA+' CTH ('+pA+'%)';
     byId('lFld').textContent='Field: '+totFl+' CTH ('+pFl+'%)';
+
     const recent=allSubs.slice(0,5);
     byId('recentTbody').innerHTML=recent.length?recent.map(s=>{
-      const t=cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training');
-      return`<tr><td><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span></td><td class="nm-cell"><strong>${s.name||'-'}</strong></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td style="font-weight:700;color:#23222f">${t}</td></tr>`;
-    }).join(''):`<tr><td colspan="7"><div class="empty-f">No submissions yet.</div></td></tr>`;
+      const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training');
+      const t=fC+aC+flC;
+      return`<tr><td><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span></td><td class="nm-cell"><strong>${s.name||'-'}</strong></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td>${topicProg(s.assigned)}</td><td>${propBar(fC,aC,flC)}</td><td style="font-weight:700;color:#23222f">${t}</td></tr>`;
+    }).join(''):`<tr><td colspan="9"><div class="empty-f">No submissions yet.</div></td></tr>`;
     buildSparklines();
   }
 
@@ -586,11 +660,13 @@
     let tF=0,tA=0,tFl=0;
     allSubs.forEach(s=>{tF+=cth(s.selections,'FIP');tA+=cth(s.selections,'Almarai');tFl+=cth(s.selections,'Field Training');});
 
+    // ── Gradient donut ──
     new ApexCharts(byId('chartDist'),{
       chart:{type:'donut',height:320,animations:{enabled:true,speed:600},toolbar:{show:false}},
       series:[tF,tA,tFl],
       labels:['FIP Premises','Almarai Premises','Field Training'],
       colors:['#4a90c4','#1b3a6b','#d97706'],
+      fill:{type:'gradient',gradient:{shade:'dark',type:'horizontal',shadeIntensity:0.25,gradientToColors:['#63b3ed','#2c5282','#f6ad55'],inverseColors:false,opacityFrom:1,opacityTo:1}},
       plotOptions:{pie:{donut:{size:'62%',labels:{show:true,total:{show:true,label:'Total CTH',fontSize:'11px',color:'#a8a8b1',formatter:()=>tF+tA+tFl}}}}},
       legend:{position:'bottom',fontSize:'12px',fontFamily:'Roboto',itemMargin:{horizontal:8}},
       stroke:{width:2,colors:['#fff']},
@@ -598,6 +674,7 @@
       tooltip:{y:{formatter:(v)=>v+' CTH'}}
     }).render();
 
+    // ── Horizontal stacked bar (phase names fit on Y-axis) ──
     const phF=[],phA=[],phFl=[];
     PHASES.forEach(ph=>{
       let f=0,a=0,fl=0;
@@ -606,16 +683,38 @@
     });
     new ApexCharts(byId('chartPhase'),{
       chart:{type:'bar',height:320,stacked:true,toolbar:{show:false},animations:{enabled:true,speed:600},fontFamily:'Roboto'},
+      plotOptions:{bar:{horizontal:true,borderRadius:4,barHeight:'52%',borderRadiusWhenStacked:'last'}},
       series:[{name:'FIP',data:phF},{name:'Almarai',data:phA},{name:'Field Training',data:phFl}],
       colors:['#4a90c4','#1b3a6b','#d97706'],
-      plotOptions:{bar:{borderRadius:4,columnWidth:'46%',borderRadiusWhenStacked:'last'}},
-      xaxis:{categories:PHASES.map(p=>p.n.length>13?p.n.slice(0,13)+'…':p.n),labels:{style:{fontSize:'11px',fontFamily:'Roboto'}}},
-      yaxis:{title:{text:'CTH',style:{fontSize:'11px',color:'#a8a8b1',fontFamily:'Roboto'}},labels:{style:{fontSize:'11px',fontFamily:'Roboto'}}},
+      xaxis:{labels:{style:{fontSize:'11px',fontFamily:'Roboto'}},title:{text:'CTH',style:{fontSize:'11px',color:'#a8a8b1'}}},
+      yaxis:{categories:PHASES.map(p=>p.n),labels:{style:{fontSize:'11px',fontFamily:'Roboto'}}},
       legend:{position:'bottom',fontSize:'12px',fontFamily:'Roboto',itemMargin:{horizontal:8}},
       grid:{borderColor:'rgba(0,0,0,.04)',strokeDashArray:4},
       tooltip:{y:{formatter:(v)=>v+' CTH'}}
     }).render();
 
+    // ── Submissions over time line chart ──
+    const byMonth={};
+    allSubs.forEach(s=>{const m=(s.submittedAt||'').slice(0,7);if(m)byMonth[m]=(byMonth[m]||0)+1;});
+    const months=Object.keys(byMonth).sort();
+    if(months.length>=2){
+      new ApexCharts(byId('chartLine'),{
+        chart:{type:'area',height:180,toolbar:{show:false},animations:{speed:600},fontFamily:'Roboto'},
+        series:[{name:'Submissions',data:months.map(m=>byMonth[m])}],
+        colors:['#0d2145'],
+        fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.22,opacityTo:0,stops:[0,100]}},
+        stroke:{curve:'smooth',width:2},
+        xaxis:{categories:months,labels:{style:{fontSize:'11px'}}},
+        yaxis:{min:0,tickAmount:3,labels:{style:{fontSize:'11px'}},forceNiceScale:true},
+        grid:{borderColor:'rgba(0,0,0,.04)',strokeDashArray:4},
+        markers:{size:4,colors:['#0d2145'],strokeColors:'#fff',strokeWidth:2},
+        tooltip:{y:{formatter:v=>v+' submission'+(v!==1?'s':'')}}
+      }).render();
+    } else {
+      byId('chartLine').innerHTML='<p style="text-align:center;color:#a8a8b1;padding:32px;font-size:13px;font-family:Roboto,sans-serif;">Not enough data for a trend — needs submissions across 2+ months.</p>';
+    }
+
+    // ── Phase summary table ──
     const gT=tF+tA+tFl;
     byId('phaseSummaryBody').innerHTML=PHASES.map((ph,i)=>{
       const pt=phF[i]+phA[i]+phFl[i],pct=gT?Math.round(pt/gT*100):0;
@@ -631,8 +730,8 @@
     byId('subCount').textContent=`${allSubs.length} submission${allSubs.length!==1?'s':''}`;
     byId('subTbody').innerHTML=filtered.length?filtered.map((s,i)=>{
       const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training'),tot=fC+aC+flC;
-      return`<tr><td class="mu">${i+1}</td><td><div class="nm-cell"><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span><strong>${s.name||'-'}</strong></div></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td>${s.assigned}/73</td><td style="color:#4a90c4;font-weight:700">${fC}</td><td style="color:#1b3a6b;font-weight:700">${aC}</td><td style="color:#d97706;font-weight:700">${flC}</td><td style="font-weight:700;color:#23222f">${tot}</td><td style="display:flex;gap:4px"><button class="btn-act btn-view" onclick="openModal(${s.id})">View</button><button class="btn-act btn-pdf" onclick="openAndPrint(${s.id})">PDF</button><button class="btn-act btn-csv" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button><button class="btn-act btn-del" onclick="deleteSubmission(${s.id},'${(s.name||'').replace(/'/g,'\\\'')}')" title="Delete this submission"><i class="mdi mdi-trash-can-outline"></i></button></td></tr>`;
-    }).join(''):`<tr><td colspan="12"><div class="empty-f">No results.</div></td></tr>`;
+      return`<tr><td class="mu">${i+1}</td><td><div class="nm-cell"><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span><strong>${s.name||'-'}</strong></div></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td>${topicProg(s.assigned)}</td><td style="color:#4a90c4;font-weight:700">${fC}</td><td style="color:#1b3a6b;font-weight:700">${aC}</td><td style="color:#d97706;font-weight:700">${flC}</td><td style="font-weight:700;color:#23222f">${tot}</td><td>${propBar(fC,aC,flC)}</td><td style="display:flex;gap:4px"><button class="btn-act btn-view" onclick="openModal(${s.id})">View</button><button class="btn-act btn-pdf" onclick="openAndPrint(${s.id})">PDF</button><button class="btn-act btn-csv" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button><button class="btn-act btn-del" onclick="deleteSubmission(${s.id},'${(s.name||'').replace(/'/g,'\\\'')}')" title="Delete this submission"><i class="mdi mdi-trash-can-outline"></i></button></td></tr>`;
+    }).join(''):`<tr><td colspan="13"><div class="empty-f">No results.</div></td></tr>`;
   }
 
   /* ── Modal ── */

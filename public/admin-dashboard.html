@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Roboto',sans-serif;font-size:14px;background:#f2f5f7;color:#404656;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
@@ -548,7 +550,7 @@
       </table>
     </div>
     <div class="modal-f-foot">
-      <button class="btn-lg-f pdf" onclick="printSubmission()"><i class="mdi mdi-printer"></i> Print / PDF</button>
+      <button class="btn-lg-f pdf" onclick="printSubmission()"><i class="mdi mdi-download"></i> Download PDF</button>
       <button class="btn-lg-f csv" onclick="exportCurrentCSV()"><i class="mdi mdi-download"></i> Export CSV</button>
     </div>
   </div>
@@ -560,6 +562,24 @@
 <script>
   const cthByIdx={0:2,1:2,2:2,3:2,4:4,5:6,6:6,7:10,8:10,9:8,10:10,11:8,12:6,13:6,14:6,15:8,16:8,17:4,18:0,19:0,20:2,21:2,22:2,23:8,24:6,25:4,26:12,27:6,28:6,29:10,30:12,31:12,32:8,33:4,34:6,35:8,36:8,37:6,38:8,39:8,40:4,41:6,42:10,43:10,44:8,45:8,46:10,47:6,48:6,49:5,50:6,51:5,52:5,53:5,54:5,55:5,56:6,57:3,58:4,59:2,60:8,61:4,62:4,63:2,64:6,65:2,66:2,67:6,68:4,69:4,70:8,71:24,72:2};
   const PHASES=[{n:'Job Description',s:0,e:6},{n:'Pre Execution',s:7,e:17},{n:'Introduction',s:18,e:29},{n:'Execution',s:30,e:58},{n:'Exec – Specialization',s:59,e:69},{n:'Closing',s:70,e:72}];
+
+  // Full 73-row topic data — used for the detailed PDF table
+  const ROWS=[{"idx":0,"phase_name":"Job Description","topic":"JDs Briefing","sub":"Salesman-TT/MT","cth":2},{"idx":1,"phase_name":"Job Description","topic":"JDs Briefing","sub":"Pre Seller","cth":2},{"idx":2,"phase_name":"Job Description","topic":"JDs Briefing","sub":"Salesman-HoReCa","cth":2},{"idx":3,"phase_name":"Job Description","topic":"JDs Briefing","sub":"Merchandizing","cth":2},{"idx":4,"phase_name":"Job Description","topic":"JDs Briefing","sub":"Who is a Salesman?","cth":4},{"idx":5,"phase_name":"Job Description","topic":"JDs Briefing","sub":"Difference between Salesman & Delivery Man","cth":6},{"idx":6,"phase_name":"Job Description","topic":"JDs Briefing","sub":"Qualities of a Good Salesman","cth":6},{"idx":7,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Almarai Working Safely","cth":10},{"idx":8,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"HSS Policy","cth":10},{"idx":9,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"KSA Traffic Rules and Regulations of HTV Vehicles","cth":8},{"idx":10,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"ISO/EMS Awareness","cth":10},{"idx":11,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Defensive Driving","cth":8},{"idx":12,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Safe Manual Handling","cth":6},{"idx":13,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Acquiring of Valid Driving License","cth":6},{"idx":14,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Registration and Licensing","cth":6},{"idx":15,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Periodic Maintenance and Repair Policy","cth":8},{"idx":16,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Insurance/Accidental Measures","cth":8},{"idx":17,"phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Loading/Unloading Policy","cth":4},{"idx":18,"phase_name":"Introduction","topic":"Agenda","sub":"Program Details","cth":0},{"idx":19,"phase_name":"Introduction","topic":"Pre-Assessment","sub":"Criteria for Proceeding to Onboarding","cth":0},{"idx":20,"phase_name":"Introduction","topic":"Induction Session – FIP","sub":"Brief History and Programs","cth":2},{"idx":21,"phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Company's Vision & Objectives","cth":2},{"idx":22,"phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Organization Structure & Hierarchy","cth":2},{"idx":23,"phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Product Awareness","cth":8},{"idx":24,"phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Competitor's Landscape","cth":6},{"idx":25,"phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"International Business Acquisitions","cth":4},{"idx":26,"phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Work Ethics and Behavioral Policies","cth":12},{"idx":27,"phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Saudi Culture","cth":6},{"idx":28,"phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Employment Awareness","cth":6},{"idx":29,"phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Brief of KSA Laws, Rules & Regulations","cth":10},{"idx":30,"phase_name":"Execution","topic":"Quality","sub":"Cold Chain Management","cth":12},{"idx":31,"phase_name":"Execution","topic":"Quality","sub":"Personal Hygiene and Cleanliness","cth":12},{"idx":32,"phase_name":"Execution","topic":"Quality","sub":"Quality Complaints Procedures","cth":8},{"idx":33,"phase_name":"Execution","topic":"Quality","sub":"Date Code Policy","cth":4},{"idx":34,"phase_name":"Execution","topic":"Quality","sub":"Waste Management Procedures","cth":6},{"idx":35,"phase_name":"Execution","topic":"Quality","sub":"Emergency Preparedness and Response","cth":8},{"idx":36,"phase_name":"Execution","topic":"Quality","sub":"Environment Policy, Inspection and Compliance","cth":8},{"idx":37,"phase_name":"Execution","topic":"Quality","sub":"Handling Customer Complaints","cth":6},{"idx":38,"phase_name":"Execution","topic":"Quality","sub":"Product Recall","cth":8},{"idx":39,"phase_name":"Execution","topic":"Quality","sub":"Correct Product Handling","cth":8},{"idx":40,"phase_name":"Execution","topic":"Quality","sub":"Product Replacement Policy","cth":4},{"idx":41,"phase_name":"Execution","topic":"Sales KPIs","sub":"Customer Relationship","cth":6},{"idx":42,"phase_name":"Execution","topic":"Sales KPIs","sub":"Route Optimization – Geo Mapping","cth":10},{"idx":43,"phase_name":"Execution","topic":"Sales KPIs","sub":"Productivity and Drop Size Management","cth":10},{"idx":44,"phase_name":"Execution","topic":"Sales KPIs","sub":"Retail Segmentations (MT/TT/HoReCa)","cth":8},{"idx":45,"phase_name":"Execution","topic":"Sales KPIs","sub":"Impulse Buying/POSM","cth":8},{"idx":46,"phase_name":"Execution","topic":"Sales KPIs","sub":"Buy Back, Rotation, FIFO, Hygiene, Fresh & Few Dates","cth":10},{"idx":47,"phase_name":"Execution","topic":"Sales KPIs","sub":"Steps of Sales Call","cth":6},{"idx":48,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Daily Order Processing and Approval Process","cth":6},{"idx":49,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Usage of TAB/HHT for Report Generation (SARAS/SALES BUZZ)","cth":5},{"idx":50,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Ordering Concepts – Dairy & Bakery (POQ, SRQ, Shop Stock Capturing)","cth":6},{"idx":51,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Types of Purchase Order: Open and Close","cth":5},{"idx":52,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Error Reporting and Corrective Measures","cth":5},{"idx":53,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Ordering Concepts – Poultry","cth":5},{"idx":54,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Thermal Printer","cth":5},{"idx":55,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"E-Invoicing, ZATCA","cth":5},{"idx":56,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Asset Scanning, Location & Visibility","cth":6},{"idx":57,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Space / Shelf Management (Primary & Secondary Category)","cth":3},{"idx":58,"phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Execution Standard","cth":4},{"idx":59,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Merchandizing Principles","cth":2},{"idx":60,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Planogram","cth":8},{"idx":61,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Distribution Excellence","cth":4},{"idx":62,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Steps of Sales Call","cth":4},{"idx":63,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Commission and Incentive Policy","cth":2},{"idx":64,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Product Expiry and Disposal","cth":6},{"idx":65,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"KYC and Customer Credit Approval Process","cth":2},{"idx":66,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Cash and Online Money Collection Policy","cth":2},{"idx":67,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Product Portfolio/SKU – Fresh & Long Life","cth":6},{"idx":68,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Trade Margins","cth":4},{"idx":69,"phase_name":"Exec – Specialization","topic":"Specialization","sub":"Damage and Return Policy","cth":4},{"idx":70,"phase_name":"Closing","topic":"Field & Placement","sub":"CPP Visits","cth":8},{"idx":71,"phase_name":"Closing","topic":"Field & Placement","sub":"Route Riding","cth":24},{"idx":72,"phase_name":"Closing","topic":"Field & Placement","sub":"Closing and Placement Announcement","cth":2}];
+
+  // Preload FIP logo as base64 for PDF embedding
+  var _pdfLogo = null;
+  (function(){
+    var img = new Image();
+    img.onload = function(){
+      try{
+        var c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        c.getContext('2d').drawImage(img, 0, 0);
+        _pdfLogo = { url: c.toDataURL('image/png'), w: img.naturalWidth, h: img.naturalHeight };
+      }catch(e){}
+    };
+    img.src = '/fip-logo-white.png';
+  })();
   const AV_COLORS=['#0d2145','#4a90c4','#1b3a6b','#d97706','#1ecab8','#f93b7a','#7c3aed'];
   const SECTION_TITLES={dashboard:'Dashboard',analytics:'Analytics',submissions:'Submissions',planner:'Planner View'};
 
@@ -751,9 +771,140 @@
   function openAndPrint(id){currentSub=allSubs.find(s=>s.id===id);printSubmission();}
   function closeModal(){byId('modalBg').classList.remove('open');currentSub=null;}
 
-  /* ── Print / PDF ── */
+  /* ── Download PDF (jsPDF 2-page) ── */
   function printSubmission(){
-    if(!currentSub)return;const s=currentSub;
+    if(!currentSub) return;
+    if(!window.jspdf||!window.jspdf.jsPDF){ window.print(); return; }
+    const s=currentSub;
+    const btn=document.querySelector('.btn-lg-f.pdf');
+    if(btn){btn.textContent='Generating…';btn.disabled=true;}
+    setTimeout(function(){
+      try{
+        const {jsPDF}=window.jspdf;
+        const doc=new jsPDF('p','mm','a4');
+        const PW=210,M=14,CW=PW-M*2,HPD=6;
+        const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training'),tot=fC+aC+flC;
+        const selMap={};(s.selections||[]).forEach(sel=>{selMap[sel.row_idx]=sel.delivery_point;});
+
+        /* ── PAGE 1: Summary ── */
+        doc.setFillColor(13,33,69); doc.rect(0,0,PW,30,'F');
+        let tX=M;
+        if(_pdfLogo&&_pdfLogo.h>0){const lh=18,lw=lh*(_pdfLogo.w/_pdfLogo.h);doc.addImage(_pdfLogo.url,'PNG',M,6,lw,lh);tX=M+lw+6;}
+        doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(13);
+        doc.text('FIP Sales Program',tX,12);
+        doc.setFont('helvetica','normal'); doc.setFontSize(9);
+        doc.text('Onboarding Planning Report — Delivery Point Assignment',tX,20);
+        doc.setFontSize(8); doc.setTextColor(141,198,63);
+        doc.text('FIP × Almarai Partnership Program',tX,27);
+        const rF=[s.name?'Name: '+s.name:null,s.desig?'Designation: '+s.desig:null,s.region?'Region: '+s.region:null,s.submittedAt?'Date: '+s.submittedAt.slice(0,10):null].filter(Boolean);
+        doc.setFontSize(7.5); doc.setTextColor(180,200,220);
+        rF.forEach((f,i)=>doc.text(f,PW-M,8+i*5.5,{align:'right'}));
+        doc.setFillColor(141,198,63); doc.rect(0,30,PW,1.5,'F');
+
+        let y=38;
+        /* KPI boxes */
+        const kpis=[
+          {lbl:'FIP Premises',val:fC,col:[74,144,196],pct:tot?Math.round(fC/tot*100)+'%':'-'},
+          {lbl:'Almarai Premises',val:aC,col:[27,58,107],pct:tot?Math.round(aC/tot*100)+'%':'-'},
+          {lbl:'Field Training',val:flC,col:[194,124,10],pct:tot?Math.round(flC/tot*100)+'%':'-'},
+          {lbl:'Total CTH',val:tot,col:[13,33,69],pct:s.assigned+'/73 topics'},
+        ];
+        const kw=(CW-9)/4;
+        kpis.forEach((k,i)=>{
+          const kx=M+i*(kw+3);
+          doc.setFillColor(248,249,250); doc.roundedRect(kx,y,kw,24,2,2,'F');
+          doc.setFillColor(...k.col); doc.rect(kx,y,kw,2,'F');
+          doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(100,116,139);
+          doc.text(k.lbl.toUpperCase(),kx+kw/2,y+8,{align:'center'});
+          doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(...k.col);
+          doc.text(String(k.val),kx+kw/2,y+17,{align:'center'});
+          doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(148,163,184);
+          doc.text('CTH · '+k.pct,kx+kw/2,y+22,{align:'center'});
+        });
+        y+=30;
+
+        /* Distribution bar */
+        if(tot>0){
+          doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(100,116,139);
+          doc.text('DELIVERY DISTRIBUTION',M,y); y+=3;
+          const pF=fC/tot,pA=aC/tot,pFl=flC/tot,bw=CW;
+          doc.setFillColor(74,144,196);  doc.rect(M,y,bw*pF,7,'F');
+          doc.setFillColor(27,58,107);   doc.rect(M+bw*pF,y,bw*pA,7,'F');
+          doc.setFillColor(194,124,10);  doc.rect(M+bw*(pF+pA),y,bw*pFl,7,'F');
+          y+=10;
+          let lx=M;
+          [[74,144,196,'FIP: '+fC+' CTH ('+Math.round(pF*100)+'%)'],[27,58,107,'Almarai: '+aC+' CTH ('+Math.round(pA*100)+'%)'],[194,124,10,'Field: '+flC+' CTH ('+Math.round(pFl*100)+'%)']].forEach(([r,g,b,txt])=>{
+            doc.setFillColor(r,g,b); doc.circle(lx+1.5,y-1,1.5,'F');
+            doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(64,70,86);
+            doc.text(txt,lx+5,y); lx+=doc.getTextWidth(txt)+14;
+          });
+          y+=6;
+        }
+
+        /* Phase breakdown table */
+        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(64,70,86);
+        doc.text('PHASE BREAKDOWN',M,y); y+=2;
+        doc.autoTable({
+          startY:y,
+          head:[['Phase','FIP CTH','Almarai CTH','Field CTH','Total','Assigned']],
+          body:PHASES.map(ph=>{
+            const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);
+            const pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');
+            return[ph.n,pf,pa,pfl,pf+pa+pfl,ps.length+'/'+(ph.e-ph.s+1)];
+          }),
+          theme:'grid',
+          styles:{fontSize:9,cellPadding:3,font:'helvetica'},
+          headStyles:{fillColor:[13,33,69],textColor:255,fontStyle:'bold',fontSize:8.5},
+          columnStyles:{0:{cellWidth:55,fontStyle:'bold'},1:{textColor:[74,144,196],fontStyle:'bold',halign:'center'},2:{textColor:[27,58,107],fontStyle:'bold',halign:'center'},3:{textColor:[194,124,10],fontStyle:'bold',halign:'center'},4:{fontStyle:'bold',halign:'center'},5:{halign:'center',textColor:[100,116,139]}},
+          margin:{left:M,right:M}
+        });
+
+        /* ── PAGE 2: Full 73-row detail ── */
+        doc.addPage();
+        doc.setFillColor(13,33,69); doc.rect(0,0,PW,18,'F');
+        doc.setFillColor(141,198,63); doc.rect(0,18,PW,1,'F');
+        doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+        doc.text('Detailed Topic Assignment — All 73 Sub-Topics',M,12);
+        doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(180,200,220);
+        doc.text([s.name,s.desig,s.region].filter(Boolean).join(' · '),PW-M,12,{align:'right'});
+
+        const body2=[];
+        let lastPhase='';
+        ROWS.forEach(r=>{
+          if(r.phase_name!==lastPhase){
+            lastPhase=r.phase_name;
+            body2.push([{content:r.phase_name,colSpan:4,styles:{fillColor:[27,58,107],textColor:[255,255,255],fontStyle:'bold',fontSize:8,cellPadding:{top:3,bottom:3,left:4,right:4}}}]);
+          }
+          const dp=selMap[r.idx]||'Unassigned';
+          const dpC={'FIP':[74,144,196],'Almarai':[27,58,107],'Field Training':[194,124,10],'Unassigned':[200,50,50]};
+          body2.push([r.topic,r.sub,{content:dp,styles:{textColor:dpC[dp]||[100,116,139],fontStyle:'bold'}},{content:r.cth>0?r.cth+' hrs':'—',styles:{halign:'center',textColor:[148,163,184]}}]);
+        });
+        body2.push([{content:'Program Total — 73 Sub-Topics',colSpan:2,styles:{fontStyle:'bold',fillColor:[248,249,250]}},{content:'441 CTH',colSpan:2,styles:{fontStyle:'bold',halign:'center',fillColor:[248,249,250],textColor:[13,33,69]}}]);
+
+        doc.autoTable({
+          startY:22,
+          head:[['Main Topic','Sub Topic','Delivery Point','CTH']],
+          body:body2,
+          theme:'striped',
+          styles:{fontSize:7.5,cellPadding:2.5,font:'helvetica',overflow:'linebreak'},
+          headStyles:{fillColor:[13,33,69],textColor:255,fontStyle:'bold',fontSize:8},
+          columnStyles:{0:{cellWidth:38},1:{cellWidth:'auto'},2:{cellWidth:32},3:{cellWidth:16,halign:'center'}},
+          alternateRowStyles:{fillColor:[250,251,252]},
+          margin:{left:M,right:M},
+          didDrawPage:function(){
+            doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(160,160,160);
+            doc.text('FIP Sales Program — Onboarding Planning Report · Confidential',M,290);
+            doc.text('Page '+doc.internal.getNumberOfPages(),PW-M,290,{align:'right'});
+          }
+        });
+
+        const fn='FIP_'+(s.name||'sub').replace(/\s+/g,'_')+'_'+new Date().toISOString().split('T')[0]+'.pdf';
+        doc.save(fn);
+      }catch(err){console.error('PDF error:',err);window.print();}
+      finally{if(btn){btn.textContent='⬇ Download PDF';btn.disabled=false;}}
+    },60);
+
+    if(false){const s2=currentSub;
     const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training'),tot=fC+aC+flC;
     const ph=PHASES.map(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e),pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');return`<tr><td>${ph.n}</td><td>${pf}</td><td>${pa}</td><td>${pfl}</td><td><strong>${pf+pa+pfl}</strong></td><td>${ps.length}/${ph.e-ph.s+1}</td></tr>`;}).join('');
     byId('printArea').innerHTML=`<div style="font-family:Roboto,Arial,sans-serif;padding:28px;"><div style="background:linear-gradient(135deg,#0d2145,#1b3a6b);padding:20px 24px;color:#fff;border-radius:8px;margin-bottom:20px;"><div style="font-size:10px;color:#8DC63F;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">FIP Sales Program — Onboarding Planner</div><div style="font-size:20px;font-weight:700;">${s.name||'—'}</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">${[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ')}</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;"><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#4a90c4;font-weight:700;text-transform:uppercase;">FIP</div><div style="font-size:24px;font-weight:700;color:#4a90c4;">${fC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#1b3a6b;font-weight:700;text-transform:uppercase;">Almarai</div><div style="font-size:24px;font-weight:700;color:#1b3a6b;">${aC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#d97706;font-weight:700;text-transform:uppercase;">Field</div><div style="font-size:24px;font-weight:700;color:#d97706;">${flC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#23222f;font-weight:700;text-transform:uppercase;">Total</div><div style="font-size:24px;font-weight:700;color:#23222f;">${tot}</div><div style="font-size:10px;color:#a8a8b1;">${s.assigned}/73 topics</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#f8f9fa;"><th style="padding:8px 10px;text-align:left;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6c757d;">Phase</th><th style="padding:8px 10px;color:#4a90c4;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">FIP CTH</th><th style="padding:8px 10px;color:#1b3a6b;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Almarai CTH</th><th style="padding:8px 10px;color:#d97706;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Field CTH</th><th style="padding:8px 10px;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Total</th><th style="padding:8px 10px;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Assigned</th></tr></thead><tbody>${ph}</tbody></table></div>`;

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Admin — FIP Sales Program</title>
   <link rel="icon" type="image/png" href="/fip-logo.png">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
   <style>
     :root{
       --bg:#f5f6fa;
@@ -62,24 +62,27 @@
     .mhdr-pill{background:var(--primary-light);color:var(--primary);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-left:8px;}
     .main-content{flex:1;overflow-y:auto;padding:20px 24px;}
 
-    /* ── KPI CARDS ── */
-    .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
-    .kpi{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:14px 14px 12px;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s;}
-    .kpi:hover{box-shadow:0 4px 16px rgba(15,23,42,.08);transform:translateY(-1px);}
-    .kpi-stripe{height:3px;border-radius:var(--r) var(--r) 0 0;position:absolute;top:0;left:0;right:0;}
-    .kpi.k-tot .kpi-stripe{background:var(--primary);}
-    .kpi.k-fip .kpi-stripe{background:var(--fip);}
-    .kpi.k-alm .kpi-stripe{background:var(--alm);}
-    .kpi.k-fld .kpi-stripe{background:var(--fld);}
-    .kpi.k-cth .kpi-stripe{background:var(--grn);}
-    .kpi-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;margin-top:6px;}
-    .kpi-value{font-size:26px;font-weight:800;line-height:1;color:var(--text1);}
+    /* ── KPI CARDS — Frogetor style ── */
+    .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+    .kpi{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:16px 16px 0;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s;}
+    .kpi:hover{box-shadow:0 6px 20px rgba(15,23,42,.09);transform:translateY(-2px);}
+    .kpi-body{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+    .kpi-left{flex:1;}
+    .kpi-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+    .kpi-value{font-size:28px;font-weight:800;line-height:1;color:var(--text1);}
     .kpi.k-fip .kpi-value{color:var(--fip);}
     .kpi.k-alm .kpi-value{color:var(--alm);}
     .kpi.k-fld .kpi-value{color:var(--fld);}
     .kpi.k-cth .kpi-value{color:#276749;}
     .kpi.k-tot .kpi-value{color:var(--primary);}
-    .kpi-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+    .kpi-sub{font-size:11px;color:var(--text3);margin-top:5px;}
+    .kpi-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;margin-left:10px;}
+    .kpi.k-tot .kpi-icon{background:rgba(94,106,210,.10);}
+    .kpi.k-fip .kpi-icon{background:rgba(74,144,196,.10);}
+    .kpi.k-alm .kpi-icon{background:rgba(27,58,107,.08);}
+    .kpi.k-fld .kpi-icon{background:rgba(217,119,6,.10);}
+    .kpi.k-cth .kpi-icon{background:rgba(141,198,63,.10);}
+    .kpi-spark{margin:0 -16px;height:56px;}
 
     /* ── CARDS ── */
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px;}
@@ -231,11 +234,26 @@
     <!-- DASHBOARD -->
     <div class="section active" id="sec-dashboard">
       <div class="kpi-grid">
-        <div class="kpi k-tot"><div class="kpi-stripe"></div><div class="kpi-label">Total Submissions</div><div class="kpi-value" id="kSubs">—</div><div class="kpi-sub">Individual plans</div></div>
-        <div class="kpi k-fip"><div class="kpi-stripe"></div><div class="kpi-label">FIP Premises</div><div class="kpi-value" id="kFip">—</div><div class="kpi-sub" id="kFipPct">CTH</div></div>
-        <div class="kpi k-alm"><div class="kpi-stripe"></div><div class="kpi-label">Almarai Premises</div><div class="kpi-value" id="kAlm">—</div><div class="kpi-sub" id="kAlmPct">CTH</div></div>
-        <div class="kpi k-fld"><div class="kpi-stripe"></div><div class="kpi-label">Field Training</div><div class="kpi-value" id="kFld">—</div><div class="kpi-sub" id="kFldPct">CTH</div></div>
-        <div class="kpi k-cth"><div class="kpi-stripe"></div><div class="kpi-label">Total Program CTH</div><div class="kpi-value" id="kTot">—</div><div class="kpi-sub">All submissions</div></div>
+        <div class="kpi k-tot">
+          <div class="kpi-body"><div class="kpi-left"><div class="kpi-label">Total Submissions</div><div class="kpi-value" id="kSubs">—</div><div class="kpi-sub">Individual plans</div></div><div class="kpi-icon">📋</div></div>
+          <div class="kpi-spark" id="spk-tot"></div>
+        </div>
+        <div class="kpi k-fip">
+          <div class="kpi-body"><div class="kpi-left"><div class="kpi-label">FIP Premises</div><div class="kpi-value" id="kFip">—</div><div class="kpi-sub" id="kFipPct">CTH</div></div><div class="kpi-icon">🏛</div></div>
+          <div class="kpi-spark" id="spk-fip"></div>
+        </div>
+        <div class="kpi k-alm">
+          <div class="kpi-body"><div class="kpi-left"><div class="kpi-label">Almarai Premises</div><div class="kpi-value" id="kAlm">—</div><div class="kpi-sub" id="kAlmPct">CTH</div></div><div class="kpi-icon">🏢</div></div>
+          <div class="kpi-spark" id="spk-alm"></div>
+        </div>
+        <div class="kpi k-fld">
+          <div class="kpi-body"><div class="kpi-left"><div class="kpi-label">Field Training</div><div class="kpi-value" id="kFld">—</div><div class="kpi-sub" id="kFldPct">CTH</div></div><div class="kpi-icon">🚗</div></div>
+          <div class="kpi-spark" id="spk-fld"></div>
+        </div>
+        <div class="kpi k-cth">
+          <div class="kpi-body"><div class="kpi-left"><div class="kpi-label">Total Program CTH</div><div class="kpi-value" id="kTot">—</div><div class="kpi-sub">All submissions</div></div><div class="kpi-icon">📊</div></div>
+          <div class="kpi-spark" id="spk-cth"></div>
+        </div>
       </div>
 
       <div class="card">
@@ -267,8 +285,8 @@
     <!-- ANALYTICS -->
     <div class="section" id="sec-analytics">
       <div class="charts-grid">
-        <div class="chart-card"><h3>Delivery Distribution</h3><canvas id="chartDist"></canvas></div>
-        <div class="chart-card"><h3>CTH per Phase — All Submissions</h3><canvas id="chartPhase"></canvas></div>
+        <div class="chart-card"><h3>Delivery Distribution</h3><div id="chartDist"></div></div>
+        <div class="chart-card"><h3>CTH per Phase — All Submissions</h3><div id="chartPhase"></div></div>
       </div>
       <div class="card">
         <div class="card-hdr"><div class="card-title">Phase Breakdown</div></div>
@@ -385,17 +403,72 @@
       const t=cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training');
       return`<tr><td><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span></td><td><strong>${s.name||'-'}</strong></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg">${s.account}</span></td><td class="mu" style="font-size:11px;">${fmt(s.submittedAt)}</td><td style="font-weight:700;">${t}</td></tr>`;
     }).join(''):`<tr><td colspan="7"><div class="empty">No submissions yet.</div></td></tr>`;
+    buildSparklines();
+  }
+
+  function buildSparklines(){
+    const spkOpts=(data,color)=>({
+      chart:{type:'area',sparkline:{enabled:true},height:56,animations:{enabled:true,speed:700}},
+      stroke:{curve:'smooth',width:2},
+      fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.3,opacityTo:0,stops:[0,100]}},
+      series:[{data:data.length>1?data:[0,0]}],
+      colors:[color],
+      tooltip:{enabled:data.length>1,fixed:{enabled:false},x:{show:false}}
+    });
+    const fipD=allSubs.map(s=>cth(s.selections,'FIP'));
+    const almD=allSubs.map(s=>cth(s.selections,'Almarai'));
+    const fldD=allSubs.map(s=>cth(s.selections,'Field Training'));
+    const totD=allSubs.map(s=>cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training'));
+    const cntD=allSubs.map((_,i)=>i+1);
+    new ApexCharts(byId('spk-tot'),spkOpts(cntD,'#5e6ad2')).render();
+    new ApexCharts(byId('spk-fip'),spkOpts(fipD,'#4a90c4')).render();
+    new ApexCharts(byId('spk-alm'),spkOpts(almD,'#1b3a6b')).render();
+    new ApexCharts(byId('spk-fld'),spkOpts(fldD,'#d97706')).render();
+    new ApexCharts(byId('spk-cth'),spkOpts(totD,'#8DC63F')).render();
   }
 
   function buildCharts(){
     let tF=0,tA=0,tFl=0;
     allSubs.forEach(s=>{tF+=cth(s.selections,'FIP');tA+=cth(s.selections,'Almarai');tFl+=cth(s.selections,'Field Training');});
-    new Chart(byId('chartDist'),{type:'doughnut',data:{labels:['FIP','Almarai','Field Training'],datasets:[{data:[tF,tA,tFl],backgroundColor:['#4a90c4','#1b3a6b','#d97706'],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:14,boxWidth:12}}}}});
+
+    // ── Donut chart ──
+    new ApexCharts(byId('chartDist'),{
+      chart:{type:'donut',height:300,animations:{enabled:true,speed:600},toolbar:{show:false}},
+      series:[tF,tA,tFl],
+      labels:['FIP Premises','Almarai Premises','Field Training'],
+      colors:['#4a90c4','#1b3a6b','#d97706'],
+      plotOptions:{pie:{donut:{size:'62%',labels:{show:true,total:{show:true,label:'Total CTH',fontSize:'11px',color:'#94a3b8',formatter:()=>tF+tA+tFl}}}}},
+      legend:{position:'bottom',fontSize:'12px',itemMargin:{horizontal:10}},
+      stroke:{width:2,colors:['#fff']},
+      dataLabels:{enabled:true,formatter:(v)=>Math.round(v)+'%',style:{fontSize:'11px',fontWeight:700}},
+      tooltip:{y:{formatter:(v)=>v+' CTH'}}
+    }).render();
+
+    // ── Stacked column chart ──
     const phF=[],phA=[],phFl=[];
-    PHASES.forEach(ph=>{let f=0,a=0,fl=0;allSubs.forEach(s=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);f+=cth(ps,'FIP');a+=cth(ps,'Almarai');fl+=cth(ps,'Field Training');});phF.push(f);phA.push(a);phFl.push(fl);});
-    new Chart(byId('chartPhase'),{type:'bar',data:{labels:PHASES.map(p=>p.n.length>16?p.n.slice(0,16)+'…':p.n),datasets:[{label:'FIP',data:phF,backgroundColor:'#4a90c4',borderRadius:4},{label:'Almarai',data:phA,backgroundColor:'#1b3a6b',borderRadius:4},{label:'Field',data:phFl,backgroundColor:'#d97706',borderRadius:4}]},options:{responsive:true,scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:11}}},y:{stacked:true,grid:{color:'rgba(0,0,0,.04)'},title:{display:true,text:'CTH',font:{size:11}}}},plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:14,boxWidth:12}}}}});
+    PHASES.forEach(ph=>{
+      let f=0,a=0,fl=0;
+      allSubs.forEach(s=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);f+=cth(ps,'FIP');a+=cth(ps,'Almarai');fl+=cth(ps,'Field Training');});
+      phF.push(f);phA.push(a);phFl.push(fl);
+    });
+    new ApexCharts(byId('chartPhase'),{
+      chart:{type:'bar',height:300,stacked:true,toolbar:{show:false},animations:{enabled:true,speed:600}},
+      series:[{name:'FIP',data:phF},{name:'Almarai',data:phA},{name:'Field Training',data:phFl}],
+      colors:['#4a90c4','#1b3a6b','#d97706'],
+      plotOptions:{bar:{borderRadius:4,columnWidth:'48%',borderRadiusWhenStacked:'last'}},
+      xaxis:{categories:PHASES.map(p=>p.n.length>13?p.n.slice(0,13)+'…':p.n),labels:{style:{fontSize:'11px'}}},
+      yaxis:{title:{text:'CTH',style:{fontSize:'11px',color:'#94a3b8'}},labels:{style:{fontSize:'11px'}}},
+      legend:{position:'bottom',fontSize:'12px',itemMargin:{horizontal:10}},
+      grid:{borderColor:'rgba(0,0,0,.04)',strokeDashArray:4},
+      tooltip:{y:{formatter:(v)=>v+' CTH'}}
+    }).render();
+
+    // ── Phase summary table ──
     const gT=tF+tA+tFl;
-    byId('phaseSummaryBody').innerHTML=PHASES.map((ph,i)=>{const pt=phF[i]+phA[i]+phFl[i],pct=gT?Math.round(pt/gT*100):0;return`<tr><td><strong>${ph.n}</strong></td><td style="color:var(--fip);font-weight:700;">${phF[i]}</td><td style="color:var(--alm);font-weight:700;">${phA[i]}</td><td style="color:var(--fld);font-weight:700;">${phFl[i]}</td><td style="font-weight:700;">${pt}</td><td class="mu">${pct}%</td></tr>`;}).join('');
+    byId('phaseSummaryBody').innerHTML=PHASES.map((ph,i)=>{
+      const pt=phF[i]+phA[i]+phFl[i],pct=gT?Math.round(pt/gT*100):0;
+      return`<tr><td><strong>${ph.n}</strong></td><td style="color:var(--fip);font-weight:700;">${phF[i]}</td><td style="color:var(--alm);font-weight:700;">${phA[i]}</td><td style="color:var(--fld);font-weight:700;">${phFl[i]}</td><td style="font-weight:700;">${pt}</td><td class="mu">${pct}%</td></tr>`;
+    }).join('');
   }
 
   function renderTable(){

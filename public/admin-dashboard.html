@@ -8,110 +8,189 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f7fb;color:#10213c;display:flex;height:100vh;overflow:hidden;}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4fa;color:#10213c;display:flex;height:100vh;overflow:hidden;}
 
-    /* ── Sidebar ── */
-    .sidebar{width:230px;flex-shrink:0;background:#0d2145;display:flex;flex-direction:column;height:100vh;}
-    .sb-brand{padding:20px 18px 0;border-bottom:1px solid rgba(255,255,255,.08);text-align:center;padding-bottom:0;}
-    .sb-brand img{height:52px;display:block;margin:0 auto 10px;}
-    .sb-brand-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:.2px;}
-    .sb-brand-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.3px;padding-bottom:14px;}
-    .sb-brand-accent{height:2px;background:linear-gradient(90deg,transparent,#8DC63F,transparent);margin:0 -18px;}
-    .sb-nav{flex:1;padding:10px 0;overflow-y:auto;}
-    .sb-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:14px 18px 5px;}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s;user-select:none;}
-    .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
-    .nav-item.active{background:rgba(255,255,255,.09);color:#fff;border-left-color:#8DC63F;}
-    .nav-item .icon{font-size:16px;flex-shrink:0;}
-    .sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.08);}
-    .sb-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:6px;}
-    .sb-btn.planner{background:#8DC63F;color:#fff;}
-    .sb-btn.planner:hover{background:#7ab534;}
-    .sb-btn.logout{background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12);}
-    .sb-btn.logout:hover{background:rgba(255,255,255,.12);color:#fff;}
+    /* ─── SLIM SIDEBAR (64px → 230px overlay on hover) ─── */
+    .sidebar{
+      width:64px;flex-shrink:0;background:#0d2145;
+      display:flex;flex-direction:column;height:100vh;
+      position:fixed;left:0;top:0;z-index:200;
+      transition:width .25s ease;overflow:hidden;
+      box-shadow:2px 0 16px rgba(0,0,0,.18);
+    }
+    .sidebar:hover{width:230px;}
 
-    /* ── Main area ── */
-    .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
-    .main-hdr{background:#fff;border-bottom:1px solid #e3ebf7;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .main-hdr-title{font-size:17px;font-weight:700;color:#0d2145;}
-    .main-hdr-sub{font-size:12px;color:#8aa0bc;margin-top:1px;}
-    .main-content{flex:1;overflow-y:auto;padding:24px 28px;}
+    /* Brand */
+    .sb-brand{display:flex;flex-direction:column;align-items:center;padding:16px 10px 12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+    .sb-logo{height:36px;width:auto;transition:height .25s;}
+    .sidebar:hover .sb-logo{height:44px;}
+    .sb-texts{overflow:hidden;max-height:0;opacity:0;transition:max-height .25s,opacity .2s,margin .25s;text-align:center;width:100%;}
+    .sidebar:hover .sb-texts{max-height:60px;opacity:1;margin-top:10px;}
+    .sb-brand-title{font-size:12px;font-weight:700;color:#fff;letter-spacing:.2px;white-space:nowrap;}
+    .sb-brand-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;letter-spacing:.3px;white-space:nowrap;}
+    .sb-accent{height:2px;background:linear-gradient(90deg,transparent,#8DC63F,transparent);width:100%;margin-top:8px;}
 
-    /* ── KPI cards ── */
+    /* Nav */
+    .sb-nav{flex:1;padding:8px 0;overflow-y:auto;overflow-x:hidden;}
+    .sb-section-label{
+      font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+      color:rgba(255,255,255,.25);padding:12px 0 4px 20px;
+      white-space:nowrap;overflow:hidden;
+      max-height:0;opacity:0;transition:max-height .25s,opacity .15s;
+    }
+    .sidebar:hover .sb-section-label{max-height:28px;opacity:1;}
+    .nav-item{
+      display:flex;align-items:center;gap:0;
+      padding:11px 0 11px 18px;cursor:pointer;
+      border-left:3px solid transparent;
+      transition:background .15s,border-color .15s;
+      overflow:hidden;white-space:nowrap;
+      text-decoration:none;
+    }
+    .nav-item:hover{background:rgba(255,255,255,.07);}
+    .nav-item.active{background:rgba(255,255,255,.10);border-left-color:#8DC63F;}
+    .nav-icon{font-size:17px;width:28px;text-align:center;flex-shrink:0;}
+    .nav-text{
+      font-size:13px;font-weight:500;color:rgba(255,255,255,.65);
+      margin-left:10px;opacity:0;transition:opacity .15s .05s;
+      pointer-events:none;
+    }
+    .nav-item.active .nav-text{color:#fff;}
+    .nav-item:hover .nav-text{color:#fff;}
+    .sidebar:hover .nav-text{opacity:1;pointer-events:auto;}
+
+    /* Sidebar bottom */
+    .sb-bottom{padding:10px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+    .sb-user{
+      display:flex;align-items:center;gap:0;padding:8px 8px 8px 10px;
+      border-radius:8px;background:rgba(255,255,255,.05);margin-bottom:8px;
+      overflow:hidden;
+    }
+    .sb-user-avatar{width:28px;height:28px;border-radius:50%;background:#8DC63F;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+    .sb-user-info{margin-left:10px;opacity:0;transition:opacity .15s .05s;white-space:nowrap;}
+    .sidebar:hover .sb-user-info{opacity:1;}
+    .sb-user-name{font-size:12px;font-weight:600;color:#fff;}
+    .sb-user-role{font-size:10px;color:rgba(255,255,255,.4);}
+    .sb-logout{
+      display:flex;align-items:center;gap:0;width:100%;
+      padding:8px 0 8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);
+      font-size:12px;font-weight:600;cursor:pointer;overflow:hidden;
+      transition:background .15s;
+    }
+    .sb-logout:hover{background:rgba(255,255,255,.1);color:#fff;}
+    .sb-logout .nav-text{color:inherit;}
+
+    /* ─── MAIN ─── */
+    .main{margin-left:64px;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+    /* Two-tone header */
+    .main-hdr{
+      background:linear-gradient(135deg,#0d2145 0%,#1b3a6b 60%,#1e4080 100%);
+      padding:18px 28px 20px;flex-shrink:0;position:relative;
+    }
+    .main-hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#8DC63F 30%,#8DC63F 70%,transparent);}
+    .main-hdr-row{display:flex;justify-content:space-between;align-items:center;}
+    .main-hdr-title{font-size:18px;font-weight:700;color:#fff;}
+    .main-hdr-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;}
+    .main-hdr-actions{display:flex;gap:8px;}
+
+    .main-content{flex:1;overflow-y:auto;padding:20px 28px;}
+
+    /* ─── KPI CARDS ─── */
     .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
-    .kpi{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:16px 14px;}
-    .kpi .label{font-size:10px;color:#607b9f;text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
-    .kpi .value{font-size:26px;font-weight:800;color:#0d2145;margin-top:4px;line-height:1;}
-    .kpi .sub{font-size:11px;color:#8aa0bc;margin-top:3px;}
-    .kpi.c-fip .value{color:#4a90c4;} .kpi.c-alm .value{color:#1b3a6b;} .kpi.c-fld .value{color:#c27c0a;}
+    .kpi{
+      background:#fff;border-radius:12px;padding:16px 16px 14px;
+      border:1px solid #e3ebf7;border-left:4px solid #e3ebf7;
+      box-shadow:0 2px 8px rgba(13,33,69,.06);
+      transition:transform .15s,box-shadow .15s;
+    }
+    .kpi:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,33,69,.1);}
+    .kpi.c-total{border-left-color:#4a6899;}
+    .kpi.c-fip{border-left-color:#4a90c4;}
+    .kpi.c-alm{border-left-color:#1b3a6b;}
+    .kpi.c-fld{border-left-color:#c27c0a;}
+    .kpi.c-cth{border-left-color:#8DC63F;}
+    .kpi-label{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:#7b8fab;margin-bottom:6px;}
+    .kpi-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:4px;color:#0d2145;}
+    .kpi.c-fip .kpi-value{color:#4a90c4;}
+    .kpi.c-alm .kpi-value{color:#1b3a6b;}
+    .kpi.c-fld .kpi-value{color:#c27c0a;}
+    .kpi.c-cth .kpi-value{color:#276749;}
+    .kpi-sub{font-size:11px;color:#8aa0bc;}
 
-    /* ── Card ── */
-    .card{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:18px;margin-bottom:18px;}
-    .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-    .card-hdr h2{font-size:14px;font-weight:700;color:#0d2145;}
+    /* ─── CARDS ─── */
+    .card{background:#fff;border:1px solid #e3ebf7;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 1px 4px rgba(13,33,69,.05);}
+    .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+    .card-title{font-size:14px;font-weight:700;color:#0d2145;}
+    .card-sub{font-size:12px;color:#8aa0bc;margin-top:2px;}
 
-    /* ── Distribution bar ── */
-    .bar-wrap{background:#e8effa;border-radius:999px;overflow:hidden;height:14px;}
-    .seg{height:100%;float:left;}
-    .seg.fip{background:#4a90c4;} .seg.alm{background:#1b3a6b;} .seg.fld{background:#c27c0a;}
-    .legend{margin-top:8px;font-size:12px;color:#304f77;display:flex;gap:16px;flex-wrap:wrap;}
-    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+    /* ─── DISTRIBUTION BAR ─── */
+    .dist-bar-wrap{border-radius:99px;overflow:hidden;height:24px;background:#f0f4fa;display:flex;margin:8px 0;}
+    .dist-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.9);transition:width .6s ease;min-width:40px;}
+    .dist-seg.fip{background:#4a90c4;}
+    .dist-seg.alm{background:#1b3a6b;}
+    .dist-seg.fld{background:#c27c0a;}
+    .dist-legend{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap;}
+    .dist-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
 
-    /* ── Charts ── */
-    .charts-grid{display:grid;grid-template-columns:1fr 2fr;gap:18px;margin-bottom:18px;}
-    .chart-box{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:18px;}
-    .chart-box h3{font-size:13px;font-weight:700;color:#0d2145;margin-bottom:14px;}
-    .chart-wrap{position:relative;}
-
-    /* ── Table ── */
-    .tbl-actions{display:flex;gap:8px;align-items:center;}
+    /* ─── TABLE ─── */
+    .tbl-search-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .tbl-search{flex:1;padding:9px 14px 9px 36px;border:1px solid #d5e0ef;border-radius:8px;font-size:13px;color:#0d2145;background:#f8faff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238aa0bc' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") 12px center no-repeat;outline:none;transition:border .15s;}
+    .tbl-search:focus{border-color:#4a90c4;background-color:#fff;}
+    .tbl-count{font-size:12px;color:#8aa0bc;white-space:nowrap;}
     table{width:100%;border-collapse:collapse;font-size:13px;}
-    th{color:#5f7899;text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:10px 8px;border-bottom:2px solid #e3ebf7;white-space:nowrap;background:#f8faff;}
-    td{border-bottom:1px solid #edf2fb;padding:9px 8px;vertical-align:middle;}
+    thead th{background:#f8faff;color:#5f7899;text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:10px 12px;border-bottom:2px solid #e3ebf7;white-space:nowrap;text-align:left;position:sticky;top:0;z-index:5;}
+    tbody td{border-bottom:1px solid #f0f4fa;padding:10px 12px;vertical-align:middle;}
     tbody tr:last-child td{border-bottom:none;}
-    tbody tr:hover td{background:#f4f8ff;}
-    .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:#eef3fb;color:#4a6899;}
+    tbody tr:hover td{background:#f5f8ff;}
+    .avatar{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-right:8px;vertical-align:middle;}
+    .name-cell{display:flex;align-items:center;}
+    .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;background:#eef3fb;color:#4a6899;}
     .muted{color:#8aa0bc;}
+    .no-data{text-align:center;padding:40px;color:#8aa0bc;}
 
-    /* ── Buttons ── */
-    .btn{border:none;border-radius:6px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;transition:opacity .15s;white-space:nowrap;}
+    /* Buttons */
+    .btn{border:none;border-radius:6px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;transition:opacity .15s;}
     .btn:hover{opacity:.8;}
     .btn-view{background:#0d2145;color:#fff;}
+    .btn-pdf{background:#9b2c2c;color:#fff;}
     .btn-csv-s{background:#276749;color:#fff;}
-    .btn-pdf-s{background:#9b2c2c;color:#fff;}
-    .btn-export{background:#276749;color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+    .btn-export{background:#276749;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;}
     .btn-export:hover{background:#1a4a33;}
 
-    /* ── Section visibility ── */
+    /* ─── CHARTS ─── */
+    .charts-grid{display:grid;grid-template-columns:1fr 2fr;gap:18px;margin-bottom:18px;}
+    .chart-card{background:#fff;border:1px solid #e3ebf7;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(13,33,69,.05);}
+    .chart-card h3{font-size:13px;font-weight:700;color:#0d2145;margin-bottom:14px;}
+
+    /* ─── SECTIONS ─── */
     .section{display:none;}
     .section.active{display:block;}
+    #sec-planner{margin:-20px -28px;height:calc(100vh - 60px);overflow:hidden;}
+    #plannerIframe{width:100%;height:100%;border:none;display:block;}
 
-    /* ── Recent submissions mini-table ── */
-    .recent-table{font-size:12px;}
-    .recent-table th{font-size:10px;}
-    .recent-table td{padding:7px 8px;}
-
-    /* ── Modal ── */
+    /* ─── MODAL ─── */
     .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;padding:20px;}
     .modal-bg.open{display:flex;}
-    .modal{background:#fff;border-radius:16px;width:100%;max-width:720px;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+    .modal{background:#fff;border-radius:16px;width:100%;max-width:720px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25);}
     .modal-hdr{background:linear-gradient(135deg,#0d2145,#1b3a6b);padding:20px 26px;border-radius:16px 16px 0 0;color:#fff;display:flex;justify-content:space-between;align-items:flex-start;}
     .modal-hdr h3{font-size:17px;font-weight:800;}
     .modal-hdr p{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;}
     .modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:13px;font-weight:600;}
     .modal-body{padding:22px 26px;}
     .m-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
-    .m-kpi{border-radius:10px;padding:12px;text-align:center;}
-    .m-kpi .ml{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;}
+    .m-kpi{border-radius:10px;padding:13px;text-align:center;}
+    .m-kpi .ml{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;}
     .m-kpi .mv{font-size:22px;font-weight:800;line-height:1;}
-    .m-kpi .ms{font-size:11px;margin-top:2px;opacity:.7;}
+    .m-kpi .ms{font-size:11px;margin-top:2px;opacity:.65;}
     .m-kpi.fip{background:#ebf8ff;color:#4a90c4;}
     .m-kpi.alm{background:#ebf0ff;color:#1b3a6b;}
     .m-kpi.fld{background:#fffbf0;color:#c27c0a;}
     .m-kpi.tot{background:#f4f7fb;color:#0d2145;}
     .ph-table{width:100%;border-collapse:collapse;font-size:13px;}
-    .ph-table th{background:#f4f7fb;color:#5f7899;font-size:10px;letter-spacing:.5px;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid #e3ebf7;}
-    .ph-table td{padding:8px 10px;border-bottom:1px solid #f0f4fb;}
+    .ph-table th{background:#f8faff;color:#5f7899;font-size:10px;letter-spacing:.5px;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid #e3ebf7;}
+    .ph-table td{padding:9px 10px;border-bottom:1px solid #f0f4fa;}
     .ph-table tr:last-child td{border-bottom:none;}
     .modal-actions{display:flex;gap:10px;margin-top:18px;padding-top:14px;border-top:1px solid #e3ebf7;}
     .btn-lg{border:none;border-radius:8px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;}
@@ -119,15 +198,8 @@
     .btn-lg.csv{background:#276749;color:#fff;}
 
     /* Print */
-    @media print{
-      body>*:not(#printArea){display:none!important;}
-      #printArea{display:block!important;}
-    }
+    @media print{body>*:not(#printArea){display:none!important;}#printArea{display:block!important;}}
     #printArea{display:none;}
-
-    /* ── Planner iframe section ── */
-    #sec-planner{margin:-24px -28px;height:calc(100vh - 56px);overflow:hidden;}
-    #plannerIframe{width:100%;height:100%;border:none;display:block;}
   </style>
 </head>
 <body>
@@ -135,95 +207,106 @@
 <!-- ── SIDEBAR ── -->
 <div class="sidebar">
   <div class="sb-brand">
-    <img src="/fip-logo-white.png" alt="FIP">
-    <div class="sb-brand-title">FIP Sales Program</div>
-    <div class="sb-brand-sub">Onboarding Planner</div>
-    <div class="sb-brand-accent"></div>
+    <img class="sb-logo" src="/fip-logo-white.png" alt="FIP">
+    <div class="sb-texts">
+      <div class="sb-brand-title">FIP Sales Program</div>
+      <div class="sb-brand-sub">Onboarding Planner</div>
+      <div class="sb-accent"></div>
+    </div>
   </div>
   <div class="sb-nav">
-    <div class="sb-label">Menu</div>
+    <div class="sb-section-label">Menu</div>
     <div class="nav-item active" data-section="dashboard" onclick="showSection('dashboard',this)">
-      <span class="icon">📊</span> Dashboard
+      <span class="nav-icon">📊</span><span class="nav-text">Dashboard</span>
     </div>
     <div class="nav-item" data-section="analytics" onclick="showSection('analytics',this)">
-      <span class="icon">📈</span> Analytics
+      <span class="nav-icon">📈</span><span class="nav-text">Analytics</span>
     </div>
     <div class="nav-item" data-section="submissions" onclick="showSection('submissions',this)">
-      <span class="icon">📋</span> Submissions
+      <span class="nav-icon">📋</span><span class="nav-text">Submissions</span>
     </div>
     <div class="nav-item" data-section="planner" onclick="showSection('planner',this)">
-      <span class="icon">🗂</span> Planner View
+      <span class="nav-icon">🗂</span><span class="nav-text">Planner View</span>
     </div>
-    <div class="sb-label">Admin</div>
+    <div class="sb-section-label">Admin</div>
     <div class="nav-item" onclick="window.location.href='/admin-users.html'">
-      <span class="icon">👥</span> Manage Users
+      <span class="nav-icon">👥</span><span class="nav-text">Manage Users</span>
     </div>
   </div>
   <div class="sb-bottom">
-    <button class="sb-btn logout" onclick="logout()">↩ Logout</button>
+    <div class="sb-user">
+      <div class="sb-user-avatar" id="adminAvatar">A</div>
+      <div class="sb-user-info">
+        <div class="sb-user-name" id="adminName">Admin</div>
+        <div class="sb-user-role">Administrator</div>
+      </div>
+    </div>
+    <button class="sb-logout" onclick="logout()">
+      <span class="nav-icon" style="font-size:15px;">↩</span>
+      <span class="nav-text">Logout</span>
+    </button>
   </div>
 </div>
 
-<!-- ── MAIN AREA ── -->
+<!-- ── MAIN ── -->
 <div class="main">
   <div class="main-hdr">
-    <div>
-      <div class="main-hdr-title" id="pageTitle">Dashboard</div>
-      <div class="main-hdr-sub" id="pageSub">Overview of all submissions</div>
+    <div class="main-hdr-row">
+      <div>
+        <div class="main-hdr-title" id="pageTitle">Dashboard</div>
+        <div class="main-hdr-sub" id="pageSub">Overview of all submissions</div>
+      </div>
     </div>
   </div>
 
   <div class="main-content">
 
-    <!-- DASHBOARD SECTION -->
+    <!-- DASHBOARD -->
     <div class="section active" id="sec-dashboard">
       <div class="kpi-grid">
-        <div class="kpi"><div class="label">Total Submissions</div><div class="value" id="kSubs">—</div><div class="sub">Individual plans</div></div>
-        <div class="kpi c-fip"><div class="label">FIP Premises</div><div class="value" id="kFip">—</div><div class="sub" id="kFipPct">CTH</div></div>
-        <div class="kpi c-alm"><div class="label">Almarai Premises</div><div class="value" id="kAlm">—</div><div class="sub" id="kAlmPct">CTH</div></div>
-        <div class="kpi c-fld"><div class="label">Field Training</div><div class="value" id="kFld">—</div><div class="sub" id="kFldPct">CTH</div></div>
-        <div class="kpi"><div class="label">Total Program CTH</div><div class="value" id="kTot">—</div><div class="sub">All submissions</div></div>
+        <div class="kpi c-total"><div class="kpi-label">Total Submissions</div><div class="kpi-value" id="kSubs">—</div><div class="kpi-sub">Individual plans submitted</div></div>
+        <div class="kpi c-fip"><div class="kpi-label">FIP Premises</div><div class="kpi-value" id="kFip">—</div><div class="kpi-sub" id="kFipPct">CTH</div></div>
+        <div class="kpi c-alm"><div class="kpi-label">Almarai Premises</div><div class="kpi-value" id="kAlm">—</div><div class="kpi-sub" id="kAlmPct">CTH</div></div>
+        <div class="kpi c-fld"><div class="kpi-label">Field Training</div><div class="kpi-value" id="kFld">—</div><div class="kpi-sub" id="kFldPct">CTH</div></div>
+        <div class="kpi c-cth"><div class="kpi-label">Total Program CTH</div><div class="kpi-value" id="kTot">—</div><div class="kpi-sub">All submissions combined</div></div>
       </div>
 
       <div class="card">
-        <div class="card-hdr"><h2>CTH Distribution — All Submissions</h2></div>
-        <div class="bar-wrap">
-          <div class="seg fip" id="segFip" style="width:0%"></div>
-          <div class="seg alm" id="segAlm" style="width:0%"></div>
-          <div class="seg fld" id="segFld" style="width:0%"></div>
+        <div class="card-hdr">
+          <div><div class="card-title">CTH Distribution</div><div class="card-sub">Across all submissions combined</div></div>
         </div>
-        <div class="legend">
-          <span><span class="dot" style="background:#4a90c4"></span><span id="lFip">FIP</span></span>
-          <span><span class="dot" style="background:#1b3a6b"></span><span id="lAlm">Almarai</span></span>
-          <span><span class="dot" style="background:#c27c0a"></span><span id="lFld">Field</span></span>
+        <div class="dist-bar-wrap">
+          <div class="dist-seg fip" id="segFip" style="width:0%">—</div>
+          <div class="dist-seg alm" id="segAlm" style="width:0%">—</div>
+          <div class="dist-seg fld" id="segFld" style="width:0%">—</div>
+        </div>
+        <div class="dist-legend">
+          <span><span class="dist-dot" style="background:#4a90c4"></span><span id="lFip">FIP</span></span>
+          <span><span class="dist-dot" style="background:#1b3a6b"></span><span id="lAlm">Almarai</span></span>
+          <span><span class="dist-dot" style="background:#c27c0a"></span><span id="lFld">Field</span></span>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-hdr"><h2>Recent Submissions</h2>
-          <span style="font-size:12px;color:#8aa0bc;cursor:pointer;" onclick="showSection('submissions',document.querySelector('[data-section=submissions]'))">View all →</span>
+        <div class="card-hdr">
+          <div><div class="card-title">Recent Submissions</div></div>
+          <span style="font-size:12px;color:#4a90c4;cursor:pointer;font-weight:600;" onclick="showSection('submissions',document.querySelector('[data-section=submissions]'))">View all →</span>
         </div>
-        <table class="recent-table">
-          <thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th><th>Submitted</th><th>Total CTH</th></tr></thead>
+        <table>
+          <thead><tr><th></th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th><th>Submitted</th><th>Total CTH</th></tr></thead>
           <tbody id="recentTbody"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- ANALYTICS SECTION -->
+    <!-- ANALYTICS -->
     <div class="section" id="sec-analytics">
       <div class="charts-grid">
-        <div class="chart-box">
-          <h3>Delivery Point Distribution</h3>
-          <div class="chart-wrap"><canvas id="chartDist"></canvas></div>
-        </div>
-        <div class="chart-box">
-          <h3>CTH per Phase (All Submissions Combined)</h3>
-          <div class="chart-wrap"><canvas id="chartPhase"></canvas></div>
-        </div>
+        <div class="chart-card"><h3>Delivery Distribution</h3><canvas id="chartDist"></canvas></div>
+        <div class="chart-card"><h3>CTH per Phase — All Submissions</h3><canvas id="chartPhase"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-hdr"><h2>Phase Summary</h2></div>
+        <div class="card-hdr"><div class="card-title">Phase Summary</div></div>
         <table>
           <thead><tr><th>Phase</th><th style="color:#4a90c4">FIP CTH</th><th style="color:#1b3a6b">Almarai CTH</th><th style="color:#c27c0a">Field CTH</th><th>Phase Total</th><th>% of Program</th></tr></thead>
           <tbody id="phaseSummaryBody"></tbody>
@@ -231,25 +314,24 @@
       </div>
     </div>
 
-    <!-- PLANNER IFRAME SECTION -->
-    <div class="section" id="sec-planner">
-      <iframe id="plannerIframe" src="" title="Planner View" allowfullscreen></iframe>
-    </div>
-
-    <!-- SUBMISSIONS SECTION -->
+    <!-- SUBMISSIONS -->
     <div class="section" id="sec-submissions">
       <div class="card">
         <div class="card-hdr">
-          <h2>All Submissions <span id="subCount" style="font-size:12px;font-weight:400;color:#8aa0bc;"></span></h2>
-          <button class="btn-export" onclick="exportAllCSV()">⬇ Export All (CSV)</button>
+          <div><div class="card-title">All Submissions</div><div class="card-sub" id="subCount"></div></div>
+          <button class="btn-export" onclick="exportAllCSV()">⬇ Export All CSV</button>
+        </div>
+        <div class="tbl-search-row">
+          <input class="tbl-search" id="searchInput" placeholder="Search by name, designation, region or account…" oninput="renderTable()">
+          <span class="tbl-count" id="filterCount"></span>
         </div>
         <table>
           <thead>
             <tr>
               <th>#</th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th>
               <th>Submitted</th><th>Topics</th>
-              <th style="color:#4a90c4">FIP CTH</th><th style="color:#1b3a6b">Almarai CTH</th>
-              <th style="color:#c27c0a">Field CTH</th><th>Total</th><th>Actions</th>
+              <th style="color:#4a90c4">FIP</th><th style="color:#1b3a6b">Almarai</th>
+              <th style="color:#c27c0a">Field</th><th>Total</th><th>Actions</th>
             </tr>
           </thead>
           <tbody id="subTbody"></tbody>
@@ -257,10 +339,15 @@
       </div>
     </div>
 
+    <!-- PLANNER IFRAME -->
+    <div class="section" id="sec-planner">
+      <iframe id="plannerIframe" src="" title="Planner View"></iframe>
+    </div>
+
   </div><!-- /main-content -->
 </div><!-- /main -->
 
-<!-- ── VIEW MODAL ── -->
+<!-- VIEW MODAL -->
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-hdr">
@@ -272,7 +359,7 @@
         <div class="m-kpi fip"><div class="ml">FIP</div><div class="mv" id="mFip">0</div><div class="ms">CTH</div></div>
         <div class="m-kpi alm"><div class="ml">Almarai</div><div class="mv" id="mAlm">0</div><div class="ms">CTH</div></div>
         <div class="m-kpi fld"><div class="ml">Field</div><div class="mv" id="mFld">0</div><div class="ms">CTH</div></div>
-        <div class="m-kpi tot"><div class="ml">Total</div><div class="mv" id="mTot">0</div><div class="ms">CTH · <span id="mTopics">0</span>/73 topics</div></div>
+        <div class="m-kpi tot"><div class="ml">Total</div><div class="mv" id="mTot">0</div><div class="ms">CTH · <span id="mTopics">0</span>/73</div></div>
       </div>
       <table class="ph-table">
         <thead><tr><th>Phase</th><th style="color:#4a90c4">FIP CTH</th><th style="color:#1b3a6b">Almarai CTH</th><th style="color:#c27c0a">Field CTH</th><th>Total</th><th>Assigned</th></tr></thead>
@@ -290,22 +377,22 @@
 
 <script>
   const cthByIdx={0:2,1:2,2:2,3:2,4:4,5:6,6:6,7:10,8:10,9:8,10:10,11:8,12:6,13:6,14:6,15:8,16:8,17:4,18:0,19:0,20:2,21:2,22:2,23:8,24:6,25:4,26:12,27:6,28:6,29:10,30:12,31:12,32:8,33:4,34:6,35:8,36:8,37:6,38:8,39:8,40:4,41:6,42:10,43:10,44:8,45:8,46:10,47:6,48:6,49:5,50:6,51:5,52:5,53:5,54:5,55:5,56:6,57:3,58:4,59:2,60:8,61:4,62:4,63:2,64:6,65:2,66:2,67:6,68:4,69:4,70:8,71:24,72:2};
-  const PHASES=[{name:'Job Description',start:0,end:6},{name:'Pre Execution',start:7,end:17},{name:'Introduction',start:18,end:29},{name:'Execution',start:30,end:58},{name:'Exec – Specialization',start:59,end:69},{name:'Closing',start:70,end:72}];
+  const PHASES=[{n:'Job Description',s:0,e:6},{n:'Pre Execution',s:7,e:17},{n:'Introduction',s:18,e:29},{n:'Execution',s:30,e:58},{n:'Exec – Specialization',s:59,e:69},{n:'Closing',s:70,e:72}];
+  const TITLES={dashboard:['Dashboard','Overview of all submissions'],analytics:['Analytics','CTH breakdown by phase and delivery point'],submissions:['Submissions','All individual planning submissions'],planner:['Planner View','Delivery point assignment tool']};
+  const AVATAR_COLORS=['#4a90c4','#1b3a6b','#c27c0a','#276749','#9b2c2c','#5b21b6','#1a6b5a'];
 
-  let allSubs=[], currentSub=null, chartsBuilt=false;
+  let allSubs=[],currentSub=null,chartsBuilt=false;
 
   function byId(i){return document.getElementById(i);}
   async function api(p){const r=await fetch(p);const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Error');return d;}
   function cth(sels,dp){return(sels||[]).filter(s=>s.delivery_point===dp).reduce((t,s)=>t+(cthByIdx[s.row_idx]||0),0);}
   function fmt(dt){return dt?dt.slice(0,16).replace('T',' '):'-';}
+  function initials(name){return(name||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
+  function avatarColor(name){return AVATAR_COLORS[(name||'').charCodeAt(0)%AVATAR_COLORS.length];}
 
-  // ── Navigation ──
-  const TITLES={
-    dashboard:  ['Dashboard',   'Overview of all submissions'],
-    analytics:  ['Analytics',   'CTH breakdown by phase and delivery point'],
-    submissions:['Submissions', 'All individual planning submissions'],
-    planner:    ['Planner View','Delivery point assignment tool']
-  };
+  async function logout(){try{await fetch('/api/auth/logout',{method:'POST'});}catch(e){}window.location.href='/login.html';}
+
+  /* Navigation */
   function showSection(id,el){
     document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.nav-item[data-section]').forEach(n=>n.classList.remove('active'));
@@ -316,168 +403,152 @@
     if(id==='analytics'&&!chartsBuilt){buildCharts();chartsBuilt=true;}
     if(id==='planner'){
       const fr=byId('plannerIframe');
-      if(fr&&!fr.getAttribute('data-loaded')){
-        fr.src='/planner.html';
-        fr.setAttribute('data-loaded','1');
-      }
+      if(fr&&!fr.getAttribute('data-loaded')){fr.src='/planner.html';fr.setAttribute('data-loaded','1');}
     }
   }
 
-  // ── Logout ──
-  async function logout(){try{await fetch('/api/auth/logout',{method:'POST'});}catch(e){}window.location.href='/login.html';}
-
-  // ── Build KPIs + bars ──
+  /* Dashboard */
   function buildDashboard(){
     let totF=0,totA=0,totFl=0;
     allSubs.forEach(s=>{totF+=cth(s.selections,'FIP');totA+=cth(s.selections,'Almarai');totFl+=cth(s.selections,'Field Training');});
     const totAll=totF+totA+totFl;
-    const pF=totAll?Math.round(totF/totAll*100):0, pA=totAll?Math.round(totA/totAll*100):0, pFl=totAll?100-pF-pA:0;
+    const pF=totAll?Math.round(totF/totAll*100):0,pA=totAll?Math.round(totA/totAll*100):0,pFl=totAll?100-pF-pA:0;
 
     byId('kSubs').textContent=allSubs.length;
     byId('kFip').textContent=totF; byId('kFipPct').textContent=`${pF}% of total CTH`;
     byId('kAlm').textContent=totA; byId('kAlmPct').textContent=`${pA}% of total CTH`;
     byId('kFld').textContent=totFl; byId('kFldPct').textContent=`${pFl}% of total CTH`;
     byId('kTot').textContent=totAll;
-    byId('segFip').style.width=pF+'%'; byId('segAlm').style.width=pA+'%'; byId('segFld').style.width=pFl+'%';
+
+    byId('segFip').style.width=pF+'%'; byId('segFip').textContent=pF>8?pF+'%':'';
+    byId('segAlm').style.width=pA+'%'; byId('segAlm').textContent=pA>8?pA+'%':'';
+    byId('segFld').style.width=pFl+'%'; byId('segFld').textContent=pFl>8?pFl+'%':'';
     byId('lFip').textContent=`FIP: ${totF} CTH (${pF}%)`;
     byId('lAlm').textContent=`Almarai: ${totA} CTH (${pA}%)`;
     byId('lFld').textContent=`Field: ${totFl} CTH (${pFl}%)`;
 
-    // Recent 5
     const recent=allSubs.slice(0,5);
-    byId('recentTbody').innerHTML=recent.length?recent.map((s,i)=>`<tr>
-      <td class="muted">${i+1}</td><td><strong>${s.name||'-'}</strong></td><td>${s.desig||'-'}</td>
-      <td>${s.region||'-'}</td><td><span class="badge">${s.account}</span></td>
-      <td class="muted" style="font-size:11px;">${fmt(s.submittedAt)}</td>
-      <td style="font-weight:700;">${cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training')}</td>
-    </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#8aa0bc;padding:20px;">No submissions yet.</td></tr>';
+    byId('recentTbody').innerHTML=recent.length?recent.map(s=>{
+      const tot=cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training');
+      const ini=initials(s.name),col=avatarColor(s.name);
+      return `<tr>
+        <td><span class="avatar" style="background:${col}">${ini}</span></td>
+        <td><strong>${s.name||'-'}</strong></td>
+        <td class="muted">${s.desig||'-'}</td>
+        <td class="muted">${s.region||'-'}</td>
+        <td><span class="badge">${s.account}</span></td>
+        <td class="muted" style="font-size:11px;">${fmt(s.submittedAt)}</td>
+        <td style="font-weight:700;">${tot}</td>
+      </tr>`;
+    }).join(''):'<tr><td colspan="7"><div class="no-data">No submissions yet.</div></td></tr>';
   }
 
-  // ── Build Charts ──
+  /* Analytics */
   function buildCharts(){
     let totF=0,totA=0,totFl=0;
     allSubs.forEach(s=>{totF+=cth(s.selections,'FIP');totA+=cth(s.selections,'Almarai');totFl+=cth(s.selections,'Field Training');});
+    new Chart(byId('chartDist'),{type:'doughnut',data:{labels:['FIP','Almarai','Field Training'],datasets:[{data:[totF,totA,totFl],backgroundColor:['#4a90c4','#1b3a6b','#c27c0a'],borderWidth:3,borderColor:'#fff',hoverOffset:4}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:16}}}}});
 
-    new Chart(byId('chartDist'),{type:'doughnut',data:{labels:['FIP','Almarai','Field Training'],datasets:[{data:[totF,totA,totFl],backgroundColor:['#4a90c4','#1b3a6b','#c27c0a'],borderWidth:3,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:12}}}}}});
-
-    const phaseLabels=PHASES.map(p=>p.name);
     const phF=[],phA=[],phFl=[];
-    PHASES.forEach(ph=>{
-      let f=0,a=0,fl=0;
-      allSubs.forEach(s=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.start&&r.row_idx<=ph.end);f+=cth(ps,'FIP');a+=cth(ps,'Almarai');fl+=cth(ps,'Field Training');});
-      phF.push(f);phA.push(a);phFl.push(fl);
-    });
+    PHASES.forEach(ph=>{let f=0,a=0,fl=0;allSubs.forEach(s=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);f+=cth(ps,'FIP');a+=cth(ps,'Almarai');fl+=cth(ps,'Field Training');});phF.push(f);phA.push(a);phFl.push(fl);});
+    new Chart(byId('chartPhase'),{type:'bar',data:{labels:PHASES.map(p=>p.n.length>18?p.n.slice(0,18)+'…':p.n),datasets:[{label:'FIP',data:phF,backgroundColor:'#4a90c4',borderRadius:3},{label:'Almarai',data:phA,backgroundColor:'#1b3a6b',borderRadius:3},{label:'Field',data:phFl,backgroundColor:'#c27c0a',borderRadius:3}]},options:{responsive:true,scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:11}}},y:{stacked:true,title:{display:true,text:'CTH (hrs)',font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}}},plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:14}}}}});
 
-    new Chart(byId('chartPhase'),{type:'bar',data:{labels:phaseLabels,datasets:[{label:'FIP',data:phF,backgroundColor:'#4a90c4'},{label:'Almarai',data:phA,backgroundColor:'#1b3a6b'},{label:'Field',data:phFl,backgroundColor:'#c27c0a'}]},options:{responsive:true,scales:{x:{stacked:true,ticks:{maxRotation:30}},y:{stacked:true,title:{display:true,text:'CTH (Hours)'}}},plugins:{legend:{position:'bottom'}}}});
-
-    // Phase summary table
     const grandTotal=totF+totA+totFl;
     byId('phaseSummaryBody').innerHTML=PHASES.map((ph,i)=>{
-      const pt=phF[i]+phA[i]+phFl[i];
-      const pct=grandTotal?Math.round(pt/grandTotal*100):0;
-      return `<tr><td><strong>${ph.name}</strong></td><td style="color:#4a90c4;font-weight:700;">${phF[i]}</td><td style="color:#1b3a6b;font-weight:700;">${phA[i]}</td><td style="color:#c27c0a;font-weight:700;">${phFl[i]}</td><td style="font-weight:700;">${pt}</td><td class="muted">${pct}%</td></tr>`;
+      const pt=phF[i]+phA[i]+phFl[i],pct=grandTotal?Math.round(pt/grandTotal*100):0;
+      return `<tr><td><strong>${ph.n}</strong></td><td style="color:#4a90c4;font-weight:700;">${phF[i]}</td><td style="color:#1b3a6b;font-weight:700;">${phA[i]}</td><td style="color:#c27c0a;font-weight:700;">${phFl[i]}</td><td style="font-weight:700;">${pt}</td><td class="muted">${pct}%</td></tr>`;
     }).join('');
   }
 
-  // ── Build submissions table ──
-  function buildTable(){
+  /* Submissions table */
+  function renderTable(){
+    const q=(byId('searchInput')?.value||'').toLowerCase().trim();
+    const filtered=q?allSubs.filter(s=>[s.name,s.desig,s.region,s.account].some(v=>(v||'').toLowerCase().includes(q))):allSubs;
+    byId('filterCount').textContent=q?`${filtered.length} of ${allSubs.length} results`:`${allSubs.length} total`;
     byId('subCount').textContent=`(${allSubs.length} submission${allSubs.length!==1?'s':''})`;
-    byId('subTbody').innerHTML=allSubs.length?allSubs.map((s,i)=>{
+    byId('subTbody').innerHTML=filtered.length?filtered.map((s,i)=>{
       const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training'),tot=fC+aC+flC;
+      const ini=initials(s.name),col=avatarColor(s.name);
       return `<tr>
-        <td class="muted">${i+1}</td><td><strong>${s.name||'-'}</strong></td><td>${s.desig||'-'}</td>
-        <td>${s.region||'-'}</td><td><span class="badge">${s.account}</span></td>
-        <td class="muted" style="font-size:11px;">${fmt(s.submittedAt)}</td><td>${s.assigned}/73</td>
-        <td style="color:#4a90c4;font-weight:700;">${fC}</td><td style="color:#1b3a6b;font-weight:700;">${aC}</td>
-        <td style="color:#c27c0a;font-weight:700;">${flC}</td><td style="font-weight:700;">${tot}</td>
+        <td class="muted">${i+1}</td>
+        <td><div class="name-cell"><span class="avatar" style="background:${col}">${ini}</span><strong>${s.name||'-'}</strong></div></td>
+        <td class="muted">${s.desig||'-'}</td><td class="muted">${s.region||'-'}</td>
+        <td><span class="badge">${s.account}</span></td>
+        <td class="muted" style="font-size:11px;">${fmt(s.submittedAt)}</td>
+        <td>${s.assigned}/73</td>
+        <td style="color:#4a90c4;font-weight:700;">${fC}</td>
+        <td style="color:#1b3a6b;font-weight:700;">${aC}</td>
+        <td style="color:#c27c0a;font-weight:700;">${flC}</td>
+        <td style="font-weight:700;">${tot}</td>
         <td style="display:flex;gap:4px;">
           <button class="btn btn-view" onclick="openModal(${s.id})">View</button>
-          <button class="btn btn-pdf-s" onclick="openAndPrint(${s.id})">PDF</button>
+          <button class="btn btn-pdf" onclick="openAndPrint(${s.id})">PDF</button>
           <button class="btn btn-csv-s" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button>
         </td>
       </tr>`;
-    }).join(''):'<tr><td colspan="12" style="text-align:center;color:#8aa0bc;padding:32px;">No submissions yet.</td></tr>';
+    }).join(''):`<tr><td colspan="12"><div class="no-data">No results found.</div></td></tr>`;
   }
 
-  // ── Modal ──
+  /* Modal */
   function openModal(id){
-    currentSub=allSubs.find(s=>s.id===id);
-    if(!currentSub)return;
-    const s=currentSub;
-    const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training');
+    currentSub=allSubs.find(s=>s.id===id);if(!currentSub)return;
+    const s=currentSub,fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training');
     byId('mName').textContent=s.name||'(No name)';
     byId('mMeta').textContent=[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ');
-    byId('mFip').textContent=fC; byId('mAlm').textContent=aC; byId('mFld').textContent=flC;
-    byId('mTot').textContent=fC+aC+flC; byId('mTopics').textContent=s.assigned;
+    byId('mFip').textContent=fC;byId('mAlm').textContent=aC;byId('mFld').textContent=flC;
+    byId('mTot').textContent=fC+aC+flC;byId('mTopics').textContent=s.assigned;
     byId('mPhaseBody').innerHTML=PHASES.map(ph=>{
-      const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.start&&r.row_idx<=ph.end);
+      const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);
       const pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');
-      return `<tr><td><strong>${ph.name}</strong></td><td style="color:#4a90c4;font-weight:700;">${pf}</td><td style="color:#1b3a6b;font-weight:700;">${pa}</td><td style="color:#c27c0a;font-weight:700;">${pfl}</td><td style="font-weight:700;">${pf+pa+pfl}</td><td class="muted">${ps.length}/${ph.end-ph.start+1}</td></tr>`;
+      return `<tr><td><strong>${ph.n}</strong></td><td style="color:#4a90c4;font-weight:700;">${pf}</td><td style="color:#1b3a6b;font-weight:700;">${pa}</td><td style="color:#c27c0a;font-weight:700;">${pfl}</td><td style="font-weight:700;">${pf+pa+pfl}</td><td class="muted">${ps.length}/${ph.e-ph.s+1}</td></tr>`;
     }).join('');
     byId('modalBg').classList.add('open');
   }
   function openAndPrint(id){currentSub=allSubs.find(s=>s.id===id);printSubmission();}
   function closeModal(){byId('modalBg').classList.remove('open');currentSub=null;}
 
-  // ── Print PDF ──
+  /* Print */
   function printSubmission(){
-    if(!currentSub)return;
-    const s=currentSub;
+    if(!currentSub)return;const s=currentSub;
     const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training'),tot=fC+aC+flC;
-    const phRows=PHASES.map(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.start&&r.row_idx<=ph.end);const pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');return `<tr><td>${ph.name}</td><td>${pf}</td><td>${pa}</td><td>${pfl}</td><td><strong>${pf+pa+pfl}</strong></td><td>${ps.length}/${ph.end-ph.start+1}</td></tr>`;}).join('');
-    byId('printArea').innerHTML=`<div style="font-family:Arial,sans-serif;padding:28px;">
-      <div style="background:#0d2145;padding:20px 24px;color:#fff;border-radius:8px;margin-bottom:20px;">
-        <div style="font-size:10px;color:#8DC63F;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">FIP Sales Program — Onboarding Planner</div>
-        <div style="font-size:20px;font-weight:800;">${s.name||'—'}</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">${[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ')}</div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
-        <div style="border:1px solid #bee3f8;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#4a90c4;font-weight:700;text-transform:uppercase;letter-spacing:1px;">FIP</div><div style="font-size:24px;font-weight:800;color:#4a90c4;">${fC}</div><div style="font-size:10px;color:#4a90c4;">CTH</div></div>
-        <div style="border:1px solid #c3d4f0;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#1b3a6b;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Almarai</div><div style="font-size:24px;font-weight:800;color:#1b3a6b;">${aC}</div><div style="font-size:10px;color:#1b3a6b;">CTH</div></div>
-        <div style="border:1px solid #fde8b0;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#c27c0a;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Field</div><div style="font-size:24px;font-weight:800;color:#c27c0a;">${flC}</div><div style="font-size:10px;color:#c27c0a;">CTH</div></div>
-        <div style="border:1px solid #d5e0ef;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#0d2145;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Total</div><div style="font-size:24px;font-weight:800;color:#0d2145;">${tot}</div><div style="font-size:10px;color:#607b9f;">${s.assigned}/73 topics</div></div>
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;">
-        <thead><tr style="background:#f4f7fb;"><th style="padding:8px;text-align:left;border-bottom:2px solid #d5e0ef;">Phase</th><th style="padding:8px;color:#4a90c4;border-bottom:2px solid #d5e0ef;">FIP CTH</th><th style="padding:8px;color:#1b3a6b;border-bottom:2px solid #d5e0ef;">Almarai CTH</th><th style="padding:8px;color:#c27c0a;border-bottom:2px solid #d5e0ef;">Field CTH</th><th style="padding:8px;border-bottom:2px solid #d5e0ef;">Total</th><th style="padding:8px;border-bottom:2px solid #d5e0ef;">Assigned</th></tr></thead>
-        <tbody>${phRows}</tbody>
-      </table></div>`;
+    const phRows=PHASES.map(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);const pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');return`<tr><td>${ph.n}</td><td>${pf}</td><td>${pa}</td><td>${pfl}</td><td><strong>${pf+pa+pfl}</strong></td><td>${ps.length}/${ph.e-ph.s+1}</td></tr>`;}).join('');
+    byId('printArea').innerHTML=`<div style="font-family:Arial,sans-serif;padding:28px;"><div style="background:#0d2145;padding:20px 24px;color:#fff;border-radius:8px;margin-bottom:20px;"><div style="font-size:10px;color:#8DC63F;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">FIP Sales Program — Onboarding Planner</div><div style="font-size:20px;font-weight:800;">${s.name||'—'}</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">${[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ')}</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;"><div style="border:1px solid #bee3f8;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#4a90c4;font-weight:700;text-transform:uppercase;">FIP</div><div style="font-size:24px;font-weight:800;color:#4a90c4;">${fC}</div><div style="font-size:10px;color:#4a90c4;">CTH</div></div><div style="border:1px solid #c3d4f0;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#1b3a6b;font-weight:700;text-transform:uppercase;">Almarai</div><div style="font-size:24px;font-weight:800;color:#1b3a6b;">${aC}</div><div style="font-size:10px;color:#1b3a6b;">CTH</div></div><div style="border:1px solid #fde8b0;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#c27c0a;font-weight:700;text-transform:uppercase;">Field</div><div style="font-size:24px;font-weight:800;color:#c27c0a;">${flC}</div><div style="font-size:10px;color:#c27c0a;">CTH</div></div><div style="border:1px solid #d5e0ef;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:9px;color:#0d2145;font-weight:700;text-transform:uppercase;">Total</div><div style="font-size:24px;font-weight:800;color:#0d2145;">${tot}</div><div style="font-size:10px;color:#607b9f;">${s.assigned}/73</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#f4f7fb;"><th style="padding:8px;text-align:left;border-bottom:2px solid #d5e0ef;">Phase</th><th style="padding:8px;color:#4a90c4;border-bottom:2px solid #d5e0ef;">FIP CTH</th><th style="padding:8px;color:#1b3a6b;border-bottom:2px solid #d5e0ef;">Almarai CTH</th><th style="padding:8px;color:#c27c0a;border-bottom:2px solid #d5e0ef;">Field CTH</th><th style="padding:8px;border-bottom:2px solid #d5e0ef;">Total</th><th style="padding:8px;border-bottom:2px solid #d5e0ef;">Assigned</th></tr></thead><tbody>${phRows}</tbody></table></div>`;
     window.print();
   }
 
-  // ── CSV exports ──
+  /* CSV */
   function exportCurrentCSV(){if(currentSub)exportSubCSV(currentSub);}
-  function exportSubCSV(s){
-    if(!s)return;
-    const rows=[['Name','Designation','Region','Account','Submitted'],[s.name,s.desig,s.region,s.account,fmt(s.submittedAt)],[],['Phase','FIP CTH','Almarai CTH','Field CTH','Phase Total','Assigned']];
-    PHASES.forEach(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.start&&r.row_idx<=ph.end);rows.push([ph.name,cth(ps,'FIP'),cth(ps,'Almarai'),cth(ps,'Field Training'),cth(ps,'FIP')+cth(ps,'Almarai')+cth(ps,'Field Training'),`${ps.length}/${ph.end-ph.start+1}`]);});
-    dl(rows,`FIP_${(s.name||'submission').replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.csv`);
-  }
-  function exportAllCSV(){
-    if(!allSubs.length){alert('No submissions to export.');return;}
-    const hdr=['#','Name','Designation','Region','Account','Submitted','Topics','FIP CTH','Almarai CTH','Field CTH','Total CTH'];
-    const rows=allSubs.map((s,i)=>[i+1,s.name,s.desig,s.region,s.account,fmt(s.submittedAt),s.assigned,cth(s.selections,'FIP'),cth(s.selections,'Almarai'),cth(s.selections,'Field Training'),cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training')]);
-    dl([hdr,...rows],`FIP_All_Submissions_${new Date().toISOString().split('T')[0]}.csv`);
-  }
+  function exportSubCSV(s){if(!s)return;const rows=[['Name','Designation','Region','Account','Submitted'],[s.name,s.desig,s.region,s.account,fmt(s.submittedAt)],[],['Phase','FIP CTH','Almarai CTH','Field CTH','Total','Assigned']];PHASES.forEach(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);rows.push([ph.n,cth(ps,'FIP'),cth(ps,'Almarai'),cth(ps,'Field Training'),cth(ps,'FIP')+cth(ps,'Almarai')+cth(ps,'Field Training'),`${ps.length}/${ph.e-ph.s+1}`]);});dl(rows,`FIP_${(s.name||'submission').replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.csv`);}
+  function exportAllCSV(){if(!allSubs.length){alert('No submissions.');return;}const hdr=['#','Name','Designation','Region','Account','Submitted','Topics','FIP CTH','Almarai CTH','Field CTH','Total CTH'];const rows=allSubs.map((s,i)=>[i+1,s.name,s.desig,s.region,s.account,fmt(s.submittedAt),s.assigned,cth(s.selections,'FIP'),cth(s.selections,'Almarai'),cth(s.selections,'Field Training'),cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training')]);dl([hdr,...rows],`FIP_All_Submissions_${new Date().toISOString().split('T')[0]}.csv`);}
   function dl(rows,fn){const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=fn;a.click();}
 
-  // ── Init ──
+  /* Init */
   async function init(){
     const me=await api('/api/auth/me');
     if(!me.user)return window.location.href='/login.html';
     if(me.user.role!=='admin')return window.location.href='/planner.html';
+
+    // Show admin identity
+    const uname=me.user.display_name||me.user.username||'Admin';
+    byId('adminName').textContent=uname;
+    byId('adminAvatar').textContent=initials(uname);
+    byId('adminAvatar').style.background=avatarColor(uname);
+
     const d=await api('/api/admin/submissions');
     allSubs=d.submissions||[];
     buildDashboard();
-    buildTable();
-  }
-  init().then(()=>{
-    // Hash routing — e.g. /admin-dashboard.html#planner from other admin pages
+    renderTable();
+
+    // Preload planner iframe silently so Planner View is instant
+    const fr=byId('plannerIframe');
+    if(fr&&!fr.getAttribute('data-loaded')){fr.src='/planner.html';fr.setAttribute('data-loaded','1');}
+
+    // Hash routing from other admin pages
     const hash=location.hash.slice(1);
-    if(hash&&TITLES[hash]){
-      const el=document.querySelector(`[data-section="${hash}"]`);
-      showSection(hash,el);
-    }
-  }).catch(e=>console.error(e));
+    if(hash&&TITLES[hash]){const el=document.querySelector(`[data-section="${hash}"]`);showSection(hash,el);}
+  }
+
+  init().catch(e=>console.error(e));
 </script>
 </body>
 </html>

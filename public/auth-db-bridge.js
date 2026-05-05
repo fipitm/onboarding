@@ -172,9 +172,12 @@
     roleGuardUi();
     await loadServerData();
 
-    // Always show profile overlay for non-admin users on every login
-    // Fields are pre-filled with existing server data so returning users just click Start Planning
+    // Always show profile overlay for non-admin users on every login with blank fields
     if (currentUser.role !== "admin") {
+      ["responderName", "responderDesig", "responderRegion"].forEach(id => {
+        const el = byId(id);
+        if (el) el.value = "";
+      });
       const overlay = byId("profileOverlay");
       if (overlay) overlay.style.display = "flex";
     }

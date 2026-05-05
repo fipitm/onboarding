@@ -3089,7 +3089,7 @@ function downloadPDF() {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(141, 198, 63);
-      doc.text('FIP × Almarai Partnership Program', textStartX, 26);
+      doc.text('FIP Sales Program', textStartX, 26);
 
       // Responder info — one line per field, right-aligned, vertically centred in header
       if (respFields.length > 0) {
@@ -3168,7 +3168,7 @@ function downloadPDF() {
       doc.setTextColor(150, 160, 180);
       doc.text('Generated: ' + todayStr, MARGIN, PH - 6);
       if (isAdmin) doc.text('Page 1 of 2', PW / 2, PH - 6, { align: 'center' });
-      doc.text('FIP × Almarai Onboarding Program', PW - MARGIN, PH - 6, { align: 'right' });
+      doc.text('FIP Sales Program — Onboarding Planner', PW - MARGIN, PH - 6, { align: 'right' });
 
       // ── PAGE 2: FULL DETAIL TABLE (admin only) ──
       if (isAdmin) {
@@ -3231,7 +3231,7 @@ function downloadPDF() {
         doc.setTextColor(150, 160, 180);
         doc.text('Generated: ' + todayStr, MARGIN, PH - 6);
         doc.text('Page 2 of 2', PW / 2, PH - 6, { align: 'center' });
-        doc.text('FIP × Almarai Onboarding Program', PW - MARGIN, PH - 6, { align: 'right' });
+        doc.text('FIP Sales Program — Onboarding Planner', PW - MARGIN, PH - 6, { align: 'right' });
       }
 
       // ── Save ──

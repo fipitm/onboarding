@@ -141,7 +141,6 @@ app.use(
   })
 );
 
-app.use('/v2', express.static(path.join(__dirname, 'v2')));
 app.use(express.static(path.join(__dirname, "public")));
 
 function requireAuth(req, res, next) {

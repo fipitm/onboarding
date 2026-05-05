@@ -70,14 +70,6 @@
       };
       byId("globalProg").appendChild(usersBtn);
 
-      const dashboardBtn = document.createElement("button");
-      dashboardBtn.className = "gp-summary-btn";
-      dashboardBtn.style.marginLeft = "8px";
-      dashboardBtn.textContent = "CEO Dashboard";
-      dashboardBtn.onclick = () => {
-        window.location.href = "/admin-dashboard.html";
-      };
-      byId("globalProg").appendChild(dashboardBtn);
     }
   }
 

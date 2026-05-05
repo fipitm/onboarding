@@ -3,128 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CEO Dashboard — FIP Sales Program</title>
+  <title>Admin Report — FIP Sales Program</title>
   <link rel="icon" type="image/png" href="/fip-logo.png">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f7fb;color:#10213c;}
+
+    /* Header */
     .top{background:#0d2145;color:#fff;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;}
     .top-title{font-size:16px;font-weight:700;}
-    .top-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
-    .links{display:flex;gap:10px;align-items:center;}
-    .links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);transition:background .15s;}
-    .links a:hover{background:rgba(255,255,255,0.1);}
-    .wrap{max-width:1280px;margin:24px auto;padding:0 20px;}
+    .top-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
+    .links{display:flex;gap:8px;}
+    .links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.2);}
+    .links a:hover{background:rgba(255,255,255,.1);}
 
-    /* KPI grid */
-    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-    .kpi{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:18px 16px;}
+    .wrap{max-width:1300px;margin:24px auto;padding:0 20px;}
+
+    /* KPI */
+    .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+    .kpi{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:16px;}
     .kpi .label{font-size:11px;color:#607b9f;text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
-    .kpi .value{font-size:32px;font-weight:800;color:#0d2145;margin-top:6px;line-height:1;}
-    .kpi .sub{font-size:12px;color:#8aa0bc;margin-top:4px;}
-    .kpi.fip-kpi .value{color:#4a90c4;}
-    .kpi.alm-kpi .value{color:#1b3a6b;}
-    .kpi.fld-kpi .value{color:#c27c0a;}
+    .kpi .value{font-size:28px;font-weight:800;color:#0d2145;margin-top:4px;line-height:1;}
+    .kpi .sub{font-size:11px;color:#8aa0bc;margin-top:3px;}
+    .kpi.fip .value{color:#4a90c4;} .kpi.alm .value{color:#1b3a6b;} .kpi.fld .value{color:#c27c0a;}
 
-    /* Distribution bar */
+    /* Dist bar */
     .card{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:18px;margin-bottom:16px;}
-    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-    .card-header h2{font-size:16px;font-weight:700;color:#0d2145;}
-    .bar-wrap{background:#e8effa;border-radius:999px;overflow:hidden;height:18px;}
-    .seg{height:100%;float:left;transition:width .6s ease;}
-    .seg.fip{background:#4a90c4;}
-    .seg.almarai{background:#1b3a6b;}
-    .seg.field{background:#c27c0a;}
-    .legend{margin-top:10px;font-size:13px;color:#304f77;display:flex;gap:20px;flex-wrap:wrap;}
-    .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;}
+    .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+    .card-hdr h2{font-size:15px;font-weight:700;color:#0d2145;}
+    .bar-wrap{background:#e8effa;border-radius:999px;overflow:hidden;height:16px;}
+    .seg{height:100%;float:left;}
+    .seg.fip{background:#4a90c4;} .seg.alm{background:#1b3a6b;} .seg.fld{background:#c27c0a;}
+    .legend{margin-top:8px;font-size:12px;color:#304f77;display:flex;gap:18px;flex-wrap:wrap;}
+    .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;}
 
-    /* Submissions table */
-    .export-btn{background:#0d2145;color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s;}
-    .export-btn:hover{background:#1b3a6b;}
-    .export-btn.csv{background:#276749;}
-    .export-btn.csv:hover{background:#1a4a33;}
+    /* Table */
     table{width:100%;border-collapse:collapse;font-size:13px;}
-    th{color:#5f7899;text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:10px 8px;border-bottom:2px solid #e3ebf7;white-space:nowrap;}
-    td{border-bottom:1px solid #edf2fb;padding:10px 8px;vertical-align:middle;}
+    th{color:#5f7899;text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:10px 8px;border-bottom:2px solid #e3ebf7;white-space:nowrap;background:#f8faff;}
+    td{border-bottom:1px solid #edf2fb;padding:9px 8px;vertical-align:middle;}
     tr:last-child td{border-bottom:none;}
-    tbody tr:hover td{background:#f8faff;}
-    .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
-    .badge-account{background:#eef3fb;color:#4a6899;}
+    tbody tr:hover td{background:#f4f8ff;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:#eef3fb;color:#4a6899;}
     .muted{color:#8aa0bc;}
-    .no-data{text-align:center;color:#8aa0bc;padding:32px;font-size:14px;}
 
-    /* Scenario notice */
-    .scenario-box{background:linear-gradient(135deg,#0d2145,#1b3a6b);border-radius:12px;padding:18px 22px;margin-bottom:16px;color:white;}
-    .scenario-box h3{font-size:14px;font-weight:700;color:#8DC63F;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
-    .scenario-box p{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;}
-    .scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-    .scenario-item{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 14px;}
-    .scenario-item strong{display:block;font-size:12px;font-weight:700;color:#8DC63F;margin-bottom:4px;}
-    .scenario-item span{font-size:12px;color:rgba(255,255,255,0.65);}
+    /* Action buttons */
+    .btn{border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:opacity .15s;}
+    .btn:hover{opacity:.85;}
+    .btn-view{background:#0d2145;color:#fff;}
+    .btn-csv{background:#276749;color:#fff;}
+    .btn-pdf{background:#9b2c2c;color:#fff;}
+
+    .export-all{background:#276749;color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;}
+    .export-all:hover{background:#1a4a33;}
+
+    /* Modal overlay */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;align-items:center;justify-content:center;padding:20px;}
+    .modal-bg.open{display:flex;}
+    .modal{background:#fff;border-radius:16px;width:100%;max-width:760px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+    .modal-hdr{background:linear-gradient(135deg,#0d2145,#1b3a6b);padding:22px 28px;border-radius:16px 16px 0 0;color:#fff;display:flex;justify-content:space-between;align-items:flex-start;}
+    .modal-hdr h3{font-size:18px;font-weight:800;}
+    .modal-hdr p{font-size:12px;color:rgba(255,255,255,.6);margin-top:2px;}
+    .modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:13px;font-weight:600;}
+    .modal-body{padding:24px 28px;}
+    .m-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+    .m-kpi{border-radius:10px;padding:12px 14px;text-align:center;}
+    .m-kpi .ml{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;}
+    .m-kpi .mv{font-size:24px;font-weight:800;line-height:1;}
+    .m-kpi .ms{font-size:11px;margin-top:2px;opacity:.7;}
+    .m-kpi.fip{background:#ebf8ff;color:#4a90c4;}
+    .m-kpi.alm{background:#ebf0ff;color:#1b3a6b;}
+    .m-kpi.fld{background:#fffbf0;color:#c27c0a;}
+    .m-kpi.tot{background:#f4f7fb;color:#0d2145;}
+    .ph-table{width:100%;border-collapse:collapse;margin-top:4px;font-size:13px;}
+    .ph-table th{background:#f4f7fb;color:#5f7899;font-size:10px;letter-spacing:.5px;text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:1px solid #e3ebf7;}
+    .ph-table td{padding:8px 10px;border-bottom:1px solid #f0f4fb;vertical-align:middle;}
+    .ph-table tr:last-child td{border-bottom:none;}
+    .modal-actions{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid #e3ebf7;}
+    .btn-lg{border:none;border-radius:8px;padding:10px 22px;font-size:13px;font-weight:700;cursor:pointer;}
+    .btn-lg.pdf{background:#9b2c2c;color:#fff;}
+    .btn-lg.csv{background:#276749;color:#fff;}
+
+    /* Print — only show modal content */
+    @media print{
+      body>*:not(#printArea){display:none!important;}
+      #printArea{display:block!important;}
+      .print-hdr{background:#0d2145!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    }
+    #printArea{display:none;}
   </style>
 </head>
 <body>
 
 <div class="top">
   <div>
-    <div class="top-title">CEO Dashboard — FIP Sales Program</div>
-    <div class="top-sub">Onboarding Planning Analytics</div>
+    <div class="top-title">Admin Report — FIP Sales Program</div>
+    <div class="top-sub">All Submissions · Onboarding Planning Analytics</div>
   </div>
   <div class="links">
     <a href="/planner.html">Planner</a>
     <a href="/admin-users.html">Manage Users</a>
-    <a href="/api/auth/logout" onclick="logout(event)">Logout</a>
+    <a href="#" onclick="logout(event)">Logout</a>
   </div>
 </div>
 
 <div class="wrap">
-
-  <!-- Scenario guidance -->
-  <div class="scenario-box">
-    <h3>How Submissions Work</h3>
-    <p>Each time someone completes the profile form and clicks <strong>Start Planning</strong>, a new independent submission is created — regardless of which login account was used.</p>
-    <div class="scenario-grid">
-      <div class="scenario-item">
-        <strong>Scenario A — Shared session</strong>
-        <span>Multiple LMs sit together, use one account, make one collective decision → 1 submission representing the group.</span>
-      </div>
-      <div class="scenario-item">
-        <strong>Scenario B — Individual sessions</strong>
-        <span>Each LM logs in separately at their location, enters their own name and makes their own selections → separate submission per person.</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- KPI cards (from submissions) -->
+  <!-- KPIs -->
   <div class="kpi-grid">
-    <div class="kpi"><div class="label">Total Submissions</div><div class="value" id="kSubs">—</div><div class="sub">Individual plans submitted</div></div>
-    <div class="kpi fip-kpi"><div class="label">FIP Premises (CTH)</div><div class="value" id="kFip">—</div><div class="sub" id="kFipPct"></div></div>
-    <div class="kpi alm-kpi"><div class="label">Almarai Premises (CTH)</div><div class="value" id="kAlm">—</div><div class="sub" id="kAlmPct"></div></div>
-    <div class="kpi fld-kpi"><div class="label">Field Training (CTH)</div><div class="value" id="kFld">—</div><div class="sub" id="kFldPct"></div></div>
+    <div class="kpi"><div class="label">Total Submissions</div><div class="value" id="kSubs">—</div><div class="sub">Individual plans</div></div>
+    <div class="kpi fip"><div class="label">FIP Premises</div><div class="value" id="kFip">—</div><div class="sub" id="kFipPct">CTH</div></div>
+    <div class="kpi alm"><div class="label">Almarai Premises</div><div class="value" id="kAlm">—</div><div class="sub" id="kAlmPct">CTH</div></div>
+    <div class="kpi fld"><div class="label">Field Training</div><div class="value" id="kFld">—</div><div class="sub" id="kFldPct">CTH</div></div>
+    <div class="kpi"><div class="label">Total Program CTH</div><div class="value" id="kTot">—</div><div class="sub">Across all submissions</div></div>
   </div>
 
   <!-- Distribution bar -->
   <div class="card">
-    <div class="card-header"><h2>Overall CTH Distribution (All Submissions Combined)</h2></div>
+    <div class="card-hdr"><h2>CTH Distribution — All Submissions Combined</h2></div>
     <div class="bar-wrap">
       <div class="seg fip" id="segFip" style="width:0%"></div>
-      <div class="seg almarai" id="segAlm" style="width:0%"></div>
-      <div class="seg field" id="segFld" style="width:0%"></div>
+      <div class="seg alm" id="segAlm" style="width:0%"></div>
+      <div class="seg fld" id="segFld" style="width:0%"></div>
     </div>
     <div class="legend">
-      <span><span class="legend-dot" style="background:#4a90c4;"></span><span id="lFip">FIP: 0 CTH</span></span>
-      <span><span class="legend-dot" style="background:#1b3a6b;"></span><span id="lAlm">Almarai: 0 CTH</span></span>
-      <span><span class="legend-dot" style="background:#c27c0a;"></span><span id="lFld">Field: 0 CTH</span></span>
+      <span><span class="dot" style="background:#4a90c4"></span><span id="lFip">FIP: 0 CTH (0%)</span></span>
+      <span><span class="dot" style="background:#1b3a6b"></span><span id="lAlm">Almarai: 0 CTH (0%)</span></span>
+      <span><span class="dot" style="background:#c27c0a"></span><span id="lFld">Field: 0 CTH (0%)</span></span>
     </div>
   </div>
 
   <!-- Submissions table -->
   <div class="card">
-    <div class="card-header">
+    <div class="card-hdr">
       <h2>All Submissions <span id="subCount" style="font-size:13px;font-weight:400;color:#7b8397;"></span></h2>
-      <div style="display:flex;gap:8px;">
-        <button class="export-btn csv" onclick="exportCSV()">⬇ Export CSV</button>
-      </div>
+      <button class="export-all" onclick="exportAllCSV()">⬇ Export All (CSV)</button>
     </div>
     <table>
       <thead>
@@ -134,19 +145,60 @@
           <th>Designation</th>
           <th>Region</th>
           <th>Account</th>
-          <th>Date &amp; Time</th>
+          <th>Submitted</th>
           <th>Topics</th>
-          <th style="color:#4a90c4;">FIP CTH</th>
-          <th style="color:#1b3a6b;">Almarai CTH</th>
-          <th style="color:#c27c0a;">Field CTH</th>
+          <th style="color:#4a90c4">FIP CTH</th>
+          <th style="color:#1b3a6b">Almarai CTH</th>
+          <th style="color:#c27c0a">Field CTH</th>
           <th>Total CTH</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody id="subTbody"></tbody>
     </table>
   </div>
-
 </div>
+
+<!-- View Modal -->
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-hdr">
+      <div>
+        <h3 id="mName">—</h3>
+        <p id="mMeta">—</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕ Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="m-kpis">
+        <div class="m-kpi fip"><div class="ml">FIP</div><div class="mv" id="mFip">0</div><div class="ms">CTH</div></div>
+        <div class="m-kpi alm"><div class="ml">Almarai</div><div class="mv" id="mAlm">0</div><div class="ms">CTH</div></div>
+        <div class="m-kpi fld"><div class="ml">Field</div><div class="mv" id="mFld">0</div><div class="ms">CTH</div></div>
+        <div class="m-kpi tot"><div class="ml">Total</div><div class="mv" id="mTot">0</div><div class="ms">CTH · <span id="mTopics">0</span>/73 topics</div></div>
+      </div>
+      <table class="ph-table">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th style="color:#4a90c4">FIP CTH</th>
+            <th style="color:#1b3a6b">Almarai CTH</th>
+            <th style="color:#c27c0a">Field CTH</th>
+            <th>Phase Total</th>
+            <th>Assigned</th>
+          </tr>
+        </thead>
+        <tbody id="mPhaseBody"></tbody>
+      </table>
+      <div class="modal-actions">
+        <button class="btn-lg pdf" onclick="printSubmission()">🖨 Print / Save as PDF</button>
+        <button class="btn-lg csv" onclick="exportCurrentCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Print area (populated on print) -->
+<div id="printArea"></div>
 
 <script>
   const cthByIdx = {
@@ -155,99 +207,196 @@
     38:8,39:8,40:4,41:6,42:10,43:10,44:8,45:8,46:10,47:6,48:6,49:5,50:6,51:5,52:5,53:5,54:5,55:5,
     56:6,57:3,58:4,59:2,60:8,61:4,62:4,63:2,64:6,65:2,66:2,67:6,68:4,69:4,70:8,71:24,72:2
   };
+  const PHASES = [
+    {name:'Job Description',          start:0,  end:6},
+    {name:'Pre Execution',            start:7,  end:17},
+    {name:'Introduction',             start:18, end:29},
+    {name:'Execution',                start:30, end:58},
+    {name:'Execution – Specialization',start:59, end:69},
+    {name:'Closing',                  start:70, end:72},
+  ];
 
   let allSubs = [];
+  let currentSub = null;
 
   function byId(id){ return document.getElementById(id); }
   async function api(path){
     const res = await fetch(path);
     const data = await res.json().catch(()=>({}));
-    if(!res.ok) throw new Error(data.error||"Request failed");
+    if(!res.ok) throw new Error(data.error||'Request failed');
     return data;
   }
-
-  function calcCTH(selections, dp){
-    return (selections||[]).filter(s=>s.delivery_point===dp).reduce((sum,s)=>sum+(cthByIdx[s.row_idx]||0),0);
+  function cth(sels, dp){
+    return (sels||[]).filter(s=>s.delivery_point===dp).reduce((t,s)=>t+(cthByIdx[s.row_idx]||0),0);
   }
+  function fmt(dt){ return dt?dt.slice(0,16).replace('T',' '):'-'; }
 
   async function logout(e){
     e.preventDefault();
-    try{ await fetch("/api/auth/logout",{method:"POST"}); }catch(e){}
-    window.location.href="/login.html";
+    try{ await fetch('/api/auth/logout',{method:'POST'}); }catch(e){}
+    window.location.href='/login.html';
   }
 
-  function exportCSV(){
-    if(!allSubs.length){ alert("No submissions to export."); return; }
-    const hdr = ["#","Name","Designation","Region","Account","Submitted","Topics Assigned","FIP CTH","Almarai CTH","Field CTH","Total CTH"];
-    const rows = allSubs.map((s,i)=>[
-      i+1, s.name, s.desig, s.region, s.account,
-      s.submittedAt?s.submittedAt.slice(0,16).replace("T"," "):"",
-      s.assigned,
-      calcCTH(s.selections,"FIP"),
-      calcCTH(s.selections,"Almarai"),
-      calcCTH(s.selections,"Field Training"),
-      calcCTH(s.selections,"FIP")+calcCTH(s.selections,"Almarai")+calcCTH(s.selections,"Field Training")
-    ]);
-    const csv = [hdr,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
-    a.download = `FIP_Submissions_${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
+  // ── Open modal ──
+  function openModal(id){
+    currentSub = allSubs.find(s=>s.id===id);
+    if(!currentSub) return;
+    const s = currentSub;
+    const fCTH = cth(s.selections,'FIP');
+    const aCTH = cth(s.selections,'Almarai');
+    const flCTH = cth(s.selections,'Field Training');
+    const tot = fCTH+aCTH+flCTH;
+    byId('mName').textContent = s.name || '(No name)';
+    byId('mMeta').textContent = [s.desig,s.region,`Account: ${s.account}`,fmt(s.submittedAt)].filter(Boolean).join(' · ');
+    byId('mFip').textContent = fCTH;
+    byId('mAlm').textContent = aCTH;
+    byId('mFld').textContent = flCTH;
+    byId('mTot').textContent = tot;
+    byId('mTopics').textContent = s.assigned;
+    // Phase breakdown
+    byId('mPhaseBody').innerHTML = PHASES.map(ph=>{
+      const phSels = (s.selections||[]).filter(r=>r.row_idx>=ph.start&&r.row_idx<=ph.end);
+      const pf=cth(phSels,'FIP'), pa=cth(phSels,'Almarai'), pfl=cth(phSels,'Field Training');
+      const ptot=pf+pa+pfl, assigned=phSels.length, total=ph.end-ph.start+1;
+      return `<tr>
+        <td><strong>${ph.name}</strong></td>
+        <td style="color:#4a90c4;font-weight:700;">${pf}</td>
+        <td style="color:#1b3a6b;font-weight:700;">${pa}</td>
+        <td style="color:#c27c0a;font-weight:700;">${pfl}</td>
+        <td style="font-weight:700;">${ptot}</td>
+        <td class="muted">${assigned}/${total}</td>
+      </tr>`;
+    }).join('');
+    byId('modalBg').classList.add('open');
   }
 
+  function closeModal(e){
+    if(e && e.target !== byId('modalBg')) return;
+    byId('modalBg').classList.remove('open');
+    currentSub = null;
+  }
+
+  // ── Print single submission as PDF ──
+  function printSubmission(){
+    if(!currentSub) return;
+    const s = currentSub;
+    const fCTH = cth(s.selections,'FIP');
+    const aCTH = cth(s.selections,'Almarai');
+    const flCTH = cth(s.selections,'Field Training');
+    const tot = fCTH+aCTH+flCTH;
+    const phRows = PHASES.map(ph=>{
+      const phSels=(s.selections||[]).filter(r=>r.row_idx>=ph.start&&r.row_idx<=ph.end);
+      const pf=cth(phSels,'FIP'),pa=cth(phSels,'Almarai'),pfl=cth(phSels,'Field Training');
+      return `<tr><td>${ph.name}</td><td>${pf}</td><td>${pa}</td><td>${pfl}</td><td><strong>${pf+pa+pfl}</strong></td><td>${phSels.length}/${ph.end-ph.start+1}</td></tr>`;
+    }).join('');
+    byId('printArea').innerHTML = `
+      <div class="print-hdr" style="background:#0d2145;padding:20px 28px;color:#fff;margin-bottom:20px;">
+        <div style="font-size:18px;font-weight:800;">${s.name||'—'}</div>
+        <div style="font-size:12px;opacity:.7;margin-top:4px;">${[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ')}</div>
+        <div style="font-size:11px;margin-top:8px;opacity:.5;">FIP Sales Program — Onboarding Planner</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 20px 20px;font-family:Arial,sans-serif;">
+        <div style="border:1px solid #bee3f8;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:10px;color:#4a90c4;font-weight:700;text-transform:uppercase;">FIP</div><div style="font-size:26px;font-weight:800;color:#4a90c4;">${fCTH}</div><div style="font-size:11px;color:#4a90c4;">CTH</div></div>
+        <div style="border:1px solid #c3d4f0;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:10px;color:#1b3a6b;font-weight:700;text-transform:uppercase;">Almarai</div><div style="font-size:26px;font-weight:800;color:#1b3a6b;">${aCTH}</div><div style="font-size:11px;color:#1b3a6b;">CTH</div></div>
+        <div style="border:1px solid #fde8b0;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:10px;color:#c27c0a;font-weight:700;text-transform:uppercase;">Field</div><div style="font-size:26px;font-weight:800;color:#c27c0a;">${flCTH}</div><div style="font-size:11px;color:#c27c0a;">CTH</div></div>
+        <div style="border:1px solid #d5e0ef;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:10px;color:#0d2145;font-weight:700;text-transform:uppercase;">Total</div><div style="font-size:26px;font-weight:800;color:#0d2145;">${tot}</div><div style="font-size:11px;color:#607b9f;">${s.assigned}/73 topics</div></div>
+      </div>
+      <div style="margin:0 20px;font-family:Arial,sans-serif;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr style="background:#f4f7fb;"><th style="padding:8px;text-align:left;border-bottom:2px solid #d5e0ef;">Phase</th><th style="padding:8px;color:#4a90c4;border-bottom:2px solid #d5e0ef;">FIP CTH</th><th style="padding:8px;color:#1b3a6b;border-bottom:2px solid #d5e0ef;">Almarai CTH</th><th style="padding:8px;color:#c27c0a;border-bottom:2px solid #d5e0ef;">Field CTH</th><th style="padding:8px;border-bottom:2px solid #d5e0ef;">Total</th><th style="padding:8px;border-bottom:2px solid #d5e0ef;">Assigned</th></tr></thead>
+          <tbody>${phRows}</tbody>
+        </table>
+      </div>`;
+    window.print();
+  }
+
+  // ── Export single submission CSV ──
+  function exportCurrentCSV(){
+    if(!currentSub) return;
+    exportSubCSV(currentSub);
+  }
+  function exportSubCSV(s){
+    const rows = [
+      ['Name','Designation','Region','Account','Submitted'],
+      [s.name,s.desig,s.region,s.account,fmt(s.submittedAt)],
+      [],
+      ['Phase','FIP CTH','Almarai CTH','Field CTH','Phase Total','Assigned/Total']
+    ];
+    PHASES.forEach(ph=>{
+      const phSels=(s.selections||[]).filter(r=>r.row_idx>=ph.start&&r.row_idx<=ph.end);
+      rows.push([ph.name,cth(phSels,'FIP'),cth(phSels,'Almarai'),cth(phSels,'Field Training'),cth(phSels,'FIP')+cth(phSels,'Almarai')+cth(phSels,'Field Training'),`${phSels.length}/${ph.end-ph.start+1}`]);
+    });
+    rows.push([]);
+    rows.push(['Summary','FIP CTH','Almarai CTH','Field CTH','Total CTH','Topics Assigned']);
+    rows.push(['Totals',cth(s.selections,'FIP'),cth(s.selections,'Almarai'),cth(s.selections,'Field Training'),cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training'),s.assigned]);
+    dl(rows, `FIP_${(s.name||'submission').replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.csv`);
+  }
+
+  // ── Export all CSV ──
+  function exportAllCSV(){
+    if(!allSubs.length){ alert('No submissions to export.'); return; }
+    const hdr = ['#','Name','Designation','Region','Account','Submitted','Topics Assigned','FIP CTH','Almarai CTH','Field CTH','Total CTH'];
+    const rows = allSubs.map((s,i)=>[i+1,s.name,s.desig,s.region,s.account,fmt(s.submittedAt),s.assigned,cth(s.selections,'FIP'),cth(s.selections,'Almarai'),cth(s.selections,'Field Training'),cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training')]);
+    dl([hdr,...rows],`FIP_All_Submissions_${new Date().toISOString().split('T')[0]}.csv`);
+  }
+
+  function dl(rows, filename){
+    const csv = rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download = filename; a.click();
+  }
+
+  // ── Init ──
   async function init(){
-    const me = await api("/api/auth/me");
-    if(!me.user) return window.location.href="/login.html";
-    if(me.user.role!=="admin") return window.location.href="/planner.html";
-
-    const subData = await api("/api/admin/submissions");
+    const me = await api('/api/auth/me');
+    if(!me.user) return window.location.href='/login.html';
+    if(me.user.role!=='admin') return window.location.href='/planner.html';
+    const subData = await api('/api/admin/submissions');
     allSubs = subData.submissions || [];
 
-    // KPIs from submissions
-    let totFip=0, totAlm=0, totFld=0;
-    allSubs.forEach(s=>{
-      totFip += calcCTH(s.selections,"FIP");
-      totAlm += calcCTH(s.selections,"Almarai");
-      totFld += calcCTH(s.selections,"Field Training");
-    });
-    const totCTH = totFip + totAlm + totFld;
-    const pF = totCTH ? Math.round(totFip/totCTH*100) : 0;
-    const pA = totCTH ? Math.round(totAlm/totCTH*100) : 0;
-    const pFl = totCTH ? 100-pF-pA : 0;
+    let totF=0,totA=0,totFl=0;
+    allSubs.forEach(s=>{ totF+=cth(s.selections,'FIP'); totA+=cth(s.selections,'Almarai'); totFl+=cth(s.selections,'Field Training'); });
+    const totAll=totF+totA+totFl;
+    const pF=totAll?Math.round(totF/totAll*100):0;
+    const pA=totAll?Math.round(totA/totAll*100):0;
+    const pFl=totAll?100-pF-pA:0;
 
-    byId("kSubs").textContent = allSubs.length;
-    byId("kFip").textContent = totFip;  byId("kFipPct").textContent = `${pF}% of total hours`;
-    byId("kAlm").textContent = totAlm;  byId("kAlmPct").textContent = `${pA}% of total hours`;
-    byId("kFld").textContent = totFld;  byId("kFldPct").textContent = `${pFl}% of total hours`;
+    byId('kSubs').textContent=allSubs.length;
+    byId('kFip').textContent=totF; byId('kFipPct').textContent=`${pF}% of total CTH`;
+    byId('kAlm').textContent=totA; byId('kAlmPct').textContent=`${pA}% of total CTH`;
+    byId('kFld').textContent=totFl; byId('kFldPct').textContent=`${pFl}% of total CTH`;
+    byId('kTot').textContent=totAll;
 
-    byId("segFip").style.width = pF+"%";
-    byId("segAlm").style.width = pA+"%";
-    byId("segFld").style.width = pFl+"%";
-    byId("lFip").textContent = `FIP: ${totFip} CTH (${pF}%)`;
-    byId("lAlm").textContent = `Almarai: ${totAlm} CTH (${pA}%)`;
-    byId("lFld").textContent = `Field: ${totFld} CTH (${pFl}%)`;
+    byId('segFip').style.width=pF+'%';
+    byId('segAlm').style.width=pA+'%';
+    byId('segFld').style.width=pFl+'%';
+    byId('lFip').textContent=`FIP: ${totF} CTH (${pF}%)`;
+    byId('lAlm').textContent=`Almarai: ${totA} CTH (${pA}%)`;
+    byId('lFld').textContent=`Field: ${totFl} CTH (${pFl}%)`;
 
-    // Submissions table
-    byId("subCount").textContent = `(${allSubs.length} submission${allSubs.length!==1?"s":""})`;
-    byId("subTbody").innerHTML = allSubs.length ? allSubs.map((s,i)=>{
-      const fCTH = calcCTH(s.selections,"FIP");
-      const aCTH = calcCTH(s.selections,"Almarai");
-      const flCTH = calcCTH(s.selections,"Field Training");
-      const tot = fCTH+aCTH+flCTH;
+    byId('subCount').textContent=`(${allSubs.length} submission${allSubs.length!==1?'s':''})`;
+    byId('subTbody').innerHTML = allSubs.length ? allSubs.map((s,i)=>{
+      const fCTH=cth(s.selections,'FIP'), aCTH=cth(s.selections,'Almarai'), flCTH=cth(s.selections,'Field Training'), tot=fCTH+aCTH+flCTH;
       return `<tr>
         <td class="muted">${i+1}</td>
-        <td><strong>${s.name||"-"}</strong></td>
-        <td>${s.desig||"-"}</td>
-        <td>${s.region||"-"}</td>
-        <td><span class="badge badge-account">${s.account}</span></td>
-        <td class="muted" style="font-size:12px;">${s.submittedAt?s.submittedAt.slice(0,16).replace("T"," "):"-"}</td>
+        <td><strong>${s.name||'-'}</strong></td>
+        <td>${s.desig||'-'}</td>
+        <td>${s.region||'-'}</td>
+        <td><span class="badge">${s.account}</span></td>
+        <td class="muted" style="font-size:12px;">${fmt(s.submittedAt)}</td>
         <td>${s.assigned}/73</td>
         <td style="color:#4a90c4;font-weight:700;">${fCTH}</td>
         <td style="color:#1b3a6b;font-weight:700;">${aCTH}</td>
         <td style="color:#c27c0a;font-weight:700;">${flCTH}</td>
         <td style="font-weight:700;">${tot}</td>
+        <td style="white-space:nowrap;display:flex;gap:5px;">
+          <button class="btn btn-view" onclick="openModal(${s.id})">View</button>
+          <button class="btn btn-pdf" onclick="currentSub=allSubs.find(x=>x.id===${s.id});printSubmission()">PDF</button>
+          <button class="btn btn-csv" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button>
+        </td>
       </tr>`;
-    }).join("") : `<tr><td colspan="11" class="no-data">No submissions yet. Users will appear here after they complete the profile form and start planning.</td></tr>`;
+    }).join('') : `<tr><td colspan="12" style="text-align:center;color:#8aa0bc;padding:32px;">No submissions yet.</td></tr>`;
   }
 
   init().catch(err=>console.error(err));

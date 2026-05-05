@@ -477,8 +477,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     <div class="sidebar-divider"></div>
     <button class="sidebar-summary-btn" onclick="showSummaryPage()">📊 Summary & Export</button>
     <button class="sidebar-summary-btn" onclick="resetAll()" style="background:linear-gradient(135deg,#742A2A,#C53030);margin-top:8px;">↺ Reset All Selections</button>
-    <!-- DEV ONLY — remove before go-live -->
-    <button class="sidebar-summary-btn" onclick="devRandomFill()" style="background:linear-gradient(135deg,#5B21B6,#7C3AED);margin-top:8px;letter-spacing:0.3px;">🎲 DEV: Random Fill All</button>
+    <!-- DEV ONLY — hidden by default, shown only when admin enables random_fill for this user -->
+    <button id="devRandomFillBtn" class="sidebar-summary-btn" onclick="devRandomFill()" style="display:none;background:linear-gradient(135deg,#5B21B6,#7C3AED);margin-top:8px;letter-spacing:0.3px;">🎲 DEV: Random Fill All</button>
   </nav>
   <!-- CONTENT AREA -->
   <div class="content-area">

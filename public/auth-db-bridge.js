@@ -371,5 +371,11 @@
         window.updatePhaseProgress(phaseId);
       }
     });
+
+    // Show the DEV random-fill button only when admin has enabled it for this user
+    const devBtn = byId("devRandomFillBtn");
+    if (devBtn) {
+      devBtn.style.display = (currentUser.random_fill === 1) ? "block" : "none";
+    }
   });
 })();

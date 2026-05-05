@@ -246,6 +246,26 @@ app.put("/api/planner", requireAuth, (req, res) => {
 
 // ── Submissions: one record per person per session ──
 
+// Fetch a user's own submission (used by bridge to restore after page refresh)
+app.get("/api/submissions/:id", requireAuth, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id." });
+  const sub = db.prepare(
+    "SELECT id, responder_name, responder_desig, responder_region FROM submissions WHERE id = ? AND user_id = ?"
+  ).get(id, req.session.user.id);
+  if (!sub) return res.status(404).json({ error: "Not found." });
+  const selections = db.prepare(
+    "SELECT row_idx, delivery_point FROM submission_selections WHERE submission_id = ?"
+  ).all(id);
+  return res.json({
+    submissionId: sub.id,
+    name: sub.responder_name,
+    desig: sub.responder_desig,
+    region: sub.responder_region,
+    selections
+  });
+});
+
 app.post("/api/submissions", requireAuth, (req, res) => {
   const userId = req.session.user.id;
   const { name, desig, region } = req.body || {};

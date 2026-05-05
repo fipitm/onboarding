@@ -54,6 +54,7 @@
     logoutBtn.className = "gp-summary-btn";
     logoutBtn.style.marginLeft = "8px";
     logoutBtn.onclick = async () => {
+      try { sessionStorage.removeItem("fip_sub_id"); } catch (_) {}
       try { await api("/api/auth/logout", { method: "POST" }); } catch (e) {}
       window.location.href = "/login.html";
     };
@@ -126,6 +127,8 @@
         body: JSON.stringify({ name, desig, region })
       });
       currentSubmissionId = result.submissionId;
+      // Persist across page refreshes
+      try { sessionStorage.setItem("fip_sub_id", String(currentSubmissionId)); } catch (_) {}
       const overlay = byId("profileOverlay");
       if (overlay) overlay.style.display = "none";
       // Auto random-fill if enabled for this user (dev/testing mode)
@@ -274,6 +277,7 @@
       '</div>';
     document.body.insertBefore(nav, document.body.firstChild);
     document.getElementById('adminSideLogout').addEventListener('click', async () => {
+      try { sessionStorage.removeItem("fip_sub_id"); } catch (_) {}
       try { await api('/api/auth/logout', { method: 'POST' }); } catch(e) {}
       window.location.href = '/login.html';
     });
@@ -294,21 +298,61 @@
       if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
       setupAdminPlanner();
     } else {
-      // Normal user: always start completely fresh on every login.
-      // planner.html's own load handler calls loadData() which restores
-      // localStorage — we must wipe both the DOM and localStorage here
-      // so stale selections (e.g. from a previous random-fill session)
-      // never bleed into a new submission.
+      // Always wipe localStorage so stale selections never bleed in
       document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
       try { localStorage.removeItem("fip_onboarding_v2"); } catch (_) {}
-      if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
 
-      ["responderName", "responderDesig", "responderRegion"].forEach(id => {
-        const el = byId(id);
-        if (el) el.value = "";
-      });
-      const overlay = byId("profileOverlay");
-      if (overlay) overlay.style.display = "flex";
+      // Check if a submission was already started in this browser session
+      const savedSubId = sessionStorage.getItem("fip_sub_id");
+      let restored = false;
+
+      if (savedSubId) {
+        try {
+          // Fetch the submission from the server — verifies it still exists
+          // and belongs to this user (server checks user_id)
+          const sub = await api("/api/submissions/" + savedSubId);
+          currentSubmissionId = sub.submissionId;
+
+          // Restore profile fields
+          if (byId("responderName"))   byId("responderName").value   = sub.name   || "";
+          if (byId("responderDesig"))  byId("responderDesig").value  = sub.desig  || "";
+          if (byId("responderRegion")) byId("responderRegion").value = sub.region || "";
+
+          // Restore selections
+          (sub.selections || []).forEach(sel => {
+            const inp = document.querySelector(
+              `input[name="row_${sel.row_idx}"][value="${sel.delivery_point}"]`
+            );
+            if (inp) inp.checked = true;
+          });
+
+          restored = true;
+        } catch (_) {
+          // Submission no longer exists (deleted by admin, or different user)
+          try { sessionStorage.removeItem("fip_sub_id"); } catch (__) {}
+        }
+      }
+
+      if (restored) {
+        // Skip overlay — continue exactly where they left off
+        if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
+        if (typeof window.updateGlobal === "function") window.updateGlobal();
+        document.querySelectorAll(".phase-nav-btn[data-phase]").forEach(btn => {
+          const phaseId = btn.getAttribute("data-phase");
+          if (phaseId && typeof window.updatePhaseProgress === "function") {
+            window.updatePhaseProgress(phaseId);
+          }
+        });
+      } else {
+        // Fresh start — show blank profile overlay
+        if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
+        ["responderName", "responderDesig", "responderRegion"].forEach(id => {
+          const el = byId(id);
+          if (el) el.value = "";
+        });
+        const overlay = byId("profileOverlay");
+        if (overlay) overlay.style.display = "flex";
+      }
     }
 
     // Fade out and remove loading screen — planner or overlay is now ready

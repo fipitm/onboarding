@@ -2,170 +2,185 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Manage Users — FIP Sales Program</title>
   <link rel="icon" type="image/png" href="/fip-logo.png">
   <style>
+    :root{
+      --bg:#f5f6fa;--card:#fff;--sb:#fff;
+      --border:#e4e8f0;--primary:#5e6ad2;--primary-light:#eef0fc;
+      --text1:#0f172a;--text2:#64748b;--text3:#94a3b8;
+      --navy:#0d2145;--grn:#8DC63F;--r:10px;
+    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f7fb;color:#10213c;display:flex;height:100vh;overflow:hidden;}
+    body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--text1);display:flex;height:100vh;overflow:hidden;}
 
-    /* ── Sidebar ── */
-    .sidebar{width:230px;flex-shrink:0;background:#0d2145;display:flex;flex-direction:column;height:100vh;}
-    .sb-brand{padding:20px 18px 0;border-bottom:1px solid rgba(255,255,255,.08);text-align:center;}
-    .sb-brand img{height:52px;display:block;margin:0 auto 10px;}
-    .sb-brand-title{font-size:13px;font-weight:700;color:#fff;letter-spacing:.2px;}
-    .sb-brand-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.3px;padding-bottom:14px;}
-    .sb-brand-accent{height:2px;background:linear-gradient(90deg,transparent,#8DC63F,transparent);margin:0 -18px;}
-    .sb-nav{flex:1;padding:10px 0;overflow-y:auto;}
-    .sb-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:14px 18px 5px;}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s;text-decoration:none;}
-    .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
-    .nav-item.active{background:rgba(255,255,255,.09);color:#fff;border-left-color:#8DC63F;}
-    .nav-item .icon{font-size:16px;flex-shrink:0;}
-    .sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.08);}
-    .sb-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:6px;}
-    .sb-btn.planner{background:#8DC63F;color:#fff;}
-    .sb-btn.planner:hover{background:#7ab534;}
-    .sb-btn.logout{background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12);}
-    .sb-btn.logout:hover{background:rgba(255,255,255,.12);color:#fff;}
+    /* ── SIDEBAR ── */
+    .sidebar{width:230px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;}
+    .sb-brand{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .sb-logo-wrap{width:38px;height:38px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .sb-logo-wrap img{height:26px;width:auto;}
+    .sb-brand-name{font-size:13px;font-weight:700;color:var(--text1);line-height:1.3;}
+    .sb-brand-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+    .sb-nav{flex:1;padding:8px 8px;overflow-y:auto;}
+    .sb-sect{font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text3);padding:12px 8px 4px;}
+    .nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;margin-bottom:1px;transition:background .12s,color .12s;text-decoration:none;}
+    .nav-item:hover{background:#f1f5f9;color:var(--text1);}
+    .nav-item.active{background:var(--primary);color:#fff;}
+    .nav-item .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+    .sb-bottom{padding:10px;border-top:1px solid var(--border);}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:#f8fafc;margin-bottom:6px;}
+    .sb-av{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--primary),#4a90c4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+    .sb-uname{font-size:12px;font-weight:600;color:var(--text1);}
+    .sb-urole{font-size:10px;color:var(--text3);}
+    .sb-logout{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .12s;}
+    .sb-logout:hover{background:#f1f5f9;color:var(--text1);}
 
-    /* ── Main ── */
+    /* ── MAIN ── */
     .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
-    .main-hdr{background:#fff;border-bottom:1px solid #e3ebf7;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .main-hdr-title{font-size:17px;font-weight:700;color:#0d2145;}
-    .main-hdr-sub{font-size:12px;color:#8aa0bc;margin-top:1px;}
-    .main-content{flex:1;overflow-y:auto;padding:24px 28px;}
+    .main-hdr{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .mhdr-left{display:flex;align-items:center;gap:6px;}
+    .mhdr-crumb{font-size:12px;color:var(--text3);}
+    .mhdr-sep{color:var(--border);font-size:14px;margin:0 2px;}
+    .mhdr-title{font-size:15px;font-weight:700;color:var(--text1);}
+    .mhdr-right{display:flex;align-items:center;gap:8px;}
+    .user-count{font-size:12px;color:var(--text3);}
+    .main-content{flex:1;overflow-y:auto;padding:20px 24px;}
 
-    /* ── Cards ── */
-    .card{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:20px;margin-bottom:18px;}
-    .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
-    .card-hdr h2{font-size:14px;font-weight:700;color:#0d2145;}
-
-    /* ── Create panel ── */
-    .create-panel{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:22px;margin-bottom:18px;display:none;}
+    /* ── CREATE PANEL ── */
+    .create-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;display:none;}
     .create-panel.open{display:block;}
-    .create-panel h3{font-size:14px;font-weight:700;color:#0d2145;margin-bottom:16px;}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .cp-title{font-size:14px;font-weight:700;color:var(--text1);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
     .form-field{display:flex;flex-direction:column;gap:5px;}
-    .form-field label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#607b9f;}
-    .form-input{padding:10px 12px;border-radius:8px;border:1px solid #d5e0ef;font-size:13px;color:#0d2145;outline:none;transition:border .15s;background:#f8faff;width:100%;}
-    .form-input:focus{border-color:#4a90c4;background:#fff;box-shadow:0 0 0 3px rgba(74,144,196,.1);}
-    .form-select{padding:10px 12px;border-radius:8px;border:1px solid #d5e0ef;font-size:13px;color:#0d2145;background:#f8faff;width:100%;outline:none;}
-    .form-actions{display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid #f0f4fb;}
-    .notify{font-size:13px;margin-top:12px;min-height:18px;}
-    .notify.ok{color:#276749;} .notify.err{color:#9b2c2c;}
+    .form-label{font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--text3);}
+    .form-input,.form-select{padding:8px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;color:var(--text1);background:#fff;outline:none;transition:border .15s,box-shadow .15s;width:100%;}
+    .form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(94,106,210,.1);}
+    .form-actions{display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
 
-    /* ── Buttons ── */
-    .btn-primary{background:#0d2145;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;}
-    .btn-primary:hover{background:#1b3a6b;}
-    .btn-ghost{background:#f4f7fb;color:#5f7899;border:1px solid #d5e0ef;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;}
-    .btn-ghost:hover{background:#e8effa;}
-    .btn-new{background:#8DC63F;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;}
-    .btn-new:hover{background:#7ab534;}
+    /* ── CARD ── */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px;}
+    .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+    .card-title{font-size:14px;font-weight:700;color:var(--text1);}
 
-    /* ── Table ── */
+    /* ── TABLE ── */
     table{width:100%;border-collapse:collapse;font-size:13px;}
-    thead th{background:#f8faff;color:#5f7899;text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:10px 12px;border-bottom:2px solid #e3ebf7;white-space:nowrap;text-align:left;}
-    tbody td{border-bottom:1px solid #f0f4fb;padding:10px 12px;vertical-align:middle;}
+    thead th{color:var(--text3);text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;text-align:left;position:sticky;top:0;background:var(--card);z-index:2;}
+    tbody td{border-bottom:1px solid #f3f5f9;padding:10px 10px;vertical-align:middle;}
     tbody tr:last-child td{border-bottom:none;}
-    tbody tr:hover td{background:#fafcff;}
+    tbody tr:hover td{background:#f8faff;}
+    .av{width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-right:8px;vertical-align:middle;flex-shrink:0;}
+    .role-badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:600;}
+    .role-admin{background:#eef0fc;color:var(--primary);border:1px solid rgba(94,106,210,.2);}
+    .role-user{background:#f1f5f9;color:var(--text2);border:1px solid var(--border);}
+    .status-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:600;}
+    .status-active{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+    .status-inactive{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;}
+    .mu{color:var(--text3);}
+    .tbl-input{padding:5px 9px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--text1);outline:none;width:140px;transition:border .15s;}
+    .tbl-input:focus{border-color:var(--primary);}
+    .tbl-select{padding:5px 9px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--text1);background:#fff;outline:none;}
+    .notify{font-size:12px;min-height:16px;margin-top:10px;}
+    .notify.ok{color:#15803d;} .notify.err{color:#be123c;}
 
-    /* Badges */
-    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-    .badge-active{background:#f0fff4;color:#276749;}
-    .badge-inactive{background:#fff5f5;color:#9b2c2c;}
-    .badge-admin{background:#ebf0ff;color:#1b3a6b;}
-    .badge-user{background:#eef3fb;color:#4a6899;}
-
-    /* Row action buttons */
-    .act-btn{border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:opacity .15s;}
+    /* ── BUTTONS ── */
+    .btn-primary{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .12s;}
+    .btn-primary:hover{opacity:.85;}
+    .btn-ghost{background:#fff;color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background .12s;}
+    .btn-ghost:hover{background:#f1f5f9;}
+    .btn-new{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .12s;}
+    .btn-new:hover{opacity:.85;}
+    .act-btn{border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:opacity .12s;white-space:nowrap;}
     .act-btn:hover{opacity:.8;}
-    .act-edit{background:#eef3fb;color:#1b3a6b;}
-    .act-save{background:#0d2145;color:#fff;}
-    .act-cancel{background:#f4f7fb;color:#5f7899;border:1px solid #d5e0ef;}
-    .act-pw{background:#f0f4ff;color:#4a6899;}
-    .act-toggle-off{background:#fff5f5;color:#9b2c2c;}
-    .act-toggle-on{background:#f0fff4;color:#276749;}
-    .act-group{display:flex;gap:5px;flex-wrap:wrap;}
+    .act-edit{background:#eef0fc;color:var(--primary);}
+    .act-save{background:var(--primary);color:#fff;}
+    .act-cancel{background:#f1f5f9;color:var(--text2);border:1px solid var(--border);}
+    .act-pw{background:#f0fdf4;color:#15803d;}
+    .act-off{background:#fff1f2;color:#be123c;}
+    .act-on{background:#f0fdf4;color:#15803d;}
+    .act-group{display:flex;gap:4px;flex-wrap:wrap;}
 
-    /* Inline edit inputs */
-    .tbl-input{padding:5px 8px;border-radius:6px;border:1px solid #bee3f8;font-size:12px;background:#fff;outline:none;width:140px;}
-    .tbl-select{padding:5px 8px;border-radius:6px;border:1px solid #bee3f8;font-size:12px;background:#fff;outline:none;}
-
-    /* Empty state */
-    .empty-state{text-align:center;padding:40px;color:#8aa0bc;}
-    .empty-state .ei{font-size:36px;margin-bottom:10px;}
-
-    /* ── Password Modal ── */
-    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;}
+    /* ── MODAL ── */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:9000;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
     .modal-bg.open{display:flex;}
-    .modal{background:#fff;border-radius:14px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;}
-    .modal-hdr{background:linear-gradient(135deg,#0d2145,#1b3a6b);padding:18px 22px;color:#fff;}
-    .modal-hdr h3{font-size:15px;font-weight:700;}
-    .modal-hdr p{font-size:12px;color:rgba(255,255,255,.55);margin-top:3px;}
-    .modal-body{padding:20px 22px;}
-    .modal-close-btn{float:right;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:600;margin-top:-2px;}
-    .modal-actions{display:flex;gap:10px;margin-top:16px;}
-    .pw-notice{font-size:12px;color:#8aa0bc;margin-top:8px;}
-    .pw-notify{font-size:13px;min-height:16px;margin-top:8px;}
-    .pw-notify.ok{color:#276749;} .pw-notify.err{color:#9b2c2c;}
+    .modal{background:var(--card);border-radius:12px;width:100%;max-width:360px;border:1px solid var(--border);box-shadow:0 20px 60px rgba(15,23,42,.15);}
+    .modal-hdr{padding:18px 20px;border-bottom:1px solid var(--border);}
+    .modal-hdr h3{font-size:15px;font-weight:700;color:var(--text1);}
+    .modal-hdr p{font-size:12px;color:var(--text3);margin-top:3px;}
+    .modal-body{padding:18px 20px;}
+    .modal-foot{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--border);}
+    .pw-notify{font-size:12px;min-height:16px;margin-top:8px;}
+    .pw-notify.ok{color:#15803d;} .pw-notify.err{color:#be123c;}
+    .empty-state{text-align:center;padding:40px;color:var(--text3);font-size:13px;}
   </style>
 </head>
 <body>
 
-<!-- ── SIDEBAR ── -->
+<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sb-brand">
-    <img src="/fip-logo-white.png" alt="FIP">
-    <div class="sb-brand-title">FIP Sales Program</div>
-    <div class="sb-brand-sub">Onboarding Planner</div>
-    <div class="sb-brand-accent"></div>
+    <div class="sb-logo-wrap"><img src="/fip-logo-white.png" alt="FIP"></div>
+    <div>
+      <div class="sb-brand-name">FIP Sales Program</div>
+      <div class="sb-brand-sub">Onboarding Planner</div>
+    </div>
   </div>
   <div class="sb-nav">
-    <div class="sb-label">Menu</div>
-    <a class="nav-item" href="/admin-dashboard.html"><span class="icon">📊</span> Dashboard</a>
-    <a class="nav-item" href="/admin-dashboard.html"><span class="icon">📈</span> Analytics</a>
-    <a class="nav-item" href="/admin-dashboard.html"><span class="icon">📋</span> Submissions</a>
-    <a class="nav-item" href="/admin-dashboard.html#planner"><span class="icon">🗂</span> Planner View</a>
-    <div class="sb-label">Admin</div>
-    <a class="nav-item active" href="/admin-users.html"><span class="icon">👥</span> Manage Users</a>
+    <div class="sb-sect">Menu</div>
+    <a class="nav-item" href="/admin-dashboard.html"><span class="ni">📊</span> Dashboard</a>
+    <a class="nav-item" href="/admin-dashboard.html#analytics"><span class="ni">📈</span> Analytics</a>
+    <a class="nav-item" href="/admin-dashboard.html#submissions"><span class="ni">📋</span> Submissions</a>
+    <a class="nav-item" href="/admin-dashboard.html#planner"><span class="ni">🗂</span> Planner View</a>
+    <div class="sb-sect">Admin</div>
+    <a class="nav-item active" href="/admin-users.html"><span class="ni">👥</span> Manage Users</a>
   </div>
   <div class="sb-bottom">
-    <button class="sb-btn logout" onclick="logout()">↩ Logout</button>
+    <div class="sb-user">
+      <div class="sb-av" id="adminAvatar">A</div>
+      <div>
+        <div class="sb-uname" id="adminName">Admin</div>
+        <div class="sb-urole">Administrator</div>
+      </div>
+    </div>
+    <button class="sb-logout" onclick="logout()"><span style="font-size:14px;">↩</span> Logout</button>
   </div>
 </div>
 
-<!-- ── MAIN ── -->
+<!-- MAIN -->
 <div class="main">
   <div class="main-hdr">
-    <div>
-      <div class="main-hdr-title">Manage Users</div>
-      <div class="main-hdr-sub" id="userCount">Loading…</div>
+    <div class="mhdr-left">
+      <span class="mhdr-crumb">Admin</span>
+      <span class="mhdr-sep">/</span>
+      <span class="mhdr-title">Manage Users</span>
     </div>
-    <button class="btn-new" onclick="toggleCreatePanel()">+ New User</button>
+    <div class="mhdr-right">
+      <span class="user-count" id="userCount"></span>
+      <button class="btn-new" onclick="toggleCreatePanel()">+ New User</button>
+    </div>
   </div>
 
   <div class="main-content">
 
-    <!-- Create User Panel -->
+    <!-- Create Panel -->
     <div class="create-panel" id="createPanel">
-      <h3>Create New User</h3>
+      <div class="cp-title">➕ Create New User</div>
       <form id="createForm" onsubmit="createUser(event)">
         <div class="form-grid">
           <div class="form-field">
-            <label>Username</label>
+            <label class="form-label">Username</label>
             <input class="form-input" id="newUsername" placeholder="e.g. john_lm" required autocomplete="off">
           </div>
           <div class="form-field">
-            <label>Display Name</label>
+            <label class="form-label">Display Name</label>
             <input class="form-input" id="newDisplayName" placeholder="e.g. John Smith" required>
           </div>
           <div class="form-field">
-            <label>Password</label>
+            <label class="form-label">Password</label>
             <input class="form-input" id="newPassword" type="password" placeholder="Minimum 6 characters" required>
           </div>
           <div class="form-field">
-            <label>Role</label>
+            <label class="form-label">Role</label>
             <select class="form-select" id="newRole">
               <option value="user">User (Line Manager)</option>
               <option value="admin">Admin</option>
@@ -182,13 +197,11 @@
 
     <!-- Users Table -->
     <div class="card">
-      <div class="card-hdr">
-        <h2>All Users</h2>
-      </div>
+      <div class="card-hdr"><div class="card-title">All Users</div></div>
       <table>
         <thead>
           <tr>
-            <th>Username</th>
+            <th>User</th>
             <th>Display Name</th>
             <th>Role</th>
             <th>Status</th>
@@ -197,7 +210,7 @@
           </tr>
         </thead>
         <tbody id="usersTbody">
-          <tr><td colspan="6"><div class="empty-state"><div class="ei">⏳</div>Loading users…</div></td></tr>
+          <tr><td colspan="6"><div class="empty-state">Loading…</div></td></tr>
         </tbody>
       </table>
       <div class="notify" id="listMsg"></div>
@@ -206,207 +219,173 @@
   </div>
 </div>
 
-<!-- ── PASSWORD MODAL ── -->
+<!-- PASSWORD MODAL -->
 <div class="modal-bg" id="pwModal" onclick="if(event.target===this)closePwModal()">
   <div class="modal">
     <div class="modal-hdr">
-      <button class="modal-close-btn" onclick="closePwModal()">✕ Close</button>
       <h3>Reset Password</h3>
       <p id="pwModalUser">—</p>
     </div>
     <div class="modal-body">
       <div class="form-field">
-        <label>New Password</label>
+        <label class="form-label">New Password</label>
         <input class="form-input" id="newPwInput" type="password" placeholder="Enter new password" autocomplete="new-password">
       </div>
-      <div class="pw-notice">User will need to use this password on their next login.</div>
       <div class="pw-notify" id="pwNotify"></div>
-      <div class="modal-actions">
-        <button class="btn-primary" onclick="confirmReset()">Save Password</button>
-        <button class="btn-ghost" onclick="closePwModal()">Cancel</button>
-      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-primary" onclick="confirmReset()">Save Password</button>
+      <button class="btn-ghost" onclick="closePwModal()">Cancel</button>
     </div>
   </div>
 </div>
 
 <script>
-  let allUsers = [];
-  let pwTargetId = null;
+  const AV_COLORS=['#5e6ad2','#4a90c4','#1b3a6b','#d97706','#059669','#dc2626','#7c3aed'];
+  let allUsers=[],pwTargetId=null;
 
-  async function api(path, opts = {}) {
-    const res = await fetch(path, { headers: {'Content-Type':'application/json', ...(opts.headers||{})}, ...opts });
-    const data = await res.json().catch(()=>({}));
-    if (!res.ok) throw new Error(data.error || 'Request failed');
+  function byId(i){return document.getElementById(i);}
+  function initials(n){return(n||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
+  function avColor(n){return AV_COLORS[(n||'').charCodeAt(0)%AV_COLORS.length];}
+
+  async function api(path,opts={}){
+    const res=await fetch(path,{headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.error||'Request failed');
     return data;
   }
 
-  async function logout() {
-    try { await fetch('/api/auth/logout', {method:'POST'}); } catch(e) {}
-    window.location.href = '/login.html';
-  }
+  async function logout(){try{await fetch('/api/auth/logout',{method:'POST'});}catch(e){}window.location.href='/login.html';}
 
-  function toggleCreatePanel() {
-    const p = document.getElementById('createPanel');
+  function toggleCreatePanel(){
+    const p=byId('createPanel');
     p.classList.toggle('open');
-    if (p.classList.contains('open')) {
-      document.getElementById('newUsername').focus();
-      document.getElementById('createMsg').textContent = '';
-    }
+    if(p.classList.contains('open')){byId('newUsername').focus();byId('createMsg').textContent='';}
   }
 
-  function rowHtml(u, editing = false) {
-    const isActive = u.is_active === 1 || u.is_active === true;
-    const statusBadge = isActive
-      ? '<span class="badge badge-active">● Active</span>'
-      : '<span class="badge badge-inactive">● Inactive</span>';
-    const roleBadge = u.role === 'admin'
-      ? '<span class="badge badge-admin">Admin</span>'
-      : '<span class="badge badge-user">User</span>';
-    const created = u.created_at ? u.created_at.slice(0, 10) : '—';
+  function rowHtml(u,editing=false){
+    const active=u.is_active===1||u.is_active===true;
+    const ini=initials(u.display_name||u.username);
+    const col=avColor(u.display_name||u.username);
+    const created=u.created_at?u.created_at.slice(0,10):'—';
+    const statusBadge=active
+      ?'<span class="status-badge status-active">● Active</span>'
+      :'<span class="status-badge status-inactive">● Inactive</span>';
+    const roleBadge=u.role==='admin'
+      ?'<span class="role-badge role-admin">Admin</span>'
+      :'<span class="role-badge role-user">User</span>';
 
-    if (editing) {
-      return `<tr id="row_${u.id}">
-        <td><strong>${u.username}</strong></td>
-        <td><input class="tbl-input" id="dn_${u.id}" value="${(u.display_name||'').replace(/"/g,'&quot;')}"></td>
-        <td><select class="tbl-select" id="role_${u.id}">
-          <option value="user" ${u.role==='user'?'selected':''}>User</option>
-          <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
-        </select></td>
-        <td>${statusBadge}</td>
-        <td class="muted" style="font-size:11px;">${created}</td>
-        <td><div class="act-group">
-          <button class="act-btn act-save" onclick="saveUser(${u.id})">Save</button>
-          <button class="act-btn act-cancel" onclick="loadUsers()">Cancel</button>
-        </div></td>
-      </tr>`;
-    }
+    if(editing){return`<tr id="row_${u.id}">
+      <td><span class="av" style="background:${col}">${ini}</span><strong>${u.username}</strong></td>
+      <td><input class="tbl-input" id="dn_${u.id}" value="${(u.display_name||'').replace(/"/g,'&quot;')}"></td>
+      <td><select class="tbl-select" id="role_${u.id}">
+        <option value="user" ${u.role==='user'?'selected':''}>User</option>
+        <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+      </select></td>
+      <td>${statusBadge}</td>
+      <td class="mu" style="font-size:11px;">${created}</td>
+      <td><div class="act-group">
+        <button class="act-btn act-save" onclick="saveUser(${u.id})">Save</button>
+        <button class="act-btn act-cancel" onclick="loadUsers()">Cancel</button>
+      </div></td>
+    </tr>`;}
 
-    return `<tr id="row_${u.id}">
-      <td><strong>${u.username}</strong></td>
-      <td>${u.display_name || '<span class="muted">—</span>'}</td>
+    return`<tr id="row_${u.id}">
+      <td><div style="display:flex;align-items:center;"><span class="av" style="background:${col}">${ini}</span><strong>${u.username}</strong></div></td>
+      <td>${u.display_name||'<span class="mu">—</span>'}</td>
       <td>${roleBadge}</td>
       <td>${statusBadge}</td>
-      <td class="muted" style="font-size:11px;">${created}</td>
+      <td class="mu" style="font-size:11px;">${created}</td>
       <td><div class="act-group">
         <button class="act-btn act-edit" onclick="editRow(${u.id})">Edit</button>
         <button class="act-btn act-pw" onclick="openPwModal(${u.id},'${u.username}')">Password</button>
-        <button class="act-btn ${isActive?'act-toggle-off':'act-toggle-on'}" onclick="toggleUser(${u.id},${!isActive})">
-          ${isActive?'Deactivate':'Activate'}
-        </button>
+        <button class="act-btn ${active?'act-off':'act-on'}" onclick="toggleUser(${u.id},${!active})">${active?'Deactivate':'Activate'}</button>
       </div></td>
     </tr>`;
   }
 
-  async function loadUsers() {
-    const data = await api('/api/admin/users');
-    allUsers = data.users || [];
-    const tbody = document.getElementById('usersTbody');
-    if (!allUsers.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="ei">👤</div>No users yet.</div></td></tr>`;
-    } else {
-      tbody.innerHTML = allUsers.map(u => rowHtml(u)).join('');
-    }
-    const total = allUsers.length;
-    const active = allUsers.filter(u => u.is_active === 1 || u.is_active === true).length;
-    document.getElementById('userCount').textContent = `${total} user${total!==1?'s':''} · ${active} active`;
-    document.getElementById('listMsg').textContent = '';
+  async function loadUsers(){
+    const data=await api('/api/admin/users');
+    allUsers=data.users||[];
+    const total=allUsers.length,active=allUsers.filter(u=>u.is_active===1||u.is_active===true).length;
+    byId('userCount').textContent=`${total} user${total!==1?'s':''} · ${active} active`;
+    byId('usersTbody').innerHTML=allUsers.length
+      ?allUsers.map(u=>rowHtml(u)).join('')
+      :`<tr><td colspan="6"><div class="empty-state">No users yet.</div></td></tr>`;
+    byId('listMsg').textContent='';
   }
 
-  function editRow(id) {
-    const u = allUsers.find(u => u.id === id);
-    if (!u) return;
-    document.getElementById('row_' + id).outerHTML = rowHtml(u, true);
-    document.getElementById('dn_' + id).focus();
+  function editRow(id){
+    const u=allUsers.find(u=>u.id===id);if(!u)return;
+    byId('row_'+id).outerHTML=rowHtml(u,true);
+    byId('dn_'+id).focus();
   }
 
-  async function saveUser(id) {
-    const displayName = document.getElementById('dn_' + id).value.trim();
-    const role = document.getElementById('role_' + id).value;
-    try {
-      await api(`/api/admin/users/${id}`, { method:'PATCH', body: JSON.stringify({displayName, role}) });
-      document.getElementById('listMsg').textContent = '✓ User updated.';
-      document.getElementById('listMsg').className = 'notify ok';
+  async function saveUser(id){
+    const dn=byId('dn_'+id).value.trim(),role=byId('role_'+id).value;
+    try{
+      await api(`/api/admin/users/${id}`,{method:'PATCH',body:JSON.stringify({displayName:dn,role})});
+      showMsg('listMsg','✓ User updated.','ok');
       await loadUsers();
-    } catch(e) {
-      document.getElementById('listMsg').textContent = e.message;
-      document.getElementById('listMsg').className = 'notify err';
-    }
+    }catch(e){showMsg('listMsg',e.message,'err');}
   }
 
-  async function toggleUser(id, isActive) {
-    try {
-      await api(`/api/admin/users/${id}`, { method:'PATCH', body: JSON.stringify({isActive}) });
-      document.getElementById('listMsg').textContent = `✓ User ${isActive?'activated':'deactivated'}.`;
-      document.getElementById('listMsg').className = 'notify ok';
+  async function toggleUser(id,isActive){
+    try{
+      await api(`/api/admin/users/${id}`,{method:'PATCH',body:JSON.stringify({isActive})});
+      showMsg('listMsg',`✓ User ${isActive?'activated':'deactivated'}.`,'ok');
       await loadUsers();
-    } catch(e) {
-      document.getElementById('listMsg').textContent = e.message;
-      document.getElementById('listMsg').className = 'notify err';
-    }
+    }catch(e){showMsg('listMsg',e.message,'err');}
   }
 
-  async function createUser(e) {
+  async function createUser(e){
     e.preventDefault();
-    const msg = document.getElementById('createMsg');
-    msg.textContent = ''; msg.className = 'notify';
-    try {
-      await api('/api/admin/users', {
-        method: 'POST',
-        body: JSON.stringify({
-          username: document.getElementById('newUsername').value.trim(),
-          displayName: document.getElementById('newDisplayName').value.trim(),
-          password: document.getElementById('newPassword').value,
-          role: document.getElementById('newRole').value
-        })
-      });
-      msg.textContent = '✓ User created successfully.';
-      msg.className = 'notify ok';
+    const msg=byId('createMsg');
+    msg.textContent='';msg.className='notify';
+    try{
+      await api('/api/admin/users',{method:'POST',body:JSON.stringify({
+        username:byId('newUsername').value.trim(),
+        displayName:byId('newDisplayName').value.trim(),
+        password:byId('newPassword').value,
+        role:byId('newRole').value
+      })});
+      showMsg('createMsg','✓ User created successfully.','ok');
       e.target.reset();
       await loadUsers();
-      setTimeout(() => { document.getElementById('createPanel').classList.remove('open'); }, 1200);
-    } catch(err) {
-      msg.textContent = err.message;
-      msg.className = 'notify err';
-    }
+      setTimeout(()=>{byId('createPanel').classList.remove('open');},1200);
+    }catch(err){showMsg('createMsg',err.message,'err');}
   }
 
-  function openPwModal(id, username) {
-    pwTargetId = id;
-    document.getElementById('pwModalUser').textContent = username;
-    document.getElementById('newPwInput').value = '';
-    document.getElementById('pwNotify').textContent = '';
-    document.getElementById('pwModal').classList.add('open');
-    setTimeout(() => document.getElementById('newPwInput').focus(), 100);
+  function openPwModal(id,username){
+    pwTargetId=id;
+    byId('pwModalUser').textContent=username;
+    byId('newPwInput').value='';
+    byId('pwNotify').textContent='';
+    byId('pwModal').classList.add('open');
+    setTimeout(()=>byId('newPwInput').focus(),100);
+  }
+  function closePwModal(){byId('pwModal').classList.remove('open');pwTargetId=null;}
+
+  async function confirmReset(){
+    const pw=byId('newPwInput').value,ntf=byId('pwNotify');
+    if(!pw||pw.length<6){ntf.textContent='Password must be at least 6 characters.';ntf.className='pw-notify err';return;}
+    try{
+      await api(`/api/admin/users/${pwTargetId}`,{method:'PATCH',body:JSON.stringify({password:pw})});
+      ntf.textContent='✓ Password reset successfully.';ntf.className='pw-notify ok';
+      setTimeout(closePwModal,1200);
+    }catch(e){ntf.textContent=e.message;ntf.className='pw-notify err';}
   }
 
-  function closePwModal() {
-    document.getElementById('pwModal').classList.remove('open');
-    pwTargetId = null;
-  }
+  function showMsg(id,txt,type){const el=byId(id);el.textContent=txt;el.className='notify '+type;}
 
-  async function confirmReset() {
-    const password = document.getElementById('newPwInput').value;
-    const notify = document.getElementById('pwNotify');
-    if (!password || password.length < 6) {
-      notify.textContent = 'Password must be at least 6 characters.';
-      notify.className = 'pw-notify err';
-      return;
-    }
-    try {
-      await api(`/api/admin/users/${pwTargetId}`, { method:'PATCH', body: JSON.stringify({password}) });
-      notify.textContent = '✓ Password reset successfully.';
-      notify.className = 'pw-notify ok';
-      setTimeout(closePwModal, 1200);
-    } catch(e) {
-      notify.textContent = e.message;
-      notify.className = 'pw-notify err';
-    }
-  }
-
-  (async function init() {
-    const me = await api('/api/auth/me');
-    if (!me.user) return window.location.href = '/login.html';
-    if (me.user.role !== 'admin') return window.location.href = '/planner.html';
+  (async function init(){
+    const me=await api('/api/auth/me');
+    if(!me.user)return window.location.href='/login.html';
+    if(me.user.role!=='admin')return window.location.href='/planner.html';
+    const uname=me.user.display_name||me.user.username||'Admin';
+    byId('adminName').textContent=uname;
+    byId('adminAvatar').textContent=initials(uname);
+    byId('adminAvatar').style.background=avColor(uname);
     await loadUsers();
   })();
 </script>

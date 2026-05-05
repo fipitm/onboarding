@@ -134,6 +134,8 @@
     .btn-csv{background:#1ecab8;color:#fff;}
     .btn-export-f{background:#0d2145;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Roboto',sans-serif;transition:opacity .15s;}
     .btn-export-f:hover{opacity:.85;}
+    .btn-clear-all{background:#fff;color:#f93b7a;border:1px solid #f93b7a;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px;}
+    .btn-clear-all:hover{background:#fff0f5;}
     .link-btn-f{font-size:12px;color:#4a90c4;font-weight:500;cursor:pointer;background:none;border:none;padding:0;font-family:'Roboto',sans-serif;}
     .link-btn-f:hover{text-decoration:underline;}
 
@@ -429,7 +431,10 @@
             <h5 class="f-card-title">All Submissions</h5>
             <small class="text-muted" id="subCount"></small>
           </div>
-          <button class="btn-export-f" onclick="exportAllCSV()"><i class="mdi mdi-download"></i> Export All CSV</button>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button class="btn-export-f" onclick="exportAllCSV()"><i class="mdi mdi-download"></i> Export All CSV</button>
+            <button class="btn-clear-all" onclick="confirmClearAll()"><i class="mdi mdi-delete-sweep-outline"></i> Clear All Data</button>
+          </div>
         </div>
         <div class="f-card-body">
           <div class="d-flex align-items-center gap-2 mb-3" style="gap:10px;">
@@ -650,6 +655,54 @@
     const ph=PHASES.map(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e),pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');return`<tr><td>${ph.n}</td><td>${pf}</td><td>${pa}</td><td>${pfl}</td><td><strong>${pf+pa+pfl}</strong></td><td>${ps.length}/${ph.e-ph.s+1}</td></tr>`;}).join('');
     byId('printArea').innerHTML=`<div style="font-family:Roboto,Arial,sans-serif;padding:28px;"><div style="background:linear-gradient(135deg,#0d2145,#1b3a6b);padding:20px 24px;color:#fff;border-radius:8px;margin-bottom:20px;"><div style="font-size:10px;color:#8DC63F;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">FIP Sales Program — Onboarding Planner</div><div style="font-size:20px;font-weight:700;">${s.name||'—'}</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">${[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ')}</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;"><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#4a90c4;font-weight:700;text-transform:uppercase;">FIP</div><div style="font-size:24px;font-weight:700;color:#4a90c4;">${fC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#1b3a6b;font-weight:700;text-transform:uppercase;">Almarai</div><div style="font-size:24px;font-weight:700;color:#1b3a6b;">${aC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#d97706;font-weight:700;text-transform:uppercase;">Field</div><div style="font-size:24px;font-weight:700;color:#d97706;">${flC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#23222f;font-weight:700;text-transform:uppercase;">Total</div><div style="font-size:24px;font-weight:700;color:#23222f;">${tot}</div><div style="font-size:10px;color:#a8a8b1;">${s.assigned}/73 topics</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#f8f9fa;"><th style="padding:8px 10px;text-align:left;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6c757d;">Phase</th><th style="padding:8px 10px;color:#4a90c4;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">FIP CTH</th><th style="padding:8px 10px;color:#1b3a6b;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Almarai CTH</th><th style="padding:8px 10px;color:#d97706;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Field CTH</th><th style="padding:8px 10px;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Total</th><th style="padding:8px 10px;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Assigned</th></tr></thead><tbody>${ph}</tbody></table></div>`;
     window.print();
+  }
+
+  /* ── Clear all submissions ── */
+  function confirmClearAll(){
+    const count=allSubs.length;
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
+    ov.innerHTML=`
+      <div style="background:#fff;border-radius:10px;padding:32px 36px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;font-family:Roboto,sans-serif;">
+        <div style="width:56px;height:56px;border-radius:50%;background:#fff0f5;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px solid #f93b7a;">
+          <i class="mdi mdi-delete-sweep-outline" style="font-size:28px;color:#f93b7a;"></i>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;color:#23222f;margin-bottom:8px;">Clear All Submissions?</h3>
+        <p style="font-size:13px;color:#6c757d;line-height:1.7;margin-bottom:6px;">
+          This will permanently delete <strong style="color:#f93b7a;font-size:20px;">${count}</strong> submission${count!==1?'s':''} and all associated delivery point selections.
+        </p>
+        <p style="font-size:12px;color:#a8a8b1;margin-bottom:24px;">This action <strong style="color:#23222f;">cannot be undone.</strong> Use this only before going live.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button id="clearCancelBtn" style="flex:1;max-width:160px;padding:10px;border:1px solid #dee2e6;border-radius:6px;background:#fff;color:#6c757d;font-size:13px;font-weight:500;cursor:pointer;font-family:Roboto,sans-serif;">Cancel</button>
+          <button id="clearConfirmBtn" style="flex:1;max-width:160px;padding:10px;border:none;border-radius:6px;background:#f93b7a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:Roboto,sans-serif;">Yes, Clear All</button>
+        </div>
+        <div id="clearMsg" style="margin-top:12px;font-size:12px;min-height:16px;"></div>
+      </div>`;
+    document.body.appendChild(ov);
+
+    ov.querySelector('#clearCancelBtn').onclick=()=>ov.remove();
+    ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+
+    ov.querySelector('#clearConfirmBtn').onclick=async()=>{
+      const btn=ov.querySelector('#clearConfirmBtn');
+      const msg=ov.querySelector('#clearMsg');
+      btn.disabled=true;btn.textContent='Clearing…';
+      try{
+        const res=await fetch('/api/admin/submissions',{method:'DELETE'});
+        const data=await res.json();
+        if(!res.ok)throw new Error(data.error||'Failed');
+        msg.style.color='#1ecab8';
+        msg.textContent=`✓ ${data.cleared} submission${data.cleared!==1?'s':''} cleared successfully.`;
+        allSubs=[];
+        buildDashboard();
+        renderTable();
+        setTimeout(()=>ov.remove(),1400);
+      }catch(err){
+        btn.disabled=false;btn.textContent='Yes, Clear All';
+        msg.style.color='#f93b7a';
+        msg.textContent='Error: '+err.message;
+      }
+    };
   }
 
   /* ── CSV exports ── */

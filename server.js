@@ -305,6 +305,13 @@ app.get("/api/admin/submissions", requireAuth, requireAdmin, (req, res) => {
   return res.json({ submissions: result });
 });
 
+app.delete("/api/admin/submissions", requireAuth, requireAdmin, (req, res) => {
+  const count = db.prepare("SELECT COUNT(*) as n FROM submissions").get().n;
+  db.exec("DELETE FROM submission_selections");
+  db.exec("DELETE FROM submissions");
+  return res.json({ success: true, cleared: count });
+});
+
 app.get("/api/report", requireAuth, requireAdmin, (req, res) => {
   const users = db.prepare("SELECT id, username, role, display_name FROM users ORDER BY id").all();
 

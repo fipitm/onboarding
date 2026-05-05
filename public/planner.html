@@ -298,6 +298,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
   body{font-size:12px;}
 }
 
+/* ─── PROFILE OVERLAY ─── */
+.profile-overlay{position:fixed;inset:0;background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 60%,#1E4080 100%);z-index:10000;display:none;align-items:center;justify-content:center;}
+.profile-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:44px 48px;width:100%;max-width:420px;text-align:center;backdrop-filter:blur(12px);}
+.profile-card-logo{margin-bottom:20px;}
+.profile-card-logo img{height:68px;width:auto;}
+.profile-card h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:white;margin-bottom:6px;}
+.profile-card p{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:28px;line-height:1.6;}
+.profile-field{margin-bottom:14px;text-align:left;}
+.profile-field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:5px;}
+.profile-input{width:100%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.22);border-radius:8px;color:white;font-family:'DM Sans',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border 0.2s;box-sizing:border-box;}
+.profile-input::placeholder{color:rgba(255,255,255,0.3);}
+.profile-input:focus{border-color:var(--green-light);background:rgba(255,255,255,0.15);}
+.profile-start-btn{width:100%;background:linear-gradient(135deg,var(--green),var(--green-light));color:white;border:none;border-radius:10px;padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:10px;letter-spacing:0.3px;}
+.profile-start-btn:hover{filter:brightness(1.1);box-shadow:0 6px 24px rgba(107,168,58,0.35);}
+
 /* ─── TOOLTIP ─── */
 .sub-info-wrap{display:inline-flex;align-items:center;gap:6px;position:relative;}
 .info-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(74,144,196,0.15);border:1px solid rgba(74,144,196,0.4);color:var(--fip-blue);font-size:10px;font-weight:800;cursor:pointer;flex-shrink:0;transition:all 0.2s;font-style:normal;line-height:1;user-select:none;}
@@ -310,6 +325,32 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 </head>
 <body>
 
+<!-- PROFILE OVERLAY -->
+<div id="profileOverlay" class="profile-overlay">
+  <div class="profile-card">
+    <div class="profile-card-logo">
+      <img src="/fip-logo-white.png" alt="Food Industries Polytechnic">
+    </div>
+    <h2>FIP × Almarai Onboarding</h2>
+    <p>Enter your details below to begin the Delivery Point planning tool.</p>
+    <form onsubmit="startPlanner(event)">
+      <div class="profile-field">
+        <label>Line Manager Name</label>
+        <input class="profile-input" id="responderName" type="text" placeholder="Enter full name" required>
+      </div>
+      <div class="profile-field">
+        <label>Designation</label>
+        <input class="profile-input" id="responderDesig" type="text" placeholder="Enter designation" required>
+      </div>
+      <div class="profile-field">
+        <label>Region</label>
+        <input class="profile-input" id="responderRegion" type="text" placeholder="Enter region" required>
+      </div>
+      <button type="submit" class="profile-start-btn">Start Planning →</button>
+    </form>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header class="hdr">
   <div class="hdr-inner">
@@ -317,19 +358,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
       <div class="logo-box">
         <img src="/fip-logo-white.png" alt="Food Industries Polytechnic">
       </div>
-      <div class="save-badge"><div class="save-dot"></div><span id="saveText">Auto-saving</span></div>
     </div>
     <div class="hdr-titles">
       <div class="hdr-eyebrow">FIP × Almarai Partnership Program</div>
       <div class="hdr-h1">FIP Sales Program</div>
       <div class="hdr-sub">Onboarding Planning Tool — Delivery Point Assignment</div>
-    </div>
-    <div class="hdr-right">
-      <div class="responder-fields">
-        <input class="hdr-input" id="responderName" type="text" placeholder="Line Manager Name" oninput="saveData()">
-        <input class="hdr-input" id="responderDesig" type="text" placeholder="Designation" oninput="saveData()">
-        <input class="hdr-input" id="responderRegion" type="text" placeholder="Region" oninput="saveData()">
-      </div>
     </div>
   </div>
   <div class="hdr-stripe"></div>
@@ -343,7 +376,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     <p>For each sub-topic listed in the phases below, select <strong>one delivery point</strong> to indicate where that topic will be delivered. Work through each phase using the left sidebar. All selections are <strong>automatically saved</strong> in your browser — you can close and return at any time without losing your work.</p>
     <div class="instr-pills">
       <span class="instr-pill fip">🏛 FIP — Delivered at Food Industries Polytechnic Site</span>
-      <span class="instr-pill almarai">🏢 Almarai — Delivered at Almarai Premises by FIP Trainers (Blended, Face to Face or online)</span>
+      <span class="instr-pill almarai">🏢 Almarai — Delivered at Almarai Premises by FIP Trainers</span>
       <span class="instr-pill field">🚗 Field Based Training — On-the-Job, field based delivery</span>
     </div>
     <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.75);">Once all phases are complete, click <strong style="color:white;">View Summary &amp; Export</strong> to review the full plan. Download the summary report, then share the PDF file directly with FIP.</p>
@@ -365,7 +398,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     
     <button class="phase-nav-btn active" 
             data-phase="jd" 
-            onclick="goToPhase('jd')"
+            onclick="sidebarGoToPhase('jd')"
             style="--ph-color:#1B3A6B;--ph-accent:#4A90C4">
       <span class="ph-num">1</span>
       <span class="ph-icon">👤</span>
@@ -377,7 +410,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     </button>
     <button class="phase-nav-btn " 
             data-phase="pre" 
-            onclick="goToPhase('pre')"
+            onclick="sidebarGoToPhase('pre')"
             style="--ph-color:#1B4D3E;--ph-accent:#38A169">
       <span class="ph-num">2</span>
       <span class="ph-icon">🛡️</span>
@@ -389,7 +422,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     </button>
     <button class="phase-nav-btn " 
             data-phase="intro" 
-            onclick="goToPhase('intro')"
+            onclick="sidebarGoToPhase('intro')"
             style="--ph-color:#2C5282;--ph-accent:#63B3ED">
       <span class="ph-num">3</span>
       <span class="ph-icon">🏢</span>
@@ -401,7 +434,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     </button>
     <button class="phase-nav-btn " 
             data-phase="exec" 
-            onclick="goToPhase('exec')"
+            onclick="sidebarGoToPhase('exec')"
             style="--ph-color:#44337A;--ph-accent:#9F7AEA">
       <span class="ph-num">4</span>
       <span class="ph-icon">⚙️</span>
@@ -413,7 +446,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     </button>
     <button class="phase-nav-btn " 
             data-phase="spec" 
-            onclick="goToPhase('spec')"
+            onclick="sidebarGoToPhase('spec')"
             style="--ph-color:#7B341E;--ph-accent:#ED8936">
       <span class="ph-num">5</span>
       <span class="ph-icon">🎯</span>
@@ -425,7 +458,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     </button>
     <button class="phase-nav-btn " 
             data-phase="closing" 
-            onclick="goToPhase('closing')"
+            onclick="sidebarGoToPhase('closing')"
             style="--ph-color:#276749;--ph-accent:#68D391">
       <span class="ph-num">6</span>
       <span class="ph-icon">🏁</span>
@@ -942,7 +975,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 11 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('jd')">← Previous Phase</button><button class="nav-btn primary" style="background:#38A169" onclick="validatePhaseAndGo('pre','intro')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="sidebarGoToPhase('jd')">← Previous Phase</button><button class="nav-btn primary" style="background:#38A169" onclick="validatePhaseAndGo('pre','intro')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -1332,7 +1365,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 12 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('pre')">← Previous Phase</button><button class="nav-btn primary" style="background:#63B3ED" onclick="validatePhaseAndGo('intro','exec')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="sidebarGoToPhase('pre')">← Previous Phase</button><button class="nav-btn primary" style="background:#63B3ED" onclick="validatePhaseAndGo('intro','exec')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -2060,7 +2093,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 29 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('intro')">← Previous Phase</button><button class="nav-btn primary" style="background:#9F7AEA" onclick="validatePhaseAndGo('exec','spec')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="sidebarGoToPhase('intro')">← Previous Phase</button><button class="nav-btn primary" style="background:#9F7AEA" onclick="validatePhaseAndGo('exec','spec')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -2356,7 +2389,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 11 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('exec')">← Previous Phase</button><button class="nav-btn primary" style="background:#ED8936" onclick="validatePhaseAndGo('spec','closing')">Next Phase →</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="sidebarGoToPhase('exec')">← Previous Phase</button><button class="nav-btn primary" style="background:#ED8936" onclick="validatePhaseAndGo('spec','closing')">Next Phase →</button>
         </div>
       </div>
     </div>
@@ -2476,7 +2509,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
           <span class="status-dot pending"></span>
           <span>0 of 3 assigned</span>
         </div>
-        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="goToPhase('spec')">← Previous Phase</button><button class="nav-btn success" onclick="showSummaryPage()">View Summary & Export ✓</button>
+        <div class="phase-footer-right"><button class="nav-btn secondary" onclick="sidebarGoToPhase('spec')">← Previous Phase</button><button class="nav-btn success" onclick="showSummaryPage()">View Summary & Export ✓</button>
         </div>
       </div>
     </div>
@@ -2599,7 +2632,7 @@ function getSelections(){
 
 function saveData(){
   const data={sel:getSelections(),name:sel('responderName').value,desig:sel('responderDesig').value,region:sel('responderRegion')?.value||''};
-  try{localStorage.setItem(SK,JSON.stringify(data));sel('saveText').textContent='Saved ✓';setTimeout(()=>sel('saveText').textContent='Auto-saving',2000);}catch(e){}
+  try{localStorage.setItem(SK,JSON.stringify(data));}catch(e){}
 }
 
 function loadData(){
@@ -2661,6 +2694,48 @@ function updatePhaseProgress(phaseId){
     footerEl.querySelector('span:last-child').textContent=`${done} of ${rows.length} assigned`;
     dot.className='status-dot '+(done===0?'pending':done===rows.length?'complete':'partial');
   }
+}
+
+function startPlanner(e){
+  e.preventDefault();
+  saveData();
+  sel('profileOverlay').style.display='none';
+}
+
+function sidebarGoToPhase(targetId){
+  const order=['jd','pre','intro','exec','spec','closing'];
+  const tidx=order.indexOf(targetId);
+  const ab=document.querySelector('.phase-nav-btn.active');
+  const cidx=ab?order.indexOf(ab.dataset.phase):0;
+  if(tidx<=cidx){goToPhase(targetId);return;}
+  const sels=getSelections();
+  for(let i=0;i<tidx;i++){
+    const pd=PHASES_DATA.find(p=>p.id===order[i]);
+    if(pd){
+      const unassigned=pd.rows.filter(([idx])=>!sels[idx]).length;
+      if(unassigned>0){
+        const ov=document.createElement('div');
+        ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+        const bx=document.createElement('div');
+        bx.style.cssText='background:#fff;border-radius:14px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;';
+        bx.innerHTML='<div style="font-size:44px;margin-bottom:12px;">⚠️</div>'+
+          '<h2 style="color:#0D2145;font-size:18px;margin:0 0 10px;">Phase Incomplete</h2>'+
+          '<p style="color:#555;font-size:14px;margin:0 0 22px;line-height:1.6;">'+
+            '<strong style="color:#C53030;font-size:26px;">'+unassigned+'</strong> sub-topic'+(unassigned>1?'s':'')+
+            ' in <strong>'+pd.name+'</strong> '+(unassigned>1?'have':'has')+' not been assigned a delivery point.<br><br>'+
+            'Please complete all selections before moving to the next phase.'+
+          '</p>'+
+          '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;">OK, Complete Now</button>';
+        ov.appendChild(bx);
+        document.body.appendChild(ov);
+        bx.querySelector('button').addEventListener('click',function(){ov.remove();goToPhase(order[i]);});
+        ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+        return;
+      }
+    }
+  }
+  saveData();
+  goToPhase(targetId);
 }
 
 function validatePhaseAndGo(fromId, toId) {
@@ -2907,8 +2982,13 @@ function applyRowHighlights(){
 
 window.addEventListener('load',()=>{
   const d=sel('responderDate');
-  if(!d.value)d.value=new Date().toISOString().split('T')[0];
+  if(d&&!d.value)d.value=new Date().toISOString().split('T')[0];
   loadData();
+  try{
+    const raw=localStorage.getItem(SK);
+    const saved=raw?JSON.parse(raw):{};
+    sel('profileOverlay').style.display=saved.name?'none':'flex';
+  }catch(e){sel('profileOverlay').style.display='flex';}
   applyRowHighlights();
   updateGlobal();
   PHASES_DATA.forEach(p=>updatePhaseProgress(p.id));

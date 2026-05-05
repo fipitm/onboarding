@@ -44,7 +44,7 @@
     logoutBtn.className = "gp-summary-btn";
     logoutBtn.style.marginLeft = "8px";
     logoutBtn.onclick = async () => {
-      await api("/api/auth/logout", { method: "POST" });
+      try { await api("/api/auth/logout", { method: "POST" }); } catch (e) {}
       window.location.href = "/login.html";
     };
     byId("globalProg").appendChild(logoutBtn);

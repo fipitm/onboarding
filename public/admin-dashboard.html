@@ -3,176 +3,254 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CEO Dashboard</title>
+  <title>CEO Dashboard — FIP Sales Program</title>
   <link rel="icon" type="image/png" href="/fip-logo.png">
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f4f7fb; color: #10213c; }
-    .top { background: #0d2145; color: #fff; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; }
-    .links a { color: #fff; text-decoration: none; margin-left: 12px; font-weight: 700; font-size: 14px; }
-    .wrap { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
-    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
-    .kpi { background: #fff; border: 1px solid #d5e0ef; border-radius: 12px; padding: 14px; }
-    .kpi .label { font-size: 12px; color: #607b9f; text-transform: uppercase; letter-spacing: .4px; }
-    .kpi .value { font-size: 30px; font-weight: 800; color: #0d2145; margin-top: 6px; }
-    .card { background: #fff; border: 1px solid #d5e0ef; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
-    h2 { margin: 0 0 10px; font-size: 18px; }
-    .bar-wrap { background: #e8effa; border-radius: 999px; overflow: hidden; height: 16px; margin-top: 8px; }
-    .seg { height: 100%; float: left; }
-    .seg.fip { background: #4a90c4; }
-    .seg.almarai { background: #1b3a6b; }
-    .seg.field { background: #c27c0a; }
-    .legend { margin-top: 8px; font-size: 13px; color: #304f77; display: flex; gap: 16px; flex-wrap: wrap; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border-bottom: 1px solid #e3ebf7; padding: 9px 8px; text-align: left; font-size: 13px; }
-    th { color: #5f7899; text-transform: uppercase; font-size: 11px; letter-spacing: .4px; }
-    .muted { color: #8aa0bc; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f7fb;color:#10213c;}
+    .top{background:#0d2145;color:#fff;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;}
+    .top-title{font-size:16px;font-weight:700;}
+    .top-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+    .links{display:flex;gap:10px;align-items:center;}
+    .links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);transition:background .15s;}
+    .links a:hover{background:rgba(255,255,255,0.1);}
+    .wrap{max-width:1280px;margin:24px auto;padding:0 20px;}
+
+    /* KPI grid */
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+    .kpi{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:18px 16px;}
+    .kpi .label{font-size:11px;color:#607b9f;text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+    .kpi .value{font-size:32px;font-weight:800;color:#0d2145;margin-top:6px;line-height:1;}
+    .kpi .sub{font-size:12px;color:#8aa0bc;margin-top:4px;}
+    .kpi.fip-kpi .value{color:#4a90c4;}
+    .kpi.alm-kpi .value{color:#1b3a6b;}
+    .kpi.fld-kpi .value{color:#c27c0a;}
+
+    /* Distribution bar */
+    .card{background:#fff;border:1px solid #d5e0ef;border-radius:12px;padding:18px;margin-bottom:16px;}
+    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+    .card-header h2{font-size:16px;font-weight:700;color:#0d2145;}
+    .bar-wrap{background:#e8effa;border-radius:999px;overflow:hidden;height:18px;}
+    .seg{height:100%;float:left;transition:width .6s ease;}
+    .seg.fip{background:#4a90c4;}
+    .seg.almarai{background:#1b3a6b;}
+    .seg.field{background:#c27c0a;}
+    .legend{margin-top:10px;font-size:13px;color:#304f77;display:flex;gap:20px;flex-wrap:wrap;}
+    .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;}
+
+    /* Submissions table */
+    .export-btn{background:#0d2145;color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s;}
+    .export-btn:hover{background:#1b3a6b;}
+    .export-btn.csv{background:#276749;}
+    .export-btn.csv:hover{background:#1a4a33;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    th{color:#5f7899;text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:10px 8px;border-bottom:2px solid #e3ebf7;white-space:nowrap;}
+    td{border-bottom:1px solid #edf2fb;padding:10px 8px;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tbody tr:hover td{background:#f8faff;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+    .badge-account{background:#eef3fb;color:#4a6899;}
+    .muted{color:#8aa0bc;}
+    .no-data{text-align:center;color:#8aa0bc;padding:32px;font-size:14px;}
+
+    /* Scenario notice */
+    .scenario-box{background:linear-gradient(135deg,#0d2145,#1b3a6b);border-radius:12px;padding:18px 22px;margin-bottom:16px;color:white;}
+    .scenario-box h3{font-size:14px;font-weight:700;color:#8DC63F;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+    .scenario-box p{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;}
+    .scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+    .scenario-item{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 14px;}
+    .scenario-item strong{display:block;font-size:12px;font-weight:700;color:#8DC63F;margin-bottom:4px;}
+    .scenario-item span{font-size:12px;color:rgba(255,255,255,0.65);}
   </style>
 </head>
 <body>
-  <div class="top">
-    <strong>CEO Dashboard - Onboarding Analytics</strong>
-    <div class="links">
-      <a href="/planner.html">Planner</a>
-      <a href="/admin-users.html">Manage Users</a>
+
+<div class="top">
+  <div>
+    <div class="top-title">CEO Dashboard — FIP Sales Program</div>
+    <div class="top-sub">Onboarding Planning Analytics</div>
+  </div>
+  <div class="links">
+    <a href="/planner.html">Planner</a>
+    <a href="/admin-users.html">Manage Users</a>
+    <a href="/api/auth/logout" onclick="logout(event)">Logout</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Scenario guidance -->
+  <div class="scenario-box">
+    <h3>How Submissions Work</h3>
+    <p>Each time someone completes the profile form and clicks <strong>Start Planning</strong>, a new independent submission is created — regardless of which login account was used.</p>
+    <div class="scenario-grid">
+      <div class="scenario-item">
+        <strong>Scenario A — Shared session</strong>
+        <span>Multiple LMs sit together, use one account, make one collective decision → 1 submission representing the group.</span>
+      </div>
+      <div class="scenario-item">
+        <strong>Scenario B — Individual sessions</strong>
+        <span>Each LM logs in separately at their location, enters their own name and makes their own selections → separate submission per person.</span>
+      </div>
     </div>
   </div>
 
-  <div class="wrap">
-    <div class="kpi-grid">
-      <div class="kpi"><div class="label">Active Users</div><div class="value" id="kUsers">0</div></div>
-      <div class="kpi"><div class="label">Plans Started</div><div class="value" id="kStarted">0</div></div>
-      <div class="kpi"><div class="label">Total Assigned Topics</div><div class="value" id="kAssigned">0</div></div>
-      <div class="kpi"><div class="label">Total Assigned CTH</div><div class="value" id="kHours">0</div></div>
-    </div>
+  <!-- KPI cards (from submissions) -->
+  <div class="kpi-grid">
+    <div class="kpi"><div class="label">Total Submissions</div><div class="value" id="kSubs">—</div><div class="sub">Individual plans submitted</div></div>
+    <div class="kpi fip-kpi"><div class="label">FIP Premises (CTH)</div><div class="value" id="kFip">—</div><div class="sub" id="kFipPct"></div></div>
+    <div class="kpi alm-kpi"><div class="label">Almarai Premises (CTH)</div><div class="value" id="kAlm">—</div><div class="sub" id="kAlmPct"></div></div>
+    <div class="kpi fld-kpi"><div class="label">Field Training (CTH)</div><div class="value" id="kFld">—</div><div class="sub" id="kFldPct"></div></div>
+  </div>
 
-    <div class="card">
-      <h2>Delivery Point Distribution</h2>
-      <div class="bar-wrap">
-        <div class="seg fip" id="segFip" style="width:0%"></div>
-        <div class="seg almarai" id="segAlmarai" style="width:0%"></div>
-        <div class="seg field" id="segField" style="width:0%"></div>
-      </div>
-      <div class="legend">
-        <span id="lFip">FIP: 0%</span>
-        <span id="lAlmarai">Almarai: 0%</span>
-        <span id="lField">Field: 0%</span>
-      </div>
+  <!-- Distribution bar -->
+  <div class="card">
+    <div class="card-header"><h2>Overall CTH Distribution (All Submissions Combined)</h2></div>
+    <div class="bar-wrap">
+      <div class="seg fip" id="segFip" style="width:0%"></div>
+      <div class="seg almarai" id="segAlm" style="width:0%"></div>
+      <div class="seg field" id="segFld" style="width:0%"></div>
     </div>
-
-    <div class="card">
-      <h2>Individual Submissions <span id="subCount" style="font-size:13px;font-weight:400;color:#7b8397;"></span></h2>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Designation</th>
-            <th>Region</th>
-            <th>Account</th>
-            <th>Submitted</th>
-            <th>Topics Assigned</th>
-            <th style="color:#4a90c4;">FIP</th>
-            <th style="color:#1b3a6b;">Almarai</th>
-            <th style="color:#c27c0a;">Field</th>
-          </tr>
-        </thead>
-        <tbody id="subTbody"></tbody>
-      </table>
+    <div class="legend">
+      <span><span class="legend-dot" style="background:#4a90c4;"></span><span id="lFip">FIP: 0 CTH</span></span>
+      <span><span class="legend-dot" style="background:#1b3a6b;"></span><span id="lAlm">Almarai: 0 CTH</span></span>
+      <span><span class="legend-dot" style="background:#c27c0a;"></span><span id="lFld">Field: 0 CTH</span></span>
     </div>
   </div>
 
-  <script>
-    const TOTAL_TOPICS = 73;
-    const cthByIdx = {
-      0:2,1:2,2:2,3:2,4:4,5:6,6:6,7:10,8:10,9:8,10:10,11:8,12:6,13:6,14:6,15:8,16:8,17:4,18:0,19:0,20:2,21:2,22:2,23:8,24:6,25:4,26:12,27:6,28:6,29:10,30:12,31:12,32:8,33:4,34:6,35:8,36:8,37:6,38:8,39:8,40:4,41:6,42:10,43:10,44:8,45:8,46:10,47:6,48:6,49:5,50:6,51:5,52:5,53:5,54:5,55:5,56:6,57:3,58:4,59:2,60:8,61:4,62:4,63:2,64:6,65:2,66:2,67:6,68:4,69:4,70:8,71:24,72:2
-    };
-
-    function byId(id) { return document.getElementById(id); }
-    async function api(path) {
-      const res = await fetch(path);
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "Request failed");
-      return data;
-    }
-
-    async function init() {
-      const me = await api("/api/auth/me");
-      if (!me.user) return window.location.href = "/login.html";
-      if (me.user.role !== "admin") return window.location.href = "/planner.html";
-
-      const [usersData, reportData, subData] = await Promise.all([
-        api("/api/admin/users"),
-        api("/api/report"),
-        api("/api/admin/submissions")
-      ]);
-
-      const activeUsers = usersData.users.filter(u => u.is_active === 1 && u.role === "user");
-      let totalAssigned = 0, totalHours = 0, started = 0;
-      let fip = 0, almarai = 0, field = 0;
-
-      const byIdMap = new Map(reportData.report.map(r => [r.user.id, r]));
-      const rows = activeUsers.map((u) => {
-        const rec = byIdMap.get(u.id);
-        const profile = rec?.profile || {};
-        const sels = rec?.selections || [];
-        const assigned = sels.length;
-        const cth = sels.reduce((sum, r) => sum + (cthByIdx[r.row_idx] || 0), 0);
-        if (assigned > 0) started += 1;
-        totalAssigned += assigned;
-        totalHours += cth;
-        sels.forEach((r) => {
-          if (r.delivery_point === "FIP") fip += (cthByIdx[r.row_idx] || 0);
-          else if (r.delivery_point === "Almarai") almarai += (cthByIdx[r.row_idx] || 0);
-          else field += (cthByIdx[r.row_idx] || 0);
-        });
-
-        return `
-          <tr>
-            <td>${u.display_name || u.username} <span class="muted">(${u.username})</span></td>
-            <td>${profile.name || "-"}</td>
-            <td>${profile.desig || "-"}</td>
-            <td>${profile.region || "-"}</td>
-            <td>${profile.date || "-"}</td>
-            <td>${assigned} / ${TOTAL_TOPICS}</td>
-            <td>${cth}</td>
-          </tr>
-        `;
-      });
-
-      byId("kUsers").textContent = activeUsers.length;
-      byId("kStarted").textContent = started;
-      byId("kAssigned").textContent = totalAssigned;
-      byId("kHours").textContent = totalHours;
-
-      // Submissions table
-      const subs = subData.submissions || [];
-      byId("subCount").textContent = `(${subs.length} total)`;
-      byId("subTbody").innerHTML = subs.length ? subs.map((s, i) => `
+  <!-- Submissions table -->
+  <div class="card">
+    <div class="card-header">
+      <h2>All Submissions <span id="subCount" style="font-size:13px;font-weight:400;color:#7b8397;"></span></h2>
+      <div style="display:flex;gap:8px;">
+        <button class="export-btn csv" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+    <table>
+      <thead>
         <tr>
-          <td style="color:#8aa0bc;">${i + 1}</td>
-          <td><strong>${s.name || "-"}</strong></td>
-          <td>${s.desig || "-"}</td>
-          <td>${s.region || "-"}</td>
-          <td><span style="background:#eef3fb;padding:2px 8px;border-radius:4px;font-size:11px;">${s.account}</span></td>
-          <td style="color:#8aa0bc;font-size:12px;">${s.submittedAt ? s.submittedAt.slice(0,16).replace("T"," ") : "-"}</td>
-          <td>${s.assigned} / 73</td>
-          <td style="color:#4a90c4;font-weight:700;">${s.fip}</td>
-          <td style="color:#1b3a6b;font-weight:700;">${s.almarai}</td>
-          <td style="color:#c27c0a;font-weight:700;">${s.field}</td>
-        </tr>`).join("") : "<tr><td colspan='10' style='color:#8aa0bc;'>No submissions yet.</td></tr>";
+          <th>#</th>
+          <th>Name</th>
+          <th>Designation</th>
+          <th>Region</th>
+          <th>Account</th>
+          <th>Date &amp; Time</th>
+          <th>Topics</th>
+          <th style="color:#4a90c4;">FIP CTH</th>
+          <th style="color:#1b3a6b;">Almarai CTH</th>
+          <th style="color:#c27c0a;">Field CTH</th>
+          <th>Total CTH</th>
+        </tr>
+      </thead>
+      <tbody id="subTbody"></tbody>
+    </table>
+  </div>
 
-      const totalDist = fip + almarai + field;
-      const pF = totalDist ? Math.round((fip / totalDist) * 100) : 0;
-      const pA = totalDist ? Math.round((almarai / totalDist) * 100) : 0;
-      const pFi = totalDist ? 100 - pF - pA : 0;
-      byId("segFip").style.width = pF + "%";
-      byId("segAlmarai").style.width = pA + "%";
-      byId("segField").style.width = pFi + "%";
-      byId("lFip").textContent = `FIP: ${pF}% (${fip} CTH)`;
-      byId("lAlmarai").textContent = `Almarai: ${pA}% (${almarai} CTH)`;
-      byId("lField").textContent = `Field: ${pFi}% (${field} CTH)`;
-    }
-    init().catch((err) => alert(err.message));
-  </script>
+</div>
+
+<script>
+  const cthByIdx = {
+    0:2,1:2,2:2,3:2,4:4,5:6,6:6,7:10,8:10,9:8,10:10,11:8,12:6,13:6,14:6,15:8,16:8,17:4,18:0,19:0,
+    20:2,21:2,22:2,23:8,24:6,25:4,26:12,27:6,28:6,29:10,30:12,31:12,32:8,33:4,34:6,35:8,36:8,37:6,
+    38:8,39:8,40:4,41:6,42:10,43:10,44:8,45:8,46:10,47:6,48:6,49:5,50:6,51:5,52:5,53:5,54:5,55:5,
+    56:6,57:3,58:4,59:2,60:8,61:4,62:4,63:2,64:6,65:2,66:2,67:6,68:4,69:4,70:8,71:24,72:2
+  };
+
+  let allSubs = [];
+
+  function byId(id){ return document.getElementById(id); }
+  async function api(path){
+    const res = await fetch(path);
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error||"Request failed");
+    return data;
+  }
+
+  function calcCTH(selections, dp){
+    return (selections||[]).filter(s=>s.delivery_point===dp).reduce((sum,s)=>sum+(cthByIdx[s.row_idx]||0),0);
+  }
+
+  async function logout(e){
+    e.preventDefault();
+    try{ await fetch("/api/auth/logout",{method:"POST"}); }catch(e){}
+    window.location.href="/login.html";
+  }
+
+  function exportCSV(){
+    if(!allSubs.length){ alert("No submissions to export."); return; }
+    const hdr = ["#","Name","Designation","Region","Account","Submitted","Topics Assigned","FIP CTH","Almarai CTH","Field CTH","Total CTH"];
+    const rows = allSubs.map((s,i)=>[
+      i+1, s.name, s.desig, s.region, s.account,
+      s.submittedAt?s.submittedAt.slice(0,16).replace("T"," "):"",
+      s.assigned,
+      calcCTH(s.selections,"FIP"),
+      calcCTH(s.selections,"Almarai"),
+      calcCTH(s.selections,"Field Training"),
+      calcCTH(s.selections,"FIP")+calcCTH(s.selections,"Almarai")+calcCTH(s.selections,"Field Training")
+    ]);
+    const csv = [hdr,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+    a.download = `FIP_Submissions_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+  }
+
+  async function init(){
+    const me = await api("/api/auth/me");
+    if(!me.user) return window.location.href="/login.html";
+    if(me.user.role!=="admin") return window.location.href="/planner.html";
+
+    const subData = await api("/api/admin/submissions");
+    allSubs = subData.submissions || [];
+
+    // KPIs from submissions
+    let totFip=0, totAlm=0, totFld=0;
+    allSubs.forEach(s=>{
+      totFip += calcCTH(s.selections,"FIP");
+      totAlm += calcCTH(s.selections,"Almarai");
+      totFld += calcCTH(s.selections,"Field Training");
+    });
+    const totCTH = totFip + totAlm + totFld;
+    const pF = totCTH ? Math.round(totFip/totCTH*100) : 0;
+    const pA = totCTH ? Math.round(totAlm/totCTH*100) : 0;
+    const pFl = totCTH ? 100-pF-pA : 0;
+
+    byId("kSubs").textContent = allSubs.length;
+    byId("kFip").textContent = totFip;  byId("kFipPct").textContent = `${pF}% of total hours`;
+    byId("kAlm").textContent = totAlm;  byId("kAlmPct").textContent = `${pA}% of total hours`;
+    byId("kFld").textContent = totFld;  byId("kFldPct").textContent = `${pFl}% of total hours`;
+
+    byId("segFip").style.width = pF+"%";
+    byId("segAlm").style.width = pA+"%";
+    byId("segFld").style.width = pFl+"%";
+    byId("lFip").textContent = `FIP: ${totFip} CTH (${pF}%)`;
+    byId("lAlm").textContent = `Almarai: ${totAlm} CTH (${pA}%)`;
+    byId("lFld").textContent = `Field: ${totFld} CTH (${pFl}%)`;
+
+    // Submissions table
+    byId("subCount").textContent = `(${allSubs.length} submission${allSubs.length!==1?"s":""})`;
+    byId("subTbody").innerHTML = allSubs.length ? allSubs.map((s,i)=>{
+      const fCTH = calcCTH(s.selections,"FIP");
+      const aCTH = calcCTH(s.selections,"Almarai");
+      const flCTH = calcCTH(s.selections,"Field Training");
+      const tot = fCTH+aCTH+flCTH;
+      return `<tr>
+        <td class="muted">${i+1}</td>
+        <td><strong>${s.name||"-"}</strong></td>
+        <td>${s.desig||"-"}</td>
+        <td>${s.region||"-"}</td>
+        <td><span class="badge badge-account">${s.account}</span></td>
+        <td class="muted" style="font-size:12px;">${s.submittedAt?s.submittedAt.slice(0,16).replace("T"," "):"-"}</td>
+        <td>${s.assigned}/73</td>
+        <td style="color:#4a90c4;font-weight:700;">${fCTH}</td>
+        <td style="color:#1b3a6b;font-weight:700;">${aCTH}</td>
+        <td style="color:#c27c0a;font-weight:700;">${flCTH}</td>
+        <td style="font-weight:700;">${tot}</td>
+      </tr>`;
+    }).join("") : `<tr><td colspan="11" class="no-data">No submissions yet. Users will appear here after they complete the profile form and start planning.</td></tr>`;
+  }
+
+  init().catch(err=>console.error(err));
+</script>
 </body>
 </html>

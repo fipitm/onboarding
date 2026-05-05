@@ -82,10 +82,7 @@
   }
 
   async function showAdminReport() {
-    const data = await api("/api/report");
-    const totalUsers = data.report.length;
-    const completed = data.report.filter((item) => item.selections.length > 0).length;
-    alert(`Admin Report\n\nUsers: ${totalUsers}\nUsers with saved plans: ${completed}\n\nDetailed records are available from /api/report.`);
+    window.location.href = "/admin-dashboard.html";
   }
 
   function gatherSelections() {
@@ -177,8 +174,14 @@
     roleGuardUi();
     await loadServerData();
 
-    // Always show profile overlay for non-admin users on every login with blank fields
-    if (currentUser.role !== "admin") {
+    if (currentUser.role === "admin") {
+      // Admin: clear all selections — nothing saves for admin sessions
+      window.saveData = function () {};
+      window.doReset = ORIGINAL_RESET;
+      document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
+      if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
+    } else {
+      // Normal user: show blank profile overlay on every login
       ["responderName", "responderDesig", "responderRegion"].forEach(id => {
         const el = byId(id);
         if (el) el.value = "";

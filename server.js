@@ -297,7 +297,8 @@ app.get("/api/admin/submissions", requireAuth, requireAdmin, (req, res) => {
       account: s.username,
       displayName: s.display_name,
       assigned: sels.length,
-      fip, almarai, field
+      fip, almarai, field,
+      selections: sels
     };
   });
   return res.json({ submissions: result });

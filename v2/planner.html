@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIP Sales Program — Onboarding Planning Tool</title>
+<link rel="icon" type="image/png" href="/fip-logo.png">
+<style>
+/* ─── Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --navy:       #1B3A6B;
+  --navy-dark:  #0D2145;
+  --green:      #6BA83A;
+  --green-light:#8DC63F;
+  --fip-blue:   #4A90C4;
+  --alm-navy:   #1B3A6B;
+  --fld-amber:  #C27C0A;
+  --fld-bg:     #FFFBF0;
+  --surface:    #F4F7FB;
+  --surface-2:  #EBF0F8;
+  --border:     #D5E0EF;
+  --text-1:     #0D1E33;
+  --text-2:     #4A6080;
+  --text-3:     #8AA0BC;
+  --shadow-sm:  0 1px 4px rgba(13,33,69,.07);
+  --shadow-md:  0 4px 16px rgba(13,33,69,.10);
+  --shadow-lg:  0 12px 40px rgba(13,33,69,.15);
+  --r: 12px; --r-sm: 8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--surface);color:var(--text-1);font-size:14px;line-height:1.5;}
+
+/* ─── Loading screen ─────────────────────────────────────────────────── */
+#loadingScreen{position:fixed;inset:0;background:linear-gradient(160deg,#0D2145 0%,#1B3A6B 60%,#1E4080 100%);z-index:20000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .3s ease;}
+#loadingScreen img{height:68px;opacity:.95;}
+.ls-spin{width:36px;height:36px;border:3px solid rgba(255,255,255,.2);border-top-color:#8DC63F;border-radius:50%;animation:spin .75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ─── Profile overlay ────────────────────────────────────────────────── */
+.profile-overlay{position:fixed;inset:0;background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 60%,#1E4080 100%);z-index:10000;display:none;align-items:center;justify-content:center;}
+.profile-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:44px 48px;width:100%;max-width:420px;text-align:center;backdrop-filter:blur(12px);}
+.profile-card-logo{margin-bottom:20px;}
+.profile-card-logo img{height:68px;width:auto;}
+.profile-card h2{font-size:22px;font-weight:800;color:white;margin-bottom:6px;}
+.profile-card p{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.6;}
+.profile-field{margin-bottom:14px;text-align:left;}
+.profile-field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:5px;}
+.profile-input{width:100%;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:8px;color:white;font-size:14px;padding:11px 14px;outline:none;transition:border .2s;}
+.profile-input::placeholder{color:rgba(255,255,255,.3);}
+.profile-input:focus{border-color:var(--green-light);background:rgba(255,255,255,.15);}
+.profile-start-btn{width:100%;background:linear-gradient(135deg,var(--green),var(--green-light));color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:10px;}
+.profile-start-btn:hover{filter:brightness(1.1);box-shadow:0 6px 24px rgba(107,168,58,.35);}
+
+/* ─── Header ─────────────────────────────────────────────────────────── */
+.planner-hdr{background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 60%,#1E4080 100%);padding:0;}
+.hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:20px 36px;gap:24px;}
+.hdr-logo-box{display:flex;align-items:center;gap:14px;}
+.hdr-logo-box img{height:72px;width:auto;}
+.hdr-titles{flex:1;text-align:center;}
+.hdr-eyebrow{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--green-light);margin-bottom:6px;}
+.hdr-h1{font-size:26px;font-weight:800;color:white;line-height:1.15;}
+.hdr-sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
+.hdr-stripe{height:4px;background:linear-gradient(90deg,transparent 0%,var(--green) 25%,var(--green-light) 50%,var(--green) 75%,transparent 100%);}
+
+/* ─── Instruction banner ─────────────────────────────────────────────── */
+.instr-banner{background:linear-gradient(135deg,var(--navy-dark),#1a2f5a);border-left:5px solid var(--green-light);margin:0 36px;margin-top:16px;border-radius:var(--r);padding:18px 22px;display:flex;align-items:flex-start;gap:14px;}
+.instr-icon{font-size:22px;flex-shrink:0;}
+.instr-text h3{font-size:14px;font-weight:800;color:var(--green-light);letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase;}
+.instr-text p{font-size:12px;color:rgba(255,255,255,.75);line-height:1.75;}
+.instr-text strong{color:white;}
+.instr-pills{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.instr-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;}
+.instr-pill.fip  {background:rgba(74,144,196,.2);color:#90CDF4;border:1px solid rgba(74,144,196,.3);}
+.instr-pill.alm  {background:rgba(99,179,237,.15);color:#BEE3F8;border:1px solid rgba(99,179,237,.25);}
+.instr-pill.field{background:rgba(194,124,10,.2);color:#F6AD55;border:1px solid rgba(194,124,10,.3);}
+
+/* ─── Global progress bar ────────────────────────────────────────────── */
+.global-prog{background:white;border-bottom:1px solid var(--border);padding:10px 36px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.gp-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-3);white-space:nowrap;}
+.gp-track{flex:1;height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;}
+.gp-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green-light));border-radius:3px;transition:width .5s ease;width:0%;}
+.gp-count{font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;}
+.gp-summary-btn{background:var(--navy);color:white;border:none;border-radius:20px;padding:7px 18px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.gp-summary-btn:hover{background:var(--navy-dark);box-shadow:var(--shadow-md);}
+
+/* ─── Main layout ────────────────────────────────────────────────────── */
+.main-layout{display:flex;gap:0;min-height:calc(100vh - 148px);}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────── */
+.planner-sidebar{width:260px;flex-shrink:0;background:white;border-right:1px solid var(--border);padding:20px 0;position:sticky;top:45px;height:calc(100vh - 45px);overflow-y:auto;}
+.sidebar-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);padding:0 16px 10px;}
+.phase-nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:10px 16px;border:none;background:transparent;cursor:pointer;text-align:left;transition:all .2s;border-left:3px solid transparent;position:relative;}
+.phase-nav-btn:hover{background:var(--surface);}
+.phase-nav-btn.active{background:var(--surface-2);border-left-color:var(--ph-accent,var(--navy));}
+.phase-nav-btn.done{border-left-color:var(--green);}
+.ph-num{width:20px;height:20px;border-radius:50%;background:var(--surface-2);color:var(--text-2);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.phase-nav-btn.active .ph-num{background:var(--ph-color,var(--navy));color:white;}
+.phase-nav-btn.done   .ph-num{background:var(--green);color:white;}
+.ph-icon{font-size:15px;flex-shrink:0;}
+.ph-info{flex:1;min-width:0;}
+.ph-name{font-size:13px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+.phase-nav-btn.active .ph-name{color:var(--ph-color,var(--navy));}
+.ph-count{font-size:10px;color:var(--text-3);display:block;}
+.ph-check{font-size:13px;color:var(--green);opacity:0;transition:opacity .2s;flex-shrink:0;}
+.phase-nav-btn.done .ph-check{opacity:1;}
+.sidebar-divider{height:1px;background:var(--border);margin:12px 16px;}
+.sidebar-summary-btn{width:calc(100% - 24px);margin:0 12px;display:block;background:linear-gradient(135deg,var(--navy),#1e4080);color:white;border:none;border-radius:var(--r-sm);padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+.sidebar-summary-btn:hover{background:linear-gradient(135deg,var(--navy-dark),var(--navy));box-shadow:var(--shadow-md);}
+
+/* ─── Content area ───────────────────────────────────────────────────── */
+.content-area{flex:1;padding:24px 32px;overflow-y:auto;}
+.phase-panel{display:none;animation:fadeIn .3s ease;}
+.phase-panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* Phase header */
+.phase-panel-header{border-radius:var(--r);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:20;}
+.phase-header-left{display:flex;align-items:center;gap:14px;}
+.phase-icon-lg{font-size:32px;}
+.phase-panel-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:3px;}
+.phase-panel-title{font-size:20px;font-weight:800;color:white;line-height:1.2;}
+.phase-panel-meta{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px;}
+.mini-ring{position:relative;width:50px;height:50px;}
+.mini-svg{width:50px;height:50px;transform:rotate(-90deg);}
+.mini-arc{transition:stroke-dasharray .5s ease;}
+.mini-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;}
+.mini-label{font-size:9px;color:rgba(255,255,255,.6);text-align:center;margin-top:2px;letter-spacing:.3px;text-transform:uppercase;}
+.phase-progress-mini{display:flex;flex-direction:column;align-items:center;gap:2px;}
+
+/* Topic block */
+.topic-block{margin-bottom:18px;background:white;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
+.topic-header{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border-left:4px solid var(--ph-accent,var(--navy));border-bottom:1px solid var(--border);}
+.topic-title{font-size:13px;font-weight:700;color:var(--navy);}
+.topic-badge{background:white;border:1px solid var(--border);border-radius:12px;padding:2px 10px;font-size:10px;font-weight:700;color:var(--text-2);}
+
+/* Topic table */
+.topic-table{width:100%;border-collapse:collapse;}
+.topic-table thead th{background:var(--surface);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-3);padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
+.topic-table thead th:last-child,.topic-table thead th.opt-h{text-align:center;}
+.topic-table thead .opt-h{border-right:1px solid var(--border);}
+.topic-table thead .opt-h:last-child{border-right:none;}
+.sub-row td{border-bottom:1px solid var(--border);vertical-align:middle;border-right:1px solid var(--border);}
+.sub-row td:last-child{border-right:none;}
+.sub-row:last-child td{border-bottom:none;}
+.sub-row:hover td{background:#FAFCFF;}
+.sub-row.assigned-fip     td{background:#F0F8FF;}
+.sub-row.assigned-almarai td{background:#F0F4FF;}
+.sub-row.assigned-field   td{background:var(--fld-bg);}
+.sub-cell{padding:12px 14px;}
+.sub-name{font-size:13px;color:var(--text-1);line-height:1.5;font-weight:500;}
+.cth-cell{padding:12px 14px;text-align:center;font-size:12px;font-weight:700;color:var(--text-2);white-space:nowrap;}
+.opt-cell{padding:0;width:80px;}
+
+/* Tick-mark pill */
+.opt-label{display:flex;justify-content:center;align-items:center;padding:10px 4px;cursor:pointer;height:100%;}
+.opt-label input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+.opt-pill{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:2px solid;transition:all .18s;cursor:pointer;user-select:none;font-size:0;}
+.opt-pill::after{content:'✓';font-size:17px;font-weight:800;transition:all .18s;line-height:1;}
+/* FIP */
+.opt-pill.fip{border-color:#BEE3F8;background:#EBF8FF;}
+.opt-pill.fip::after{opacity:.25;color:var(--fip-blue);}
+.opt-label input:checked ~ .opt-pill.fip{background:var(--fip-blue);border-color:var(--fip-blue);box-shadow:0 3px 10px rgba(74,144,196,.35);}
+.opt-label input:checked ~ .opt-pill.fip::after{opacity:1;color:white;}
+/* Almarai */
+.opt-pill.almarai{border-color:#C3D4F0;background:#EBF0FF;}
+.opt-pill.almarai::after{opacity:.25;color:var(--alm-navy);}
+.opt-label input:checked ~ .opt-pill.almarai{background:var(--alm-navy);border-color:var(--alm-navy);box-shadow:0 3px 10px rgba(27,58,107,.35);}
+.opt-label input:checked ~ .opt-pill.almarai::after{opacity:1;color:white;}
+/* Field */
+.opt-pill.field{border-color:#FDE8B0;background:var(--fld-bg);}
+.opt-pill.field::after{opacity:.25;color:var(--fld-amber);}
+.opt-label input:checked ~ .opt-pill.field{background:var(--fld-amber);border-color:var(--fld-amber);box-shadow:0 3px 10px rgba(194,124,10,.35);}
+.opt-label input:checked ~ .opt-pill.field::after{opacity:1;color:white;}
+
+/* Phase footer */
+.phase-footer{background:var(--surface-2);border-top:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:0 0 var(--r) var(--r);margin-top:18px;}
+.phase-footer-left{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2);font-weight:500;}
+.status-dot{width:8px;height:8px;border-radius:50%;}
+.status-dot.pending {background:#FBD38D;}
+.status-dot.partial {background:#68D391;}
+.status-dot.complete{background:var(--green);}
+.nav-btn{padding:9px 22px;border-radius:var(--r-sm);border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.nav-btn.secondary{background:white;border:1.5px solid var(--border);color:var(--text-2);}
+.nav-btn.secondary:hover{border-color:var(--navy);color:var(--navy);}
+.nav-btn.primary{color:white;box-shadow:var(--shadow-sm);}
+.nav-btn.primary:hover{filter:brightness(1.1);box-shadow:var(--shadow-md);}
+.nav-btn.success{background:linear-gradient(135deg,var(--green),var(--green-light));color:white;box-shadow:var(--shadow-sm);}
+.nav-btn.success:hover{box-shadow:var(--shadow-md);filter:brightness(1.05);}
+.phase-footer-right{display:flex;gap:10px;}
+
+/* ─── Summary page ───────────────────────────────────────────────────── */
+.summary-page{display:none;padding:0;}
+.summary-page.active{display:block;animation:fadeIn .4s ease;}
+
+.summary-hero{background:linear-gradient(160deg,var(--navy-dark),var(--navy));padding:36px 40px;color:white;}
+.sh-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.sh-back-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:white;font-size:12px;font-weight:600;padding:8px 18px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.sh-back-btn:hover{background:rgba(255,255,255,.2);}
+.sh-title{font-size:28px;font-weight:800;}
+.sh-subtitle{font-size:13px;color:rgba(255,255,255,.6);margin-top:4px;}
+.sh-export-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.sh-btn{padding:9px 20px;border-radius:var(--r-sm);border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.sh-btn.outline{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);color:white;}
+.sh-btn.outline:hover{background:rgba(255,255,255,.2);}
+.sh-btn.csv{background:var(--green);color:white;}
+.sh-btn.csv:hover{filter:brightness(1.1);}
+.sh-btn.pdf{background:#C53030;color:white;}
+.sh-btn.pdf:hover{filter:brightness(1.1);}
+
+.kpi-grid-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:0;}
+.kpi-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:18px 20px;backdrop-filter:blur(10px);}
+.kpi-label-s{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px;}
+.kpi-value-s{font-size:36px;font-weight:800;color:white;line-height:1;margin-bottom:2px;}
+.kpi-unit{font-size:12px;font-weight:400;color:rgba(255,255,255,.5);}
+.kpi-days{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;}
+.kpi-days strong{color:rgba(255,255,255,.9);}
+.kpi-pct-s{font-size:13px;font-weight:700;margin-top:4px;}
+.kpi-bar{height:3px;border-radius:2px;margin-top:8px;transition:width .5s ease;}
+.kpi-card.fip-kpi   .kpi-bar{background:var(--fip-blue);}
+.kpi-card.almarai-kpi .kpi-bar{background:#63B3ED;}
+.kpi-card.field-kpi .kpi-bar{background:var(--fld-amber);}
+
+/* Distribution strip */
+.dist-strip{background:var(--navy-dark);padding:18px 40px;}
+.ds-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;}
+.ds-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+.ds-seg{height:100%;transition:width .6s ease;}
+.ds-seg.fip    {background:var(--fip-blue);}
+.ds-seg.almarai{background:#2B6CB0;}
+.ds-seg.field  {background:var(--fld-amber);}
+.ds-legend{display:flex;gap:20px;flex-wrap:wrap;}
+.ds-item{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.6);}
+.ds-dot{width:10px;height:10px;border-radius:50%;}
+
+/* Phase breakdown */
+.summary-body{padding:28px 40px;}
+.section-title{font-size:18px;font-weight:700;color:var(--navy-dark);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--green);display:flex;align-items:center;gap:8px;}
+.phase-breakdown-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+.pb-card{background:white;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
+.pb-card-hdr{padding:10px 14px;color:white;display:flex;align-items:center;gap:8px;}
+.pb-card-hdr-name{font-size:13px;font-weight:700;}
+.pb-card-body{padding:14px;}
+.pb-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
+.pb-row:last-child{border-bottom:none;padding-bottom:0;}
+.pb-dp{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;}
+.pb-dp-dot{width:8px;height:8px;border-radius:50%;}
+.pb-dp-val{font-size:13px;font-weight:700;color:var(--navy-dark);}
+
+/* Full detail table */
+.unassigned-alert{background:#FFF5F5;border:1px solid #FED7D7;border-radius:var(--r-sm);padding:12px 16px;font-size:13px;color:#C53030;margin-bottom:18px;display:none;font-weight:500;}
+.unassigned-alert.show{display:block;}
+.full-table-wrap{background:white;border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
+.full-table{width:100%;border-collapse:collapse;}
+.full-table thead th{background:var(--navy-dark);color:white;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 14px;text-align:left;}
+.full-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+.full-table tbody tr:last-child td{border-bottom:none;}
+.full-table tbody tr:hover td{background:var(--surface);}
+.full-table .phase-row td{background:var(--navy-dark);color:white;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 14px;}
+.full-table .total-row td{background:var(--surface-2);font-weight:700;color:var(--navy-dark);border-top:2px solid var(--border);}
+.dp-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;}
+.dp-badge.fip       {background:#EBF8FF;color:var(--fip-blue);}
+.dp-badge.almarai   {background:#EBF0FF;color:var(--alm-navy);}
+.dp-badge.field-training{background:var(--fld-bg);color:var(--fld-amber);}
+.dp-badge.unassigned{background:#FFF5F5;color:#C53030;}
+
+/* print-only section (detail table shown only on print) */
+@media screen { .print-only{display:none!important;} }
+@media print {
+  @page{margin:14mm 12mm;}
+  body>*{display:none!important;}
+  #summaryPage{display:block!important;}
+  #summaryPage .sh-back-btn,#summaryPage .sh-export-btns,
+  #summaryPage .warn-bar,.no-print,.instr-banner,.global-prog{display:none!important;}
+  .summary-hero{background:linear-gradient(160deg,#0D2145,#1B3A6B)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .dist-strip{background:#0D2145!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .kpi-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .kpi-grid-summary{grid-template-columns:repeat(4,1fr)!important;}
+  .phase-breakdown-grid{grid-template-columns:repeat(3,1fr)!important;}
+  .summary-body{padding:14px 22px;}
+  .print-only{display:block!important;page-break-before:always;break-before:page;}
+  .full-table-wrap{box-shadow:none!important;border:1px solid #ccc!important;}
+  .full-table{width:100%;border-collapse:collapse;font-size:11px;}
+  .full-table thead th{background:#1B3A6B!important;color:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:7px 10px;font-size:10px;}
+  .full-table tbody td{padding:5px 10px;border-bottom:1px solid #e0e0e0;font-size:11px;}
+  .full-table .phase-row td{background:#1B3A6B!important;color:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .full-table .total-row td{background:#f0f0f0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .dp-badge{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <img src="/fip-logo-white.png" alt="FIP">
+  <div class="ls-spin"></div>
+</div>
+
+<!-- PROFILE OVERLAY -->
+<div id="profileOverlay" class="profile-overlay">
+  <div class="profile-card">
+    <div class="profile-card-logo"><img src="/fip-logo-white.png" alt="FIP"></div>
+    <h2>FIP Sales Program</h2>
+    <p>Enter your details below to begin the Delivery Point planning tool.</p>
+    <form onsubmit="startPlanner(event)">
+      <div class="profile-field">
+        <label>Line Manager Name</label>
+        <input class="profile-input" id="responderName" type="text" placeholder="Enter full name" required>
+      </div>
+      <div class="profile-field">
+        <label>Designation</label>
+        <input class="profile-input" id="responderDesig" type="text" placeholder="Enter designation" required>
+      </div>
+      <div class="profile-field">
+        <label>Region</label>
+        <input class="profile-input" id="responderRegion" type="text" placeholder="Enter region" required>
+      </div>
+      <button type="submit" class="profile-start-btn">Start Planning →</button>
+    </form>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="planner-hdr">
+  <div class="hdr-inner">
+    <div class="hdr-logo-box">
+      <img src="/fip-logo-white.png" alt="Food Industries Polytechnic">
+    </div>
+    <div class="hdr-titles">
+      <div class="hdr-eyebrow">FIP × Almarai Partnership</div>
+      <div class="hdr-h1">FIP Sales Program</div>
+      <div class="hdr-sub">Onboarding Planning Tool — Delivery Point Assignment</div>
+    </div>
+  </div>
+  <div class="hdr-stripe"></div>
+</header>
+
+<!-- INSTRUCTION BANNER -->
+<div class="instr-banner" id="instrBanner">
+  <div class="instr-icon">📋</div>
+  <div class="instr-text">
+    <h3>Instructions to Fill</h3>
+    <p>For each sub-topic below, select <strong>one delivery point</strong> to indicate where it will be delivered.
+       All selections are <strong>automatically saved</strong>. Once all phases are complete, click <strong>View Summary &amp; Export</strong>.</p>
+    <div class="instr-pills">
+      <span class="instr-pill fip">🏛 FIP — Delivered at FIP Site</span>
+      <span class="instr-pill alm">🏢 Almarai — Delivered at Almarai Premises</span>
+      <span class="instr-pill field">🚗 Field Based Training — On-the-Job</span>
+    </div>
+  </div>
+</div>
+<div style="height:12px;"></div>
+
+<!-- GLOBAL PROGRESS BAR -->
+<div class="global-prog" id="globalProg">
+  <span class="gp-label">Overall Progress</span>
+  <div class="gp-track"><div class="gp-fill" id="gpFill"></div></div>
+  <span class="gp-count" id="gpCount">0 / 73</span>
+  <button class="gp-summary-btn" onclick="showSummaryPage()">View Summary &amp; Export →</button>
+</div>
+
+<!-- MAIN LAYOUT (planning form) -->
+<div class="main-layout" id="formView">
+  <nav class="planner-sidebar">
+    <div class="sidebar-title">Program Phases</div>
+    <div id="sidebarNav"></div>
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-summary-btn" onclick="showSummaryPage()">📊 View Summary &amp; Export</button>
+  </nav>
+  <div class="content-area" id="contentArea"></div>
+</div>
+
+<!-- SUMMARY PAGE -->
+<div class="summary-page" id="summaryPage">
+  <div class="summary-hero">
+    <div class="sh-top">
+      <div>
+        <button class="sh-back-btn" onclick="hideSummaryPage()">← Back to Planning</button>
+        <div class="sh-title" style="margin-top:10px;">Training Delivery Summary</div>
+        <div class="sh-subtitle" id="summarySubtitle">FIP Sales Program — Onboarding Plan</div>
+      </div>
+      <div class="sh-export-btns">
+        <button class="sh-btn outline" onclick="printPlan()">🖨 Print</button>
+        <button class="sh-btn csv" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+    <div class="kpi-grid-summary">
+      <div class="kpi-card">
+        <div class="kpi-label-s">Total Program</div>
+        <div class="kpi-value-s" id="sTotalCTH">0<span class="kpi-unit"> CTH</span></div>
+        <div class="kpi-days">Topics assigned: <strong id="sTotalAssigned">0</strong> / 73</div>
+      </div>
+      <div class="kpi-card fip-kpi">
+        <div class="kpi-label-s">FIP Delivery</div>
+        <div class="kpi-value-s" id="sFipCTH">0<span class="kpi-unit"> CTH</span></div>
+        <div class="kpi-days">Duration: <strong id="sFipDays">0.0</strong> days</div>
+        <div class="kpi-pct-s" id="sFipPct" style="color:#90CDF4;">—</div>
+        <div class="kpi-bar" id="sFipBar" style="width:0%"></div>
+      </div>
+      <div class="kpi-card almarai-kpi">
+        <div class="kpi-label-s">Almarai Delivery</div>
+        <div class="kpi-value-s" id="sAlmaraiCTH">0<span class="kpi-unit"> CTH</span></div>
+        <div class="kpi-days">Duration: <strong id="sAlmaraiDays">0.0</strong> days</div>
+        <div class="kpi-pct-s" id="sAlmaraiPct" style="color:#90CDF4;">—</div>
+        <div class="kpi-bar" id="sAlmaraiBar" style="width:0%"></div>
+      </div>
+      <div class="kpi-card field-kpi">
+        <div class="kpi-label-s">Field Training</div>
+        <div class="kpi-value-s" id="sFieldCTH">0<span class="kpi-unit"> CTH</span></div>
+        <div class="kpi-days">Duration: <strong id="sFieldDays">0.0</strong> days</div>
+        <div class="kpi-pct-s" id="sFieldPct" style="color:#F6AD55;">—</div>
+        <div class="kpi-bar" id="sFieldBar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dist-strip">
+    <div class="ds-label">Hours Distribution</div>
+    <div class="ds-bar">
+      <div class="ds-seg fip"     id="dsFip"     style="width:0%"></div>
+      <div class="ds-seg almarai" id="dsAlmarai" style="width:0%"></div>
+      <div class="ds-seg field"   id="dsField"   style="width:0%"></div>
+    </div>
+    <div class="ds-legend">
+      <div class="ds-item"><div class="ds-dot" style="background:var(--fip-blue)"></div> FIP — <strong id="dsFipLbl" style="color:white;">0%</strong></div>
+      <div class="ds-item"><div class="ds-dot" style="background:#2B6CB0"></div> Almarai — <strong id="dsAlmaraiLbl" style="color:white;">0%</strong></div>
+      <div class="ds-item"><div class="ds-dot" style="background:var(--fld-amber)"></div> Field Training — <strong id="dsFieldLbl" style="color:white;">0%</strong></div>
+      <div class="ds-item" style="margin-left:auto;"><span id="dsUnassignedLbl" style="color:rgba(255,255,255,.4);"></span></div>
+    </div>
+  </div>
+
+  <div class="summary-body">
+    <div class="unassigned-alert" id="unassignedAlert"></div>
+    <div class="section-title">📊 Phase Breakdown</div>
+    <div class="phase-breakdown-grid" id="phaseBreakdownGrid"></div>
+
+    <div class="print-only">
+      <div class="section-title" style="margin-top:8px;">📋 Detailed Topic Assignment</div>
+      <div class="full-table-wrap">
+        <table class="full-table">
+          <thead>
+            <tr>
+              <th style="width:150px;">Phase</th>
+              <th style="width:180px;">Main Topic</th>
+              <th>Sub Topic</th>
+              <th style="width:110px;text-align:center;">Delivery Point</th>
+              <th style="width:80px;text-align:center;">CTH</th>
+            </tr>
+          </thead>
+          <tbody id="fullDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Scripts ─────────────────────────────────────────────────────── -->
+<script>
+/* ═══ Static data ═══════════════════════════════════════════════════════ */
+const TOTAL = 73;
+const HPD   = 6;  /* hours per day */
+const SK    = 'fip_onboarding_v2';
+
+const ROWS = [{"idx":0,"phase_id":"jd","phase_name":"Job Description","topic":"JDs Briefing","sub":"Salesman-TT/MT","cth":2},{"idx":1,"phase_id":"jd","phase_name":"Job Description","topic":"JDs Briefing","sub":"Pre Seller","cth":2},{"idx":2,"phase_id":"jd","phase_name":"Job Description","topic":"JDs Briefing","sub":"Salesman-HoReCa","cth":2},{"idx":3,"phase_id":"jd","phase_name":"Job Description","topic":"JDs Briefing","sub":"Merchandizing","cth":2},{"idx":4,"phase_id":"jd","phase_name":"Job Description","topic":"JDs Briefing","sub":"Who is a Salesman?","cth":4},{"idx":5,"phase_id":"jd","phase_name":"Job Description","topic":"JDs Briefing","sub":"Difference between Salesman & Delivery Man","cth":6},{"idx":6,"phase_id":"jd","phase_name":"Job Description","topic":"JDs Briefing","sub":"Qualities of a Good Salesman","cth":6},{"idx":7,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Almarai Working Safely","cth":10},{"idx":8,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"HSS Policy","cth":10},{"idx":9,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"KSA Traffic Rules and Regulations of HTV Vehicles","cth":8},{"idx":10,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"ISO/EMS Awareness","cth":10},{"idx":11,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Defensive Driving","cth":8},{"idx":12,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Safe Manual Handling","cth":6},{"idx":13,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Acquiring of Valid Driving License","cth":6},{"idx":14,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Registration and Licensing","cth":6},{"idx":15,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Periodic Maintenance and Repair Policy","cth":8},{"idx":16,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Insurance/Accidental Measures","cth":8},{"idx":17,"phase_id":"pre","phase_name":"Pre Execution","topic":"Health & Safety","sub":"Vehicle Loading/Unloading Policy","cth":4},{"idx":18,"phase_id":"intro","phase_name":"Introduction","topic":"Agenda","sub":"Program Details","cth":0},{"idx":19,"phase_id":"intro","phase_name":"Introduction","topic":"Pre-Assessment","sub":"Criteria for Proceeding to Onboarding","cth":0},{"idx":20,"phase_id":"intro","phase_name":"Introduction","topic":"Induction Session – FIP","sub":"Brief History and Programs","cth":2},{"idx":21,"phase_id":"intro","phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Company's Vision & Objectives","cth":2},{"idx":22,"phase_id":"intro","phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Organization Structure & Hierarchy","cth":2},{"idx":23,"phase_id":"intro","phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Product Awareness","cth":8},{"idx":24,"phase_id":"intro","phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"Competitor's Landscape","cth":6},{"idx":25,"phase_id":"intro","phase_name":"Introduction","topic":"Induction Session – Almarai","sub":"International Business Acquisitions","cth":4},{"idx":26,"phase_id":"intro","phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Work Ethics and Behavioral Policies","cth":12},{"idx":27,"phase_id":"intro","phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Saudi Culture","cth":6},{"idx":28,"phase_id":"intro","phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Employment Awareness","cth":6},{"idx":29,"phase_id":"intro","phase_name":"Introduction","topic":"HR Policies & Procedures","sub":"Brief of KSA Laws, Rules & Regulations","cth":10},{"idx":30,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Cold Chain Management","cth":12},{"idx":31,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Personal Hygiene and Cleanliness","cth":12},{"idx":32,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Quality Complaints Procedures","cth":8},{"idx":33,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Date Code Policy","cth":4},{"idx":34,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Waste Management Procedures","cth":6},{"idx":35,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Emergency Preparedness and Response","cth":8},{"idx":36,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Environment Policy, Inspection and Compliance","cth":8},{"idx":37,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Handling Customer Complaints","cth":6},{"idx":38,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Product Recall","cth":8},{"idx":39,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Correct Product Handling","cth":8},{"idx":40,"phase_id":"exec","phase_name":"Execution","topic":"Quality","sub":"Product Replacement Policy","cth":4},{"idx":41,"phase_id":"exec","phase_name":"Execution","topic":"Sales KPIs","sub":"Customer Relationship","cth":6},{"idx":42,"phase_id":"exec","phase_name":"Execution","topic":"Sales KPIs","sub":"Route Optimization – Geo Mapping","cth":10},{"idx":43,"phase_id":"exec","phase_name":"Execution","topic":"Sales KPIs","sub":"Productivity and Drop Size Management","cth":10},{"idx":44,"phase_id":"exec","phase_name":"Execution","topic":"Sales KPIs","sub":"Retail Segmentations (MT/TT/HoReCa)","cth":8},{"idx":45,"phase_id":"exec","phase_name":"Execution","topic":"Sales KPIs","sub":"Impulse Buying/POSM","cth":8},{"idx":46,"phase_id":"exec","phase_name":"Execution","topic":"Sales KPIs","sub":"Buy Back, Rotation, FIFO, Hygiene, Fresh & Few Dates","cth":10},{"idx":47,"phase_id":"exec","phase_name":"Execution","topic":"Sales KPIs","sub":"Steps of Sales Call","cth":6},{"idx":48,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Daily Order Processing and Approval Process","cth":6},{"idx":49,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Usage of TAB/HHT for Report Generation (SARAS/SALES BUZZ)","cth":5},{"idx":50,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Ordering Concepts – Dairy & Bakery (POQ, SRQ, Shop Stock Capturing)","cth":6},{"idx":51,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Types of Purchase Order: Open and Close","cth":5},{"idx":52,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Error Reporting and Corrective Measures","cth":5},{"idx":53,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Ordering Concepts – Poultry","cth":5},{"idx":54,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Thermal Printer","cth":5},{"idx":55,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"E-Invoicing, ZATCA","cth":5},{"idx":56,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Asset Scanning, Location & Visibility","cth":6},{"idx":57,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Space / Shelf Management (Primary & Secondary Category)","cth":3},{"idx":58,"phase_id":"exec","phase_name":"Execution","topic":"Daily Operational and Logistical Procedures","sub":"Execution Standard","cth":4},{"idx":59,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Merchandizing Principles","cth":2},{"idx":60,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Planogram","cth":8},{"idx":61,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Distribution Excellence","cth":4},{"idx":62,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Steps of Sales Call","cth":4},{"idx":63,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Commission and Incentive Policy","cth":2},{"idx":64,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Product Expiry and Disposal","cth":6},{"idx":65,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"KYC and Customer Credit Approval Process","cth":2},{"idx":66,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Cash and Online Money Collection Policy","cth":2},{"idx":67,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Product Portfolio/SKU – Fresh & Long Life","cth":6},{"idx":68,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Trade Margins","cth":4},{"idx":69,"phase_id":"spec","phase_name":"Execution – Specialization","topic":"Specialization","sub":"Damage and Return Policy","cth":4},{"idx":70,"phase_id":"closing","phase_name":"Closing","topic":"Field & Placement","sub":"CPP Visits","cth":8},{"idx":71,"phase_id":"closing","phase_name":"Closing","topic":"Field & Placement","sub":"Route Riding","cth":24},{"idx":72,"phase_id":"closing","phase_name":"Closing","topic":"Field & Placement","sub":"Closing and Placement Announcement","cth":2}];
+
+const PHASES_DATA = [
+  {"id":"jd",     "name":"Job Description",        "rows":[[0,2],[1,2],[2,2],[3,2],[4,4],[5,6],[6,6]],       "total":24},
+  {"id":"pre",    "name":"Pre Execution",           "rows":[[7,10],[8,10],[9,8],[10,10],[11,8],[12,6],[13,6],[14,6],[15,8],[16,8],[17,4]], "total":84},
+  {"id":"intro",  "name":"Introduction",            "rows":[[18,0],[19,0],[20,2],[21,2],[22,2],[23,8],[24,6],[25,4],[26,12],[27,6],[28,6],[29,10]], "total":58},
+  {"id":"exec",   "name":"Execution",               "rows":[[30,12],[31,12],[32,8],[33,4],[34,6],[35,8],[36,8],[37,6],[38,8],[39,8],[40,4],[41,6],[42,10],[43,10],[44,8],[45,8],[46,10],[47,6],[48,6],[49,5],[50,6],[51,5],[52,5],[53,5],[54,5],[55,5],[56,6],[57,3],[58,4]], "total":197},
+  {"id":"spec",   "name":"Execution – Specialization","rows":[[59,2],[60,8],[61,4],[62,4],[63,2],[64,6],[65,2],[66,2],[67,6],[68,4],[69,4]], "total":44},
+  {"id":"closing","name":"Closing",                 "rows":[[70,8],[71,24],[72,2]],                             "total":34}
+];
+
+const PHASE_COLORS = {
+  jd:      {color:"#1B3A6B",accent:"#4A90C4",icon:"👤"},
+  pre:     {color:"#1B4D3E",accent:"#38A169",icon:"🛡️"},
+  intro:   {color:"#2C5282",accent:"#63B3ED",icon:"🏢"},
+  exec:    {color:"#44337A",accent:"#9F7AEA",icon:"⚙️"},
+  spec:    {color:"#7B341E",accent:"#ED8936",icon:"🎯"},
+  closing: {color:"#276749",accent:"#68D391",icon:"🏁"}
+};
+
+/* ═══ DOM builder (runs on DOMContentLoaded) ════════════════════════════ */
+function buildSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  PHASES_DATA.forEach((phase, i) => {
+    const pc = PHASE_COLORS[phase.id];
+    const btn = document.createElement('button');
+    btn.className = 'phase-nav-btn' + (i === 0 ? ' active' : '');
+    btn.dataset.phase = phase.id;
+    btn.style.cssText = `--ph-color:${pc.color};--ph-accent:${pc.accent}`;
+    btn.setAttribute('onclick', `sidebarGoToPhase('${phase.id}')`);
+    btn.innerHTML = `
+      <span class="ph-num">${i + 1}</span>
+      <span class="ph-icon">${pc.icon}</span>
+      <span class="ph-info">
+        <span class="ph-name">${phase.name}</span>
+        <span class="ph-count">${phase.rows.length} topics</span>
+      </span>
+      <span class="ph-check" id="check_${phase.id}">✓</span>`;
+    nav.appendChild(btn);
+  });
+}
+
+function buildPhasePanels() {
+  const area = document.getElementById('contentArea');
+  PHASES_DATA.forEach((phase, phaseIdx) => {
+    const pc = PHASE_COLORS[phase.id];
+    const phaseRows = ROWS.filter(r => r.phase_id === phase.id);
+    const topics = [...new Set(phaseRows.map(r => r.topic))];
+
+    const topicBlocksHtml = topics.map(topic => {
+      const tRows = phaseRows.filter(r => r.topic === topic);
+      const tCTH  = tRows.reduce((s, r) => s + r.cth, 0);
+      const rowsHtml = tRows.map(r => `
+        <tr class="sub-row" data-row="${r.idx}" data-phase="${phase.id}">
+          <td class="sub-cell"><span class="sub-name">${r.sub}</span></td>
+          <td class="cth-cell">${r.cth > 0 ? r.cth + ' hrs' : '—'}</td>
+          <td class="opt-cell">
+            <label class="opt-label">
+              <input type="radio" name="row_${r.idx}" value="FIP" onchange="updateRow(${r.idx},'${phase.id}')">
+              <span class="opt-pill fip"></span>
+            </label>
+          </td>
+          <td class="opt-cell">
+            <label class="opt-label">
+              <input type="radio" name="row_${r.idx}" value="Almarai" onchange="updateRow(${r.idx},'${phase.id}')">
+              <span class="opt-pill almarai"></span>
+            </label>
+          </td>
+          <td class="opt-cell">
+            <label class="opt-label">
+              <input type="radio" name="row_${r.idx}" value="Field Training" onchange="updateRow(${r.idx},'${phase.id}')">
+              <span class="opt-pill field"></span>
+            </label>
+          </td>
+        </tr>`).join('');
+
+      return `<div class="topic-block">
+        <div class="topic-header" style="--ph-accent:${pc.accent}">
+          <span class="topic-title">${topic}</span>
+          ${tCTH > 0 ? `<span class="topic-badge">${tCTH} CTH</span>` : ''}
+        </div>
+        <table class="topic-table">
+          <thead>
+            <tr>
+              <th>Sub-Topic</th>
+              <th style="width:70px;text-align:center;">CTH</th>
+              <th class="opt-h" style="width:82px;color:#4A90C4;">FIP</th>
+              <th class="opt-h" style="width:82px;color:#1B3A6B;">Almarai</th>
+              <th class="opt-h" style="width:82px;color:#C27C0A;">Field</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>`;
+    }).join('');
+
+    const prevPhase = phaseIdx > 0 ? PHASES_DATA[phaseIdx - 1] : null;
+    const nextPhase = phaseIdx < PHASES_DATA.length - 1 ? PHASES_DATA[phaseIdx + 1] : null;
+
+    const div = document.createElement('div');
+    div.className = 'phase-panel' + (phaseIdx === 0 ? ' active' : '');
+    div.id = `phase_${phase.id}`;
+    div.innerHTML = `
+      <div class="phase-panel-header" style="background:linear-gradient(135deg,${pc.color},rgba(255,255,255,0.05));">
+        <div class="phase-header-left">
+          <span class="phase-icon-lg">${pc.icon}</span>
+          <div>
+            <div class="phase-panel-label">Phase ${phaseIdx + 1} of 6</div>
+            <div class="phase-panel-title">${phase.name}</div>
+            <div class="phase-panel-meta">${phaseRows.length} sub-topics · ${phase.total} CTH</div>
+          </div>
+        </div>
+        <div class="phase-progress-mini">
+          <div class="mini-ring">
+            <svg class="mini-svg" viewBox="0 0 54 54">
+              <circle cx="27" cy="27" r="23" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3"/>
+              <circle class="mini-arc" id="arc_${phase.id}" cx="27" cy="27" r="23" fill="none"
+                stroke="${pc.accent}" stroke-width="3" stroke-linecap="round"
+                stroke-dasharray="0,100" pathLength="100"/>
+            </svg>
+            <span class="mini-pct" id="pct_${phase.id}">0%</span>
+          </div>
+          <span class="mini-label">Progress</span>
+        </div>
+      </div>
+      ${topicBlocksHtml}
+      <div class="phase-footer">
+        <div class="phase-footer-left" id="footer_status_${phase.id}">
+          <div class="status-dot pending"></div>
+          <span>0 of ${phaseRows.length} assigned</span>
+        </div>
+        <div class="phase-footer-right">
+          ${prevPhase
+            ? `<button class="nav-btn secondary" onclick="goToPhase('${prevPhase.id}')">← ${prevPhase.name}</button>`
+            : ''}
+          ${nextPhase
+            ? `<button class="nav-btn primary" style="background:${pc.color};" onclick="validatePhaseAndGo('${phase.id}','${nextPhase.id}')">${nextPhase.name} →</button>`
+            : `<button class="nav-btn success" onclick="showSummaryPage()">View Summary &amp; Export →</button>`}
+        </div>
+      </div>`;
+    area.appendChild(div);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildSidebar();
+  buildPhasePanels();
+});
+
+/* ═══ Selection helpers ═════════════════════════════════════════════════ */
+function getSelections() {
+  const s = {};
+  for (let i = 0; i < TOTAL; i++) {
+    const c = document.querySelector(`input[name="row_${i}"]:checked`);
+    s[i] = c ? c.value : null;
+  }
+  return s;
+}
+
+function saveData() {
+  const data = {
+    sel:    getSelections(),
+    name:   (document.getElementById('responderName')   || {}).value || '',
+    desig:  (document.getElementById('responderDesig')  || {}).value || '',
+    region: (document.getElementById('responderRegion') || {}).value || ''
+  };
+  try { localStorage.setItem(SK, JSON.stringify(data)); } catch (_) {}
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(SK);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.name   && document.getElementById('responderName'))   document.getElementById('responderName').value   = data.name;
+    if (data.desig  && document.getElementById('responderDesig'))  document.getElementById('responderDesig').value  = data.desig;
+    if (data.region && document.getElementById('responderRegion')) document.getElementById('responderRegion').value = data.region;
+    if (data.sel) {
+      Object.entries(data.sel).forEach(([i, v]) => {
+        if (v) {
+          const inp = document.querySelector(`input[name="row_${i}"][value="${v}"]`);
+          if (inp) inp.checked = true;
+        }
+      });
+    }
+  } catch (_) {}
+}
+
+/* ═══ Progress tracking ═════════════════════════════════════════════════ */
+function updateRow(idx, phaseId) {
+  const row = document.querySelector(`.sub-row[data-row="${idx}"]`);
+  if (row) {
+    row.classList.remove('assigned-fip','assigned-almarai','assigned-field');
+    const c = document.querySelector(`input[name="row_${idx}"]:checked`);
+    if (c) {
+      if (c.value === 'FIP')            row.classList.add('assigned-fip');
+      else if (c.value === 'Almarai')   row.classList.add('assigned-almarai');
+      else                              row.classList.add('assigned-field');
+    }
+  }
+  saveData();
+  updateGlobal();
+  updatePhaseProgress(phaseId);
+}
+
+function updateGlobal() {
+  const sels = getSelections();
+  const assigned = Object.values(sels).filter(v => v !== null).length;
+  const pct = assigned / TOTAL * 100;
+  document.getElementById('gpFill').style.width = pct + '%';
+  document.getElementById('gpCount').textContent = `${assigned} / ${TOTAL} assigned`;
+}
+
+function updatePhaseProgress(phaseId) {
+  const pd = PHASES_DATA.find(p => p.id === phaseId);
+  if (!pd) return;
+  const done = pd.rows.filter(([idx]) => document.querySelector(`input[name="row_${idx}"]:checked`)).length;
+  const pct  = Math.round(done / pd.rows.length * 100);
+  const arcEl = document.getElementById(`arc_${phaseId}`);
+  const pctEl = document.getElementById(`pct_${phaseId}`);
+  if (arcEl) arcEl.setAttribute('stroke-dasharray', `${pct},${100 - pct}`);
+  if (pctEl) pctEl.textContent = pct + '%';
+  const btn = document.querySelector(`.phase-nav-btn[data-phase="${phaseId}"]`);
+  if (btn) btn.classList.toggle('done', done === pd.rows.length);
+  const footerEl = document.getElementById(`footer_status_${phaseId}`);
+  if (footerEl) {
+    footerEl.querySelector('.status-dot').className =
+      'status-dot ' + (done === 0 ? 'pending' : done === pd.rows.length ? 'complete' : 'partial');
+    footerEl.querySelector('span').textContent = `${done} of ${pd.rows.length} assigned`;
+  }
+}
+
+function applyRowHighlights() {
+  const sels = getSelections();
+  ROWS.forEach(r => {
+    const row = document.querySelector(`.sub-row[data-row="${r.idx}"]`);
+    if (!row) return;
+    row.classList.remove('assigned-fip','assigned-almarai','assigned-field');
+    if (sels[r.idx] === 'FIP')            row.classList.add('assigned-fip');
+    else if (sels[r.idx] === 'Almarai')   row.classList.add('assigned-almarai');
+    else if (sels[r.idx] === 'Field Training') row.classList.add('assigned-field');
+  });
+}
+
+/* ═══ Navigation ════════════════════════════════════════════════════════ */
+const PHASE_ORDER = ['jd','pre','intro','exec','spec','closing'];
+
+function goToPhase(phaseId) {
+  document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.phase-nav-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('phase_' + phaseId);
+  const btn   = document.querySelector(`.phase-nav-btn[data-phase="${phaseId}"]`);
+  if (panel) panel.classList.add('active');
+  if (btn)   btn.classList.add('active');
+  document.getElementById('contentArea').scrollTop = 0;
+}
+
+function sidebarGoToPhase(targetId) {
+  const tidx = PHASE_ORDER.indexOf(targetId);
+  const activeBtn = document.querySelector('.phase-nav-btn.active');
+  const cidx = activeBtn ? PHASE_ORDER.indexOf(activeBtn.dataset.phase) : 0;
+  if (tidx <= cidx) { goToPhase(targetId); return; }
+  const sels = getSelections();
+  for (let i = 0; i < tidx; i++) {
+    const pd = PHASES_DATA.find(p => p.id === PHASE_ORDER[i]);
+    if (pd) {
+      const unassigned = pd.rows.filter(([idx]) => !sels[idx]).length;
+      if (unassigned > 0) { showIncompleteModal(unassigned, pd.name); return; }
+    }
+  }
+  goToPhase(targetId);
+}
+
+function validatePhaseAndGo(fromId, toId) {
+  const pd = PHASES_DATA.find(p => p.id === fromId);
+  if (!pd) { goToPhase(toId); return; }
+  const sels = getSelections();
+  const unassigned = pd.rows.filter(([idx]) => !sels[idx]).length;
+  if (unassigned === 0) { goToPhase(toId); return; }
+  showIncompleteModal(unassigned, pd.name);
+}
+
+function showIncompleteModal(count, phaseName) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  const bx = document.createElement('div');
+  bx.style.cssText = 'background:#fff;border-radius:14px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;';
+  bx.innerHTML =
+    '<div style="font-size:44px;margin-bottom:12px;">⚠️</div>' +
+    '<h2 style="color:#0D2145;font-size:18px;margin:0 0 10px;">Phase Incomplete</h2>' +
+    '<p style="color:#555;font-size:14px;margin:0 0 22px;line-height:1.6;">' +
+      '<strong style="color:#C53030;font-size:26px;">' + count + '</strong> sub-topic' + (count > 1 ? 's' : '') +
+      ' in <strong>' + phaseName + '</strong> ' + (count > 1 ? 'have' : 'has') + ' not been assigned.<br><br>' +
+      'Please complete all selections before moving to the next phase.' +
+    '</p>' +
+    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" id="incompleteOk">OK, Complete Now</button>';
+  ov.appendChild(bx);
+  document.body.appendChild(ov);
+  ov.querySelector('#incompleteOk').addEventListener('click', () => ov.remove());
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+}
+
+/* ═══ Summary page ══════════════════════════════════════════════════════ */
+function showSummaryPage() {
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('summaryPage').classList.add('active');
+  buildSummary();
+}
+
+function hideSummaryPage() {
+  document.getElementById('summaryPage').classList.remove('active');
+  document.getElementById('formView').style.display = 'flex';
+}
+
+function buildSummary() {
+  const sels = getSelections();
+  let fipH = 0, almH = 0, fldH = 0, assigned = 0;
+  ROWS.forEach(r => {
+    const v = sels[r.idx];
+    if (v) {
+      assigned++;
+      if (v === 'FIP')            fipH += r.cth;
+      else if (v === 'Almarai')   almH += r.cth;
+      else                        fldH += r.cth;
+    }
+  });
+  const totalH = fipH + almH + fldH;
+  const unassigned = TOTAL - assigned;
+
+  /* KPI cards */
+  document.getElementById('sTotalCTH').innerHTML     = `${totalH}<span class="kpi-unit"> CTH</span>`;
+  document.getElementById('sTotalAssigned').textContent = assigned;
+  document.getElementById('sFipCTH').innerHTML       = `${fipH}<span class="kpi-unit"> CTH</span>`;
+  document.getElementById('sFipDays').textContent    = (fipH / HPD).toFixed(1);
+  document.getElementById('sAlmaraiCTH').innerHTML   = `${almH}<span class="kpi-unit"> CTH</span>`;
+  document.getElementById('sAlmaraiDays').textContent = (almH / HPD).toFixed(1);
+  document.getElementById('sFieldCTH').innerHTML     = `${fldH}<span class="kpi-unit"> CTH</span>`;
+  document.getElementById('sFieldDays').textContent  = (fldH / HPD).toFixed(1);
+
+  const pFip = totalH ? Math.round(fipH / totalH * 100) : 0;
+  const pAlm = totalH ? Math.round(almH / totalH * 100) : 0;
+  const pFld = totalH ? 100 - pFip - pAlm : 0;
+
+  document.getElementById('sFipPct').textContent    = `${pFip}% of total`;
+  document.getElementById('sFipBar').style.width    = pFip + '%';
+  document.getElementById('sAlmaraiPct').textContent = `${pAlm}% of total`;
+  document.getElementById('sAlmaraiBar').style.width = pAlm + '%';
+  document.getElementById('sFieldPct').textContent  = `${pFld}% of total`;
+  document.getElementById('sFieldBar').style.width  = pFld + '%';
+
+  /* Distribution strip */
+  document.getElementById('dsFip').style.width     = pFip + '%';
+  document.getElementById('dsAlmarai').style.width = pAlm + '%';
+  document.getElementById('dsField').style.width   = pFld + '%';
+  document.getElementById('dsFipLbl').textContent     = pFip + '%';
+  document.getElementById('dsAlmaraiLbl').textContent = pAlm + '%';
+  document.getElementById('dsFieldLbl').textContent   = pFld + '%';
+  document.getElementById('dsUnassignedLbl').textContent = unassigned > 0 ? `${unassigned} unassigned` : '';
+
+  /* Unassigned alert */
+  const alertEl = document.getElementById('unassignedAlert');
+  if (unassigned > 0) {
+    alertEl.textContent = `⚠️ ${unassigned} sub-topic${unassigned > 1 ? 's have' : ' has'} not been assigned a delivery point.`;
+    alertEl.classList.add('show');
+  } else {
+    alertEl.classList.remove('show');
+  }
+
+  /* Phase breakdown cards */
+  document.getElementById('phaseBreakdownGrid').innerHTML = PHASES_DATA.map(phase => {
+    const pc = PHASE_COLORS[phase.id];
+    const pr = ROWS.filter(r => r.phase_id === phase.id);
+    let pfip = 0, palm = 0, pfield = 0;
+    pr.forEach(r => {
+      const v = sels[r.idx];
+      if (v === 'FIP')          pfip  += r.cth;
+      else if (v === 'Almarai') palm  += r.cth;
+      else if (v)               pfield += r.cth;
+    });
+    const ptotal = pfip + palm + pfield;
+    return `<div class="pb-card">
+      <div class="pb-card-hdr" style="background:${pc.color};">
+        <span>${pc.icon}</span>
+        <span class="pb-card-hdr-name">${phase.name}</span>
+      </div>
+      <div class="pb-card-body">
+        <div class="pb-row">
+          <div class="pb-dp"><div class="pb-dp-dot" style="background:#4A90C4"></div> FIP</div>
+          <div class="pb-dp-val">${pfip} CTH <span style="color:var(--text-3);font-size:11px;">(${(pfip/HPD).toFixed(1)}d)</span></div>
+        </div>
+        <div class="pb-row">
+          <div class="pb-dp"><div class="pb-dp-dot" style="background:#1B3A6B"></div> Almarai</div>
+          <div class="pb-dp-val">${palm} CTH <span style="color:var(--text-3);font-size:11px;">(${(palm/HPD).toFixed(1)}d)</span></div>
+        </div>
+        <div class="pb-row">
+          <div class="pb-dp"><div class="pb-dp-dot" style="background:#C27C0A"></div> Field</div>
+          <div class="pb-dp-val">${pfield} CTH <span style="color:var(--text-3);font-size:11px;">(${(pfield/HPD).toFixed(1)}d)</span></div>
+        </div>
+        <div class="pb-row" style="background:var(--surface-2);margin:0 -14px -14px;padding:8px 14px;border-bottom:none;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-2);">Phase Total</div>
+          <div class="pb-dp-val">${ptotal} CTH</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  /* Full detail table (print only) */
+  let lastPhase = '', totalCTH = 0, tbody = '';
+  ROWS.forEach(r => {
+    if (r.phase_name !== lastPhase) {
+      lastPhase = r.phase_name;
+      const pc = PHASE_COLORS[r.phase_id];
+      tbody += `<tr class="phase-row"><td colspan="5">${pc.icon} ${r.phase_name}</td></tr>`;
+    }
+    const v = sels[r.idx];
+    const dpClass = v ? v.toLowerCase().replace(' ', '-') : 'unassigned';
+    totalCTH += r.cth;
+    tbody += `<tr>
+      <td style="color:var(--text-3);font-size:11px;">${r.phase_name}</td>
+      <td>${r.topic}</td><td>${r.sub}</td>
+      <td style="text-align:center;"><span class="dp-badge ${dpClass}">${v || 'Unassigned'}</span></td>
+      <td style="text-align:center;font-weight:700;">${r.cth > 0 ? r.cth + ' hrs' : '—'}</td>
+    </tr>`;
+  });
+  tbody += `<tr class="total-row"><td colspan="3">Program Total</td><td></td><td style="text-align:center;">${totalCTH} hrs</td></tr>`;
+  document.getElementById('fullDetailBody').innerHTML = tbody;
+}
+
+/* ═══ Export / print ════════════════════════════════════════════════════ */
+function checkAllAssigned() {
+  const sels = getSelections();
+  const unassigned = ROWS.filter(r => !sels[r.idx]).length;
+  if (unassigned === 0) return true;
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  const bx = document.createElement('div');
+  bx.style.cssText = 'background:#fff;border-radius:14px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;';
+  bx.innerHTML =
+    '<div style="font-size:48px;margin-bottom:12px;">⚠️</div>' +
+    '<h2 style="color:#0D2145;font-size:18px;margin:0 0 10px;">Incomplete Selections</h2>' +
+    '<p style="color:#555;font-size:14px;margin:0 0 22px;line-height:1.6;">' +
+      '<strong style="color:#C53030;font-size:26px;">' + unassigned + '</strong> sub-topic' + (unassigned > 1 ? 's have' : ' has') +
+      ' not been assigned a delivery point.<br><br>Please complete all assignments before exporting.' +
+    '</p>' +
+    '<button style="background:#0D2145;color:white;border:none;border-radius:8px;padding:11px 30px;font-size:14px;cursor:pointer;font-weight:600;" id="chkOkBtn">OK, Complete Now</button>';
+  ov.appendChild(bx);
+  document.body.appendChild(ov);
+  ov.querySelector('#chkOkBtn').addEventListener('click', () => ov.remove());
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  return false;
+}
+
+function printPlan() {
+  if (!checkAllAssigned()) return;
+  window.print();
+}
+
+function exportCSV() {
+  if (!checkAllAssigned()) return;
+  try { buildSummary(); } catch (_) {}
+  const sels = getSelections();
+  let csv = 'Phase,Main Topic,Sub Topic,Delivery Point,CTH (hrs)\n';
+  ROWS.forEach(r => {
+    const v = sels[r.idx] || 'Unassigned';
+    csv += `"${r.phase_name}","${r.topic}","${r.sub}","${v}",${r.cth}\n`;
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `FIP_Onboarding_Plan_${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+}
+
+/* ═══ Reset ══════════════════════════════════════════════════════════════ */
+function doReset() {
+  for (let i = 0; i < TOTAL; i++) {
+    document.querySelectorAll(`input[name="row_${i}"]`).forEach(inp => inp.checked = false);
+    const row = document.querySelector(`.sub-row[data-row="${i}"]`);
+    if (row) row.classList.remove('assigned-fip','assigned-almarai','assigned-field');
+  }
+  saveData();
+  updateGlobal();
+  PHASES_DATA.forEach(p => updatePhaseProgress(p.id));
+}
+
+function resetAll() {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  const bx = document.createElement('div');
+  bx.style.cssText = 'background:#fff;border-radius:14px;padding:32px 36px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;';
+  bx.innerHTML =
+    '<div style="font-size:40px;margin-bottom:12px;">↺</div>' +
+    '<h2 style="color:#0D2145;font-size:18px;margin:0 0 10px;">Reset All Selections?</h2>' +
+    '<p style="color:#555;font-size:14px;margin:0 0 22px;line-height:1.6;">This will clear all 73 delivery point assignments. This cannot be undone.</p>' +
+    '<div style="display:flex;gap:10px;justify-content:center;">' +
+      '<button id="resetConfirm" style="background:#C53030;color:white;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer;font-weight:600;">Reset All</button>' +
+      '<button id="resetCancel" style="background:#f1f5f9;color:#333;border:1px solid #ddd;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer;font-weight:600;">Cancel</button>' +
+    '</div>';
+  ov.appendChild(bx);
+  document.body.appendChild(ov);
+  bx.querySelector('#resetConfirm').addEventListener('click', () => { ov.remove(); doReset(); });
+  bx.querySelector('#resetCancel').addEventListener('click',  () => ov.remove());
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+}
+
+/* DEV ONLY — remove before go-live */
+function devRandomFill() {
+  const values = ['FIP','Almarai','Field Training'];
+  for (let i = 0; i < TOTAL; i++) {
+    const val = values[Math.floor(Math.random() * 3)];
+    const inp = document.querySelector(`input[name="row_${i}"][value="${val}"]`);
+    if (!inp) continue;
+    inp.checked = true;
+    const row = document.querySelector(`.sub-row[data-row="${i}"]`);
+    const phase = row ? row.dataset.phase : 'jd';
+    updateRow(i, phase);
+  }
+}
+
+/* startPlanner — overridden by auth-bridge.js for server submission */
+function startPlanner(e) {
+  e.preventDefault();
+  saveData();
+  document.getElementById('profileOverlay').style.display = 'none';
+}
+
+/* ═══ Window load ════════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  loadData();
+  applyRowHighlights();
+  updateGlobal();
+  PHASES_DATA.forEach(p => updatePhaseProgress(p.id));
+});
+</script>
+
+<!-- Auth + persistence bridge (loads after planner scripts, overrides them) -->
+<script src="/v2/assets/auth-bridge.js"></script>
+</body>
+</html>

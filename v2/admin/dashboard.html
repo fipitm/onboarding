@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Admin Dashboard — FIP Onboarding</title>
+  <link rel="icon" type="image/png" href="/fip-logo.png">
+  <link rel="stylesheet" href="/v2/assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* Dashboard-specific overrides */
+    #sec-planner { margin: -20px -24px; height: calc(100vh - var(--header-h)); overflow: hidden; }
+    #plannerIframe { width: 100%; height: 100%; border: none; display: block; }
+
+    .charts-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px; }
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px;
+    }
+    .chart-card h3 { font-size: 13px; font-weight: 700; color: var(--text1); margin-bottom: 14px; }
+
+    .m-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 18px; }
+    .m-kpi {
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .m-kpi .ml { font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 4px; }
+    .m-kpi .mv { font-size: 22px; font-weight: 800; line-height: 1; }
+    .m-kpi .ms { font-size: 10px; margin-top: 3px; color: var(--text3); }
+    .m-kpi.fip { background: #eff6ff; color: var(--fip); }
+    .m-kpi.alm { background: #eff2ff; color: var(--alm); }
+    .m-kpi.fld { background: #fffbeb; color: var(--fld); }
+    .m-kpi.tot { background: #f8fafc; color: var(--text1); }
+
+    .ph-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .ph-table th {
+      color: var(--text3);
+      font-size: 10px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+    .ph-table td { padding: 9px 10px; border-bottom: 1px solid #f3f5f9; }
+    .ph-table tr:last-child td { border-bottom: none; }
+
+    .nm-cell { display: flex; align-items: center; gap: 8px; }
+    .empty { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
+    .mu { color: var(--text2); }
+
+    /* action buttons inside table */
+    .btn-view { background: var(--primary); color: #fff; border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-pdf  { background: var(--danger);  color: #fff; border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-csv-s{ background: var(--success); color: #fff; border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .btn-view:hover,.btn-pdf:hover,.btn-csv-s:hover { opacity: .82; }
+
+    /* modal footer */
+    .modal-foot { display: flex; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--border); }
+    .btn-modal { border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .btn-modal.pdf { background: var(--danger); color: #fff; }
+    .btn-modal.csv { background: var(--success); color: #fff; }
+    .btn-modal:hover { opacity: .85; }
+
+    /* link-style button */
+    .link-btn { font-size: 12px; color: var(--primary); font-weight: 600; cursor: pointer; background: none; border: none; padding: 0; }
+    .link-btn:hover { text-decoration: underline; }
+
+    /* export btn */
+    .export-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .export-btn:hover { opacity: .85; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo-wrap"><img src="/fip-logo-white.png" alt="FIP"></div>
+      <div>
+        <div class="sb-brand-name">FIP Sales Program</div>
+        <div class="sb-brand-sub">Onboarding Planner</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-sect">Menu</div>
+      <a class="nav-item active" data-section="dashboard" href="#dashboard" onclick="showSection('dashboard',this);return false;">
+        <span class="ni">📊</span> Dashboard
+      </a>
+      <a class="nav-item" data-section="analytics" href="#analytics" onclick="showSection('analytics',this);return false;">
+        <span class="ni">📈</span> Analytics
+      </a>
+      <a class="nav-item" data-section="submissions" href="#submissions" onclick="showSection('submissions',this);return false;">
+        <span class="ni">📋</span> Submissions
+        <span class="nav-badge" id="sbBadge">—</span>
+      </a>
+      <a class="nav-item" data-section="planner" href="#planner" onclick="showSection('planner',this);return false;">
+        <span class="ni">🗂</span> Planner View
+      </a>
+      <div class="sb-sect">Admin</div>
+      <a class="nav-item" href="/v2/admin/users.html">
+        <span class="ni">👥</span> Manage Users
+      </a>
+    </nav>
+
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-av" id="adminAvatar">A</div>
+        <div>
+          <div class="sb-uname" id="adminName">Admin</div>
+          <div class="sb-urole">Administrator</div>
+        </div>
+      </div>
+      <button class="sb-logout" id="logoutBtn">
+        <span style="font-size:14px;">↩</span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="main-hdr">
+      <div class="mhdr-left">
+        <span class="mhdr-crumb">Admin</span>
+        <span class="mhdr-sep">/</span>
+        <span class="mhdr-title" id="pageTitle">Dashboard</span>
+        <span class="mhdr-pill" id="pageTag" style="display:none"></span>
+      </div>
+    </header>
+
+    <div class="main-content">
+
+      <!-- DASHBOARD -->
+      <section class="section active" id="sec-dashboard">
+        <div class="kpi-grid">
+          <div class="kpi k-tot">
+            <div class="kpi-stripe"></div>
+            <div class="kpi-label">Total Submissions</div>
+            <div class="kpi-value" id="kSubs">—</div>
+            <div class="kpi-sub">Individual plans</div>
+          </div>
+          <div class="kpi k-fip">
+            <div class="kpi-stripe"></div>
+            <div class="kpi-label">FIP Premises</div>
+            <div class="kpi-value" id="kFip">—</div>
+            <div class="kpi-sub" id="kFipPct">CTH</div>
+          </div>
+          <div class="kpi k-alm">
+            <div class="kpi-stripe"></div>
+            <div class="kpi-label">Almarai Premises</div>
+            <div class="kpi-value" id="kAlm">—</div>
+            <div class="kpi-sub" id="kAlmPct">CTH</div>
+          </div>
+          <div class="kpi k-fld">
+            <div class="kpi-stripe"></div>
+            <div class="kpi-label">Field Training</div>
+            <div class="kpi-value" id="kFld">—</div>
+            <div class="kpi-sub" id="kFldPct">CTH</div>
+          </div>
+          <div class="kpi k-cth">
+            <div class="kpi-stripe"></div>
+            <div class="kpi-label">Total Program CTH</div>
+            <div class="kpi-value" id="kTot">—</div>
+            <div class="kpi-sub">All submissions</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <div>
+              <div class="card-title">CTH Distribution</div>
+              <div class="card-sub">All submissions combined</div>
+            </div>
+          </div>
+          <div class="dist-bar">
+            <div class="dseg f" id="segFip" style="width:0%"></div>
+            <div class="dseg a" id="segAlm" style="width:0%"></div>
+            <div class="dseg fl" id="segFld" style="width:0%"></div>
+          </div>
+          <div class="dist-legend">
+            <div class="dleg-item"><div class="dleg-dot" style="background:var(--fip)"></div><span id="lFip">FIP</span></div>
+            <div class="dleg-item"><div class="dleg-dot" style="background:var(--alm)"></div><span id="lAlm">Almarai</span></div>
+            <div class="dleg-item"><div class="dleg-dot" style="background:var(--fld)"></div><span id="lFld">Field</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <div><div class="card-title">Recent Submissions</div></div>
+            <button class="link-btn" onclick="showSection('submissions',document.querySelector('[data-section=submissions]'))">View all →</button>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th><th>Name</th><th>Designation</th><th>Region</th>
+                  <th>Account</th><th>Submitted</th><th>Total CTH</th>
+                </tr>
+              </thead>
+              <tbody id="recentTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="section" id="sec-analytics">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Delivery Distribution</h3>
+            <canvas id="chartDist"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>CTH per Phase — All Submissions</h3>
+            <canvas id="chartPhase"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Phase Breakdown</div></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Phase</th>
+                  <th style="color:var(--fip)">FIP CTH</th>
+                  <th style="color:var(--alm)">Almarai CTH</th>
+                  <th style="color:var(--fld)">Field CTH</th>
+                  <th>Phase Total</th>
+                  <th>% of Program</th>
+                </tr>
+              </thead>
+              <tbody id="phaseSummaryBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUBMISSIONS -->
+      <section class="section" id="sec-submissions">
+        <div class="card">
+          <div class="card-hdr">
+            <div>
+              <div class="card-title">All Submissions</div>
+              <div class="card-sub" id="subCount"></div>
+            </div>
+            <button class="export-btn" onclick="exportAllCSV()">⬇ Export All CSV</button>
+          </div>
+          <div class="tbl-bar">
+            <input class="tbl-search" id="searchInput" placeholder="Search name, designation, region or account…" oninput="renderTable()">
+            <span class="tbl-count" id="filterCount"></span>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th>
+                  <th>Submitted</th><th>Topics</th>
+                  <th style="color:var(--fip)">FIP</th>
+                  <th style="color:var(--alm)">Almarai</th>
+                  <th style="color:var(--fld)">Field</th>
+                  <th>Total CTH</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="subTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLANNER IFRAME -->
+      <section class="section" id="sec-planner">
+        <iframe id="plannerIframe" src="" title="Planner View"></iframe>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay hidden" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal modal-lg">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="mName">—</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px;" id="mMeta">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="m-kpis">
+        <div class="m-kpi fip"><div class="ml">FIP</div><div class="mv" id="mFip">0</div><div class="ms">CTH</div></div>
+        <div class="m-kpi alm"><div class="ml">Almarai</div><div class="mv" id="mAlm">0</div><div class="ms">CTH</div></div>
+        <div class="m-kpi fld"><div class="ml">Field</div><div class="mv" id="mFld">0</div><div class="ms">CTH</div></div>
+        <div class="m-kpi tot">
+          <div class="ml">Total</div>
+          <div class="mv" id="mTot">0</div>
+          <div class="ms"><span id="mTopics">0</span>/73 topics</div>
+        </div>
+      </div>
+      <table class="ph-table">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th style="color:var(--fip)">FIP CTH</th>
+            <th style="color:var(--alm)">Almarai CTH</th>
+            <th style="color:var(--fld)">Field CTH</th>
+            <th>Total</th><th>Assigned</th>
+          </tr>
+        </thead>
+        <tbody id="mPhaseBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-modal pdf" onclick="printSubmission()">🖨 Print / PDF</button>
+      <button class="btn-modal csv" onclick="exportCurrentCSV()">⬇ Export CSV</button>
+    </div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+
+<script src="/v2/assets/app.js"></script>
+<script>
+  const SECTION_TITLES = {
+    dashboard:   'Dashboard',
+    analytics:   'Analytics',
+    submissions: 'Submissions',
+    planner:     'Planner View'
+  };
+
+  let allSubs = [], currentSub = null, chartsBuilt = false;
+
+  function byId(i) { return document.getElementById(i); }
+
+  /* ── Navigation ─────────────────────────────────────────────────────── */
+  function showSection(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item[data-section]').forEach(n => n.classList.remove('active'));
+    byId('sec-' + id).classList.add('active');
+    if (el) el.classList.add('active');
+    byId('pageTitle').textContent = SECTION_TITLES[id] || id;
+
+    if (id === 'analytics' && !chartsBuilt) { buildCharts(); chartsBuilt = true; }
+    if (id === 'planner') {
+      const fr = byId('plannerIframe');
+      if (fr && !fr.getAttribute('data-loaded')) {
+        fr.src = '/v2/planner.html';
+        fr.setAttribute('data-loaded', '1');
+      }
+    }
+  }
+
+  /* ── Dashboard ──────────────────────────────────────────────────────── */
+  function buildDashboard() {
+    let totF = 0, totA = 0, totFl = 0;
+    allSubs.forEach(s => {
+      totF  += cth(s.selections, 'FIP');
+      totA  += cth(s.selections, 'Almarai');
+      totFl += cth(s.selections, 'Field Training');
+    });
+    const tot = totF + totA + totFl;
+    const pF  = tot ? Math.round(totF  / tot * 100) : 0;
+    const pA  = tot ? Math.round(totA  / tot * 100) : 0;
+    const pFl = tot ? 100 - pF - pA : 0;
+
+    byId('kSubs').textContent = allSubs.length;
+    byId('sbBadge').textContent = allSubs.length;
+    byId('kFip').textContent  = totF;  byId('kFipPct').textContent  = `${pF}% of total CTH`;
+    byId('kAlm').textContent  = totA;  byId('kAlmPct').textContent  = `${pA}% of total CTH`;
+    byId('kFld').textContent  = totFl; byId('kFldPct').textContent  = `${pFl}% of total CTH`;
+    byId('kTot').textContent  = tot;
+
+    byId('segFip').style.width = pF  + '%';
+    byId('segAlm').style.width = pA  + '%';
+    byId('segFld').style.width = pFl + '%';
+    byId('lFip').textContent = `FIP: ${totF} CTH (${pF}%)`;
+    byId('lAlm').textContent = `Almarai: ${totA} CTH (${pA}%)`;
+    byId('lFld').textContent = `Field: ${totFl} CTH (${pFl}%)`;
+
+    const recent = allSubs.slice(0, 5);
+    byId('recentTbody').innerHTML = recent.length
+      ? recent.map(s => {
+          const t = cth(s.selections,'FIP') + cth(s.selections,'Almarai') + cth(s.selections,'Field Training');
+          return `<tr>
+            <td>${avHtml(s.name, 28)}</td>
+            <td><strong>${s.name || '—'}</strong></td>
+            <td class="mu">${s.desig || '—'}</td>
+            <td class="mu">${s.region || '—'}</td>
+            <td><span class="badge badge-user">${s.account}</span></td>
+            <td class="mu" style="font-size:11px;">${fmt(s.submittedAt)}</td>
+            <td style="font-weight:700;">${t}</td>
+          </tr>`;
+        }).join('')
+      : `<tr><td colspan="7"><div class="empty">No submissions yet.</div></td></tr>`;
+  }
+
+  /* ── Analytics charts ───────────────────────────────────────────────── */
+  function buildCharts() {
+    let tF = 0, tA = 0, tFl = 0;
+    allSubs.forEach(s => {
+      tF  += cth(s.selections, 'FIP');
+      tA  += cth(s.selections, 'Almarai');
+      tFl += cth(s.selections, 'Field Training');
+    });
+
+    new Chart(byId('chartDist'), {
+      type: 'doughnut',
+      data: {
+        labels: ['FIP', 'Almarai', 'Field Training'],
+        datasets: [{ data: [tF, tA, tFl], backgroundColor: ['#4a90c4','#1b3a6b','#d97706'], borderWidth: 3, borderColor: '#fff', hoverOffset: 6 }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14, boxWidth: 12 } } } }
+    });
+
+    const phF = [], phA = [], phFl = [];
+    PHASES.forEach(ph => {
+      let f = 0, a = 0, fl = 0;
+      allSubs.forEach(s => {
+        const ps = (s.selections || []).filter(r => r.row_idx >= ph.s && r.row_idx <= ph.e);
+        f += cth(ps,'FIP'); a += cth(ps,'Almarai'); fl += cth(ps,'Field Training');
+      });
+      phF.push(f); phA.push(a); phFl.push(fl);
+    });
+
+    new Chart(byId('chartPhase'), {
+      type: 'bar',
+      data: {
+        labels: PHASES.map(p => p.name.length > 16 ? p.name.slice(0,16) + '…' : p.name),
+        datasets: [
+          { label: 'FIP',     data: phF,  backgroundColor: '#4a90c4', borderRadius: 4 },
+          { label: 'Almarai', data: phA,  backgroundColor: '#1b3a6b', borderRadius: 4 },
+          { label: 'Field',   data: phFl, backgroundColor: '#d97706', borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+          y: { stacked: true, grid: { color: 'rgba(0,0,0,.04)' }, title: { display: true, text: 'CTH', font: { size: 11 } } }
+        },
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14, boxWidth: 12 } } }
+      }
+    });
+
+    const gT = tF + tA + tFl;
+    byId('phaseSummaryBody').innerHTML = PHASES.map((ph, i) => {
+      const pt = phF[i] + phA[i] + phFl[i];
+      const pct = gT ? Math.round(pt / gT * 100) : 0;
+      return `<tr>
+        <td><strong>${ph.name}</strong></td>
+        <td style="color:var(--fip);font-weight:700;">${phF[i]}</td>
+        <td style="color:var(--alm);font-weight:700;">${phA[i]}</td>
+        <td style="color:var(--fld);font-weight:700;">${phFl[i]}</td>
+        <td style="font-weight:700;">${pt}</td>
+        <td class="mu">${pct}%</td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ── Submissions table ──────────────────────────────────────────────── */
+  function renderTable() {
+    const q = (byId('searchInput')?.value || '').toLowerCase();
+    const filtered = q
+      ? allSubs.filter(s => [s.name, s.desig, s.region, s.account].some(v => (v || '').toLowerCase().includes(q)))
+      : allSubs;
+
+    byId('filterCount').textContent = q ? `${filtered.length} of ${allSubs.length}` : '';
+    byId('subCount').textContent = `${allSubs.length} submission${allSubs.length !== 1 ? 's' : ''}`;
+
+    byId('subTbody').innerHTML = filtered.length
+      ? filtered.map((s, i) => {
+          const fC = cth(s.selections,'FIP'), aC = cth(s.selections,'Almarai'), flC = cth(s.selections,'Field Training');
+          const tot = fC + aC + flC;
+          return `<tr>
+            <td class="mu">${i + 1}</td>
+            <td><div class="nm-cell">${avHtml(s.name, 28)}<strong>${s.name || '—'}</strong></div></td>
+            <td class="mu">${s.desig || '—'}</td>
+            <td class="mu">${s.region || '—'}</td>
+            <td><span class="badge badge-user">${s.account}</span></td>
+            <td class="mu" style="font-size:11px;">${fmt(s.submittedAt)}</td>
+            <td>${s.assigned}/73</td>
+            <td style="color:var(--fip);font-weight:700;">${fC}</td>
+            <td style="color:var(--alm);font-weight:700;">${aC}</td>
+            <td style="color:var(--fld);font-weight:700;">${flC}</td>
+            <td style="font-weight:700;">${tot}</td>
+            <td style="display:flex;gap:4px;">
+              <button class="btn-view" onclick="openModal(${s.id})">View</button>
+              <button class="btn-pdf"  onclick="openAndPrint(${s.id})">PDF</button>
+              <button class="btn-csv-s" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button>
+            </td>
+          </tr>`;
+        }).join('')
+      : `<tr><td colspan="12"><div class="empty">No results.</div></td></tr>`;
+  }
+
+  /* ── Modal ──────────────────────────────────────────────────────────── */
+  function openModal(id) {
+    currentSub = allSubs.find(s => s.id === id);
+    if (!currentSub) return;
+    const s = currentSub;
+    const fC = cth(s.selections,'FIP'), aC = cth(s.selections,'Almarai'), flC = cth(s.selections,'Field Training');
+
+    byId('mName').textContent = s.name || '—';
+    byId('mMeta').textContent = [s.desig, s.region, 'Account: ' + s.account, fmt(s.submittedAt)].filter(Boolean).join(' · ');
+    byId('mFip').textContent = fC;
+    byId('mAlm').textContent = aC;
+    byId('mFld').textContent = flC;
+    byId('mTot').textContent = fC + aC + flC;
+    byId('mTopics').textContent = s.assigned;
+
+    byId('mPhaseBody').innerHTML = PHASES.map(ph => {
+      const ps = (s.selections || []).filter(r => r.row_idx >= ph.s && r.row_idx <= ph.e);
+      const pf = cth(ps,'FIP'), pa = cth(ps,'Almarai'), pfl = cth(ps,'Field Training');
+      return `<tr>
+        <td><strong>${ph.name}</strong></td>
+        <td style="color:var(--fip);font-weight:700;">${pf}</td>
+        <td style="color:var(--alm);font-weight:700;">${pa}</td>
+        <td style="color:var(--fld);font-weight:700;">${pfl}</td>
+        <td style="font-weight:700;">${pf + pa + pfl}</td>
+        <td class="mu">${ps.length}/${ph.e - ph.s + 1}</td>
+      </tr>`;
+    }).join('');
+
+    byId('modalBg').classList.remove('hidden');
+  }
+
+  function openAndPrint(id) { currentSub = allSubs.find(s => s.id === id); printSubmission(); }
+  function closeModal()     { byId('modalBg').classList.add('hidden'); currentSub = null; }
+
+  /* ── Print / PDF ────────────────────────────────────────────────────── */
+  function printSubmission() {
+    if (!currentSub) return;
+    const s = currentSub;
+    const fC = cth(s.selections,'FIP'), aC = cth(s.selections,'Almarai'), flC = cth(s.selections,'Field Training');
+    const tot = fC + aC + flC;
+    const phRows = PHASES.map(ph => {
+      const ps = (s.selections || []).filter(r => r.row_idx >= ph.s && r.row_idx <= ph.e);
+      const pf = cth(ps,'FIP'), pa = cth(ps,'Almarai'), pfl = cth(ps,'Field Training');
+      return `<tr>
+        <td>${ph.name}</td>
+        <td>${pf}</td><td>${pa}</td><td>${pfl}</td>
+        <td><strong>${pf + pa + pfl}</strong></td>
+        <td>${ps.length}/${ph.e - ph.s + 1}</td>
+      </tr>`;
+    }).join('');
+
+    byId('printArea').innerHTML = `
+      <div style="font-family:Segoe UI,Arial,sans-serif;padding:28px;">
+        <div style="background:#0d2145;padding:20px 24px;color:#fff;border-radius:8px;margin-bottom:20px;">
+          <div style="font-size:10px;color:#8DC63F;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">
+            FIP Sales Program — Onboarding Planner
+          </div>
+          <div style="font-size:20px;font-weight:800;">${s.name || '—'}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">
+            ${[s.desig, s.region, 'Account: ' + s.account, fmt(s.submittedAt)].filter(Boolean).join(' · ')}
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+          <div style="border:1px solid #dde6f4;border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:9px;color:#4a90c4;font-weight:700;text-transform:uppercase;">FIP</div>
+            <div style="font-size:24px;font-weight:800;color:#4a90c4;">${fC}</div>
+            <div style="font-size:10px;color:#94a3b8;">CTH</div>
+          </div>
+          <div style="border:1px solid #dde6f4;border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:9px;color:#1b3a6b;font-weight:700;text-transform:uppercase;">Almarai</div>
+            <div style="font-size:24px;font-weight:800;color:#1b3a6b;">${aC}</div>
+            <div style="font-size:10px;color:#94a3b8;">CTH</div>
+          </div>
+          <div style="border:1px solid #dde6f4;border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:9px;color:#d97706;font-weight:700;text-transform:uppercase;">Field</div>
+            <div style="font-size:24px;font-weight:800;color:#d97706;">${flC}</div>
+            <div style="font-size:10px;color:#94a3b8;">CTH</div>
+          </div>
+          <div style="border:1px solid #dde6f4;border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:9px;color:#0f172a;font-weight:700;text-transform:uppercase;">Total</div>
+            <div style="font-size:24px;font-weight:800;color:#0f172a;">${tot}</div>
+            <div style="font-size:10px;color:#94a3b8;">${s.assigned}/73 topics</div>
+          </div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#f8fafc;">
+              <th style="padding:8px 10px;text-align:left;border-bottom:2px solid #e4e8f0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;">Phase</th>
+              <th style="padding:8px 10px;color:#4a90c4;border-bottom:2px solid #e4e8f0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;">FIP CTH</th>
+              <th style="padding:8px 10px;color:#1b3a6b;border-bottom:2px solid #e4e8f0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Almarai CTH</th>
+              <th style="padding:8px 10px;color:#d97706;border-bottom:2px solid #e4e8f0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Field CTH</th>
+              <th style="padding:8px 10px;border-bottom:2px solid #e4e8f0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Total</th>
+              <th style="padding:8px 10px;border-bottom:2px solid #e4e8f0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Assigned</th>
+            </tr>
+          </thead>
+          <tbody>${phRows}</tbody>
+        </table>
+      </div>`;
+    window.print();
+  }
+
+  /* ── CSV exports ────────────────────────────────────────────────────── */
+  function exportCurrentCSV() { if (currentSub) exportSubCSV(currentSub); }
+
+  function exportSubCSV(s) {
+    if (!s) return;
+    const rows = [
+      ['Name','Designation','Region','Account','Submitted'],
+      [s.name, s.desig, s.region, s.account, fmt(s.submittedAt)],
+      [],
+      ['Phase','FIP CTH','Almarai CTH','Field CTH','Total','Assigned']
+    ];
+    PHASES.forEach(ph => {
+      const ps = (s.selections || []).filter(r => r.row_idx >= ph.s && r.row_idx <= ph.e);
+      rows.push([ph.name, cth(ps,'FIP'), cth(ps,'Almarai'), cth(ps,'Field Training'),
+        cth(ps,'FIP') + cth(ps,'Almarai') + cth(ps,'Field Training'),
+        `${ps.length}/${ph.e - ph.s + 1}`]);
+    });
+    dl(rows, `FIP_${(s.name || 'sub').replace(/\s+/g,'_')}_${today()}.csv`);
+  }
+
+  function exportAllCSV() {
+    if (!allSubs.length) { alert('No submissions.'); return; }
+    const h = ['#','Name','Designation','Region','Account','Submitted','Topics','FIP CTH','Almarai CTH','Field CTH','Total CTH'];
+    const r = allSubs.map((s, i) => [
+      i + 1, s.name, s.desig, s.region, s.account, fmt(s.submittedAt), s.assigned,
+      cth(s.selections,'FIP'), cth(s.selections,'Almarai'), cth(s.selections,'Field Training'),
+      cth(s.selections,'FIP') + cth(s.selections,'Almarai') + cth(s.selections,'Field Training')
+    ]);
+    dl([h, ...r], `FIP_Submissions_${today()}.csv`);
+  }
+
+  function dl(rows, fn) {
+    const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = fn;
+    a.click();
+  }
+
+  function today() { return new Date().toISOString().split('T')[0]; }
+
+  /* ── Init ───────────────────────────────────────────────────────────── */
+  async function init() {
+    const user = await requireAuth('admin');
+    if (!user) return;
+
+    const uname = user.display_name || user.username || 'Admin';
+    byId('adminName').textContent = uname;
+    byId('adminAvatar').textContent = initials(uname);
+    byId('adminAvatar').style.background = avColor(uname);
+
+    const d = await api('/api/admin/submissions');
+    allSubs = d.submissions || [];
+    buildDashboard();
+    renderTable();
+
+    const fr = byId('plannerIframe');
+    if (fr && !fr.getAttribute('data-loaded')) {
+      fr.src = '/v2/planner.html';
+      fr.setAttribute('data-loaded', '1');
+    }
+
+    const hash = location.hash.slice(1);
+    if (hash && SECTION_TITLES[hash]) {
+      const el = document.querySelector(`[data-section="${hash}"]`);
+      showSection(hash, el);
+    }
+  }
+
+  init().catch(e => console.error(e));
+</script>
+</body>
+</html>

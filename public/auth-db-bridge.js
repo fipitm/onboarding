@@ -162,19 +162,21 @@
       const input = document.querySelector(`input[name="row_${k}"][value="${value}"]`);
       if (input) input.checked = true;
     });
+
+    return profile;
   }
 
   window.addEventListener("load", async () => {
     const ok = await requireSession();
     if (!ok) return;
     roleGuardUi();
-    await loadServerData();
+    const serverProfile = await loadServerData();
 
-    // Show profile overlay only for non-admin users who have no saved profile name
+    // Show profile overlay only for non-admin users with no profile saved on server
     if (currentUser.role !== "admin") {
-      const savedName = (byId("responderName") || {}).value || "";
       const overlay = byId("profileOverlay");
-      if (overlay) overlay.style.display = savedName ? "none" : "flex";
+      const hasProfile = serverProfile.name && serverProfile.name.trim();
+      if (overlay) overlay.style.display = hasProfile ? "none" : "flex";
     }
 
     if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();

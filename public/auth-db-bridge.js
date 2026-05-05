@@ -57,7 +57,7 @@
       const reportBtn = document.createElement("button");
       reportBtn.className = "gp-summary-btn";
       reportBtn.style.marginLeft = "8px";
-      reportBtn.textContent = "Admin Report";
+      reportBtn.textContent = "← Dashboard";
       reportBtn.onclick = showAdminReport;
       byId("globalProg").appendChild(reportBtn);
 

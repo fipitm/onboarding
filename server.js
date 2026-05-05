@@ -319,6 +319,16 @@ app.delete("/api/admin/submissions", requireAuth, requireAdmin, (req, res) => {
   return res.json({ success: true, cleared: count });
 });
 
+app.delete("/api/admin/submissions/:id", requireAuth, requireAdmin, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id." });
+  const sub = db.prepare("SELECT id FROM submissions WHERE id = ?").get(id);
+  if (!sub) return res.status(404).json({ error: "Submission not found." });
+  db.prepare("DELETE FROM submission_selections WHERE submission_id = ?").run(id);
+  db.prepare("DELETE FROM submissions WHERE id = ?").run(id);
+  return res.json({ ok: true });
+});
+
 app.get("/api/report", requireAuth, requireAdmin, (req, res) => {
   const users = db.prepare("SELECT id, username, role, display_name FROM users ORDER BY id").all();
 

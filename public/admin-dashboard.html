@@ -132,6 +132,7 @@
     .btn-view{background:#0d2145;color:#fff;}
     .btn-pdf{background:#f93b7a;color:#fff;}
     .btn-csv{background:#1ecab8;color:#fff;}
+    .btn-del{background:#fff;color:#f93b7a;border:1px solid #f93b7a;}
     .btn-export-f{background:#0d2145;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Roboto',sans-serif;transition:opacity .15s;}
     .btn-export-f:hover{opacity:.85;}
     .btn-clear-all{background:#fff;color:#f93b7a;border:1px solid #f93b7a;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px;}
@@ -630,7 +631,7 @@
     byId('subCount').textContent=`${allSubs.length} submission${allSubs.length!==1?'s':''}`;
     byId('subTbody').innerHTML=filtered.length?filtered.map((s,i)=>{
       const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training'),tot=fC+aC+flC;
-      return`<tr><td class="mu">${i+1}</td><td><div class="nm-cell"><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span><strong>${s.name||'-'}</strong></div></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td>${s.assigned}/73</td><td style="color:#4a90c4;font-weight:700">${fC}</td><td style="color:#1b3a6b;font-weight:700">${aC}</td><td style="color:#d97706;font-weight:700">${flC}</td><td style="font-weight:700;color:#23222f">${tot}</td><td style="display:flex;gap:4px"><button class="btn-act btn-view" onclick="openModal(${s.id})">View</button><button class="btn-act btn-pdf" onclick="openAndPrint(${s.id})">PDF</button><button class="btn-act btn-csv" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button></td></tr>`;
+      return`<tr><td class="mu">${i+1}</td><td><div class="nm-cell"><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span><strong>${s.name||'-'}</strong></div></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td>${s.assigned}/73</td><td style="color:#4a90c4;font-weight:700">${fC}</td><td style="color:#1b3a6b;font-weight:700">${aC}</td><td style="color:#d97706;font-weight:700">${flC}</td><td style="font-weight:700;color:#23222f">${tot}</td><td style="display:flex;gap:4px"><button class="btn-act btn-view" onclick="openModal(${s.id})">View</button><button class="btn-act btn-pdf" onclick="openAndPrint(${s.id})">PDF</button><button class="btn-act btn-csv" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button><button class="btn-act btn-del" onclick="deleteSubmission(${s.id},'${(s.name||'').replace(/'/g,'\\\'')}')" title="Delete this submission"><i class="mdi mdi-trash-can-outline"></i></button></td></tr>`;
     }).join(''):`<tr><td colspan="12"><div class="empty-f">No results.</div></td></tr>`;
   }
 
@@ -655,6 +656,49 @@
     const ph=PHASES.map(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e),pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');return`<tr><td>${ph.n}</td><td>${pf}</td><td>${pa}</td><td>${pfl}</td><td><strong>${pf+pa+pfl}</strong></td><td>${ps.length}/${ph.e-ph.s+1}</td></tr>`;}).join('');
     byId('printArea').innerHTML=`<div style="font-family:Roboto,Arial,sans-serif;padding:28px;"><div style="background:linear-gradient(135deg,#0d2145,#1b3a6b);padding:20px 24px;color:#fff;border-radius:8px;margin-bottom:20px;"><div style="font-size:10px;color:#8DC63F;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">FIP Sales Program — Onboarding Planner</div><div style="font-size:20px;font-weight:700;">${s.name||'—'}</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px;">${[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ')}</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;"><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#4a90c4;font-weight:700;text-transform:uppercase;">FIP</div><div style="font-size:24px;font-weight:700;color:#4a90c4;">${fC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#1b3a6b;font-weight:700;text-transform:uppercase;">Almarai</div><div style="font-size:24px;font-weight:700;color:#1b3a6b;">${aC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#d97706;font-weight:700;text-transform:uppercase;">Field</div><div style="font-size:24px;font-weight:700;color:#d97706;">${flC}</div><div style="font-size:10px;color:#a8a8b1;">CTH</div></div><div style="border:1px solid #e0e0e0;border-radius:6px;padding:12px;text-align:center;"><div style="font-size:9px;color:#23222f;font-weight:700;text-transform:uppercase;">Total</div><div style="font-size:24px;font-weight:700;color:#23222f;">${tot}</div><div style="font-size:10px;color:#a8a8b1;">${s.assigned}/73 topics</div></div></div><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#f8f9fa;"><th style="padding:8px 10px;text-align:left;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6c757d;">Phase</th><th style="padding:8px 10px;color:#4a90c4;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">FIP CTH</th><th style="padding:8px 10px;color:#1b3a6b;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Almarai CTH</th><th style="padding:8px 10px;color:#d97706;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Field CTH</th><th style="padding:8px 10px;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Total</th><th style="padding:8px 10px;border-bottom:2px solid #e0e0e0;font-size:10px;text-transform:uppercase;">Assigned</th></tr></thead><tbody>${ph}</tbody></table></div>`;
     window.print();
+  }
+
+  /* ── Delete single submission ── */
+  function deleteSubmission(id, name){
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
+    ov.innerHTML=`
+      <div style="background:#fff;border-radius:10px;padding:28px 32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;font-family:Roboto,sans-serif;">
+        <div style="width:48px;height:48px;border-radius:50%;background:#fff0f5;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;border:2px solid #f93b7a;">
+          <i class="mdi mdi-trash-can-outline" style="font-size:24px;color:#f93b7a;"></i>
+        </div>
+        <h3 style="font-size:16px;font-weight:700;color:#23222f;margin-bottom:8px;">Delete Submission?</h3>
+        <p style="font-size:13px;color:#6c757d;line-height:1.65;margin-bottom:22px;">
+          This will permanently delete the submission by<br>
+          <strong style="color:#23222f;">${name||'this user'}</strong> and all their delivery point selections.
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button id="delCancelBtn" style="flex:1;max-width:140px;padding:9px;border:1px solid #dee2e6;border-radius:6px;background:#fff;color:#6c757d;font-size:13px;font-weight:500;cursor:pointer;font-family:Roboto,sans-serif;">Cancel</button>
+          <button id="delConfirmBtn" style="flex:1;max-width:140px;padding:9px;border:none;border-radius:6px;background:#f93b7a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:Roboto,sans-serif;">Delete</button>
+        </div>
+        <div id="delMsg" style="margin-top:10px;font-size:12px;min-height:14px;"></div>
+      </div>`;
+    document.body.appendChild(ov);
+    ov.querySelector('#delCancelBtn').onclick=()=>ov.remove();
+    ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+    ov.querySelector('#delConfirmBtn').onclick=async()=>{
+      const btn=ov.querySelector('#delConfirmBtn');
+      const msg=ov.querySelector('#delMsg');
+      btn.disabled=true; btn.textContent='Deleting…';
+      try{
+        const res=await fetch(`/api/admin/submissions/${id}`,{method:'DELETE'});
+        const data=await res.json();
+        if(!res.ok)throw new Error(data.error||'Failed');
+        allSubs=allSubs.filter(s=>s.id!==id);
+        buildDashboard();
+        renderTable();
+        ov.remove();
+      }catch(err){
+        btn.disabled=false; btn.textContent='Delete';
+        msg.style.color='#f93b7a';
+        msg.textContent='Error: '+err.message;
+      }
+    };
   }
 
   /* ── Clear all submissions ── */

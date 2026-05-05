@@ -114,8 +114,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .topic-title{font-size:14px;font-weight:700;color:var(--navy);}
 .topic-badge{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:3px 10px;font-size:10px;font-weight:700;color:var(--text-2);letter-spacing:0.3px;}
 .topic-table{width:100%;border-collapse:collapse;}
-.topic-table thead th{background:var(--surface);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);}
-.sub-row td{border-bottom:1px solid var(--border);vertical-align:middle;}
+.topic-table thead th{background:var(--surface);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
+.topic-table thead th:last-child{border-right:none;}
+.sub-row td{border-bottom:1px solid var(--border);vertical-align:middle;border-right:1px solid var(--border);}
+.sub-row td:last-child{border-right:none;}
 .sub-row:last-child td{border-bottom:none;}
 .sub-row:hover td{background:#FAFCFF;}
 .sub-row.assigned-fip td{background:#F0F8FF;}
@@ -124,17 +126,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .sub-cell{padding:13px 16px;}
 .sub-name{font-size:13px;color:var(--text-1);line-height:1.5;font-weight:500;}
 .cth-cell{padding:13px 16px;text-align:center;font-size:12px;font-weight:700;color:var(--text-2);white-space:nowrap;}
-.select-cell{padding:10px 16px;}
-.delivery-select{display:flex;gap:8px;}
-.opt-label{cursor:pointer;}
+.select-cell{padding:0;}
+.delivery-select{display:flex;gap:0;height:100%;}
+.opt-label{flex:1;display:flex;justify-content:center;align-items:center;padding:10px 4px;border-right:1px solid var(--border);cursor:pointer;}
+.opt-label:last-child{border-right:none;}
 .opt-label input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
-.opt-pill{display:inline-flex;align-items:center;padding:7px 16px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid;transition:all 0.18s;cursor:pointer;white-space:nowrap;user-select:none;letter-spacing:0.2px;}
-.opt-pill.fip{color:var(--fip-blue);border-color:#BEE3F8;background:#EBF8FF;}
-.opt-label input:checked ~ .opt-pill.fip{background:var(--fip-blue);color:white;border-color:var(--fip-blue);box-shadow:0 3px 10px rgba(74,144,196,0.35);}
-.opt-pill.almarai{color:var(--almarai-navy);border-color:#C3D4F0;background:#EBF0FF;}
-.opt-label input:checked ~ .opt-pill.almarai{background:var(--almarai-navy);color:white;border-color:var(--almarai-navy);box-shadow:0 3px 10px rgba(27,58,107,0.35);}
-.opt-pill.field{color:var(--field-amber);border-color:#FDE8B0;background:var(--field-bg);}
-.opt-label input:checked ~ .opt-pill.field{background:var(--field-amber);color:white;border-color:var(--field-amber);box-shadow:0 3px 10px rgba(194,124,10,0.35);}
+.opt-pill{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:2px solid;transition:all 0.18s;cursor:pointer;user-select:none;font-size:0;}
+.opt-pill::after{content:'✓';font-size:17px;font-weight:800;transition:all 0.18s;line-height:1;}
+.opt-pill.fip{border-color:#BEE3F8;background:#EBF8FF;}
+.opt-pill.fip::after{opacity:0.25;color:var(--fip-blue);}
+.opt-label input:checked ~ .opt-pill.fip{background:var(--fip-blue);border-color:var(--fip-blue);box-shadow:0 3px 10px rgba(74,144,196,0.35);}
+.opt-label input:checked ~ .opt-pill.fip::after{opacity:1;color:white;}
+.opt-pill.almarai{border-color:#C3D4F0;background:#EBF0FF;}
+.opt-pill.almarai::after{opacity:0.25;color:var(--almarai-navy);}
+.opt-label input:checked ~ .opt-pill.almarai{background:var(--almarai-navy);border-color:var(--almarai-navy);box-shadow:0 3px 10px rgba(27,58,107,0.35);}
+.opt-label input:checked ~ .opt-pill.almarai::after{opacity:1;color:white;}
+.opt-pill.field{border-color:#FDE8B0;background:var(--field-bg);}
+.opt-pill.field::after{opacity:0.25;color:var(--field-amber);}
+.opt-label input:checked ~ .opt-pill.field{background:var(--field-amber);border-color:var(--field-amber);box-shadow:0 3px 10px rgba(194,124,10,0.35);}
+.opt-label input:checked ~ .opt-pill.field::after{opacity:1;color:white;}
 
 /* Phase footer */
 .phase-footer{background:var(--surface-2);border-top:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:0 0 var(--r) var(--r);margin-top:-1px;}
@@ -468,7 +478,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -676,7 +686,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -972,7 +982,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -1012,7 +1022,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -1052,7 +1062,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -1092,7 +1102,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -1220,7 +1230,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -1362,7 +1372,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -1622,7 +1632,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -1794,7 +1804,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -2090,7 +2100,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>
@@ -2386,7 +2396,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
               <tr>
                 <th>Sub Topic</th>
                 <th style="width:90px;text-align:center;">Est. Hours</th>
-                <th style="width:360px;text-align:center;">Delivery Point</th>
+                <th style="width:360px;padding:0;text-align:center;"><div style="display:flex;"><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--fip-blue);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">FIP</div><div style="flex:1;padding:10px 4px;border-right:1px solid var(--border);color:var(--almarai-navy);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Almarai</div><div style="flex:1;padding:10px 4px;color:var(--field-amber);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Field</div></div></th>
               </tr>
             </thead>
             <tbody>

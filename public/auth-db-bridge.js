@@ -160,6 +160,81 @@
     return profile;
   }
 
+  function setupAdminPlanner() {
+    const lk = 'display:flex;align-items:center;gap:9px;padding:10px 16px;color:rgba(255,255,255,.6);text-decoration:none;font-size:12px;font-weight:500;border-left:3px solid transparent;';
+    const lkA = lk + 'border-left-color:#8DC63F;background:rgba(255,255,255,.08);color:#fff;';
+    const lbl = 'font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:12px 16px 4px;';
+
+    const nav = document.createElement('div');
+    nav.id = 'adminSideNav';
+    nav.style.cssText = 'position:fixed;left:0;top:0;bottom:0;width:210px;background:#0d2145;z-index:400;display:flex;flex-direction:column;box-shadow:2px 0 10px rgba(0,0,0,.2);';
+    nav.innerHTML = `
+      <div style="padding:18px 16px 0;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);">
+        <img src="/fip-logo-white.png" style="height:48px;display:block;margin:0 auto 10px;">
+        <div style="font-size:12px;font-weight:700;color:#fff;letter-spacing:.2px;">FIP Sales Program</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;padding-bottom:12px;letter-spacing:.3px;">Onboarding Planner</div>
+        <div style="height:2px;background:linear-gradient(90deg,transparent,#8DC63F,transparent);margin:0 -16px;"></div>
+      </div>
+      <div style="flex:1;padding:8px 0;overflow-y:auto;">
+        <div style="${lbl}">Menu</div>
+        <a href="/admin-dashboard.html" style="${lk}"><span>📊</span> Dashboard</a>
+        <a href="/admin-dashboard.html" style="${lk}"><span>📈</span> Analytics</a>
+        <a href="/admin-dashboard.html" style="${lk}"><span>📋</span> Submissions</a>
+        <div style="${lbl}">Admin</div>
+        <a href="/admin-users.html" style="${lk}"><span>👥</span> Manage Users</a>
+        <div style="${lbl}">Current</div>
+        <div style="${lkA}"><span>🗂</span> Planner View</div>
+      </div>
+      <div style="padding:10px;border-top:1px solid rgba(255,255,255,.08);">
+        <button id="adminSideLogout" style="display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.65);font-size:12px;font-weight:600;cursor:pointer;">↩ Logout</button>
+      </div>`;
+
+    document.body.insertBefore(nav, document.body.firstChild);
+    document.getElementById('adminSideLogout').addEventListener('click', async () => {
+      try { await api('/api/auth/logout', { method: 'POST' }); } catch(e) {}
+      window.location.href = '/login.html';
+    });
+
+    // Push page content right to clear the sidebar
+    document.body.style.paddingLeft = '210px';
+
+    // Hide the planner's phase navigation sidebar
+    const phaseSidebar = document.querySelector('.sidebar');
+    if (phaseSidebar) phaseSidebar.style.display = 'none';
+
+    // Compact instruction banner to a single line
+    const instr = document.getElementById('instrBanner');
+    if (instr) {
+      instr.style.cssText = 'display:flex;align-items:center;gap:12px;padding:9px 32px;margin:0;background:linear-gradient(135deg,#0d2145,#1a2f5a);border-left:4px solid #8DC63F;border-radius:0;';
+      instr.innerHTML =
+        '<span style="font-size:15px;flex-shrink:0;">📋</span>' +
+        '<p style="font-size:12px;color:rgba(255,255,255,.75);margin:0;">' +
+          '<strong style="color:#8DC63F;">Admin View</strong> — Assign each sub-topic to a delivery point:' +
+          '&nbsp;<span style="background:rgba(74,144,196,.2);color:#90cdf4;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">🏛 FIP</span>' +
+          '&nbsp;<span style="background:rgba(99,179,237,.15);color:#bee3f8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">🏢 Almarai</span>' +
+          '&nbsp;<span style="background:rgba(194,124,10,.2);color:#f6ad55;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">🚗 Field</span>' +
+        '</p>';
+    }
+
+    // Move DEV buttons to global progress bar
+    const gp = byId('globalProg');
+    if (gp) {
+      const rnd = document.createElement('button');
+      rnd.textContent = '🎲 Random Fill';
+      rnd.className = 'gp-summary-btn';
+      rnd.style.cssText = 'margin-left:8px;background:linear-gradient(135deg,#5B21B6,#7C3AED);';
+      rnd.onclick = () => typeof window.devRandomFill === 'function' && window.devRandomFill();
+      gp.appendChild(rnd);
+
+      const rst = document.createElement('button');
+      rst.textContent = '↺ Reset All';
+      rst.className = 'gp-summary-btn';
+      rst.style.cssText = 'margin-left:6px;background:linear-gradient(135deg,#742A2A,#C53030);';
+      rst.onclick = () => typeof window.resetAll === 'function' && window.resetAll();
+      gp.appendChild(rst);
+    }
+  }
+
   window.addEventListener("load", async () => {
     const ok = await requireSession();
     if (!ok) return;
@@ -172,6 +247,7 @@
       window.doReset = ORIGINAL_RESET;
       document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
       if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
+      setupAdminPlanner();
     } else {
       // Normal user: show blank profile overlay on every login
       ["responderName", "responderDesig", "responderRegion"].forEach(id => {

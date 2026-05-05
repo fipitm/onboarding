@@ -325,6 +325,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 </head>
 <body>
 
+<!-- LOADING SCREEN — covers everything until auth resolves -->
+<div id="loadingScreen" style="position:fixed;inset:0;background:linear-gradient(160deg,#0D2145 0%,#1B3A6B 60%,#1E4080 100%);z-index:20000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity 0.3s ease;">
+  <img src="/fip-logo-white.png" alt="FIP" style="height:68px;opacity:0.95;">
+  <div style="width:36px;height:36px;border:3px solid rgba(255,255,255,0.2);border-top-color:#8DC63F;border-radius:50%;animation:ls-spin 0.75s linear infinite;"></div>
+</div>
+<style>@keyframes ls-spin{to{transform:rotate(360deg);}}</style>
+
 <!-- PROFILE OVERLAY -->
 <div id="profileOverlay" class="profile-overlay">
   <div class="profile-card">

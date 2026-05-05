@@ -182,6 +182,13 @@
       if (overlay) overlay.style.display = "flex";
     }
 
+    // Fade out and remove loading screen — planner or overlay is now ready
+    const ls = byId("loadingScreen");
+    if (ls) {
+      ls.style.opacity = "0";
+      setTimeout(() => ls.remove(), 320);
+    }
+
     if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
     if (typeof window.updateGlobal === "function") window.updateGlobal();
     const phaseButtons = document.querySelectorAll(".phase-nav-btn[data-phase]");

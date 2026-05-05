@@ -130,10 +130,8 @@ function requireAdmin(req, res, next) {
 }
 
 app.get("/", (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("/login.html");
-  }
-  return res.redirect("/planner.html");
+  if (!req.session.user) return res.redirect("/login.html");
+  return res.redirect(req.session.user.role === "admin" ? "/admin-dashboard.html" : "/planner.html");
 });
 
 app.post("/api/auth/login", (req, res) => {

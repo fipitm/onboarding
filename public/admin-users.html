@@ -5,259 +5,295 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Manage Users — FIP Sales Program</title>
   <link rel="icon" type="image/png" href="/fip-logo.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg:#f5f6fa;--card:#fff;--sb:#fff;
-      --border:#e4e8f0;--primary:#5e6ad2;--primary-light:#eef0fc;
-      --text1:#0f172a;--text2:#64748b;--text3:#94a3b8;
-      --navy:#0d2145;--grn:#8DC63F;--r:10px;
-    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--text1);display:flex;height:100vh;overflow:hidden;}
+    body{font-family:'Roboto',sans-serif;font-size:14px;background:#f2f5f7;color:#404656;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+    a{text-decoration:none;color:inherit;}
+
+    .top-stripe{height:3px;background:linear-gradient(90deg,#0d2145 0%,#8DC63F 35%,#8DC63F 65%,#0d2145 100%);position:fixed;top:0;left:0;right:0;z-index:1001;}
+
+    /* ── TOPBAR ── */
+    .topbar{position:fixed;top:3px;left:0;right:0;z-index:999;}
+    .navbar-custom{background:#fff;padding:0 28px;min-height:70px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 0 24px rgba(0,0,0,.06),0 1px 0 rgba(0,0,0,.02);}
+    .topbar-left{display:flex;align-items:center;gap:12px;width:270px;flex-shrink:0;}
+    .tb-logo img{height:44px;width:auto;}
+    .tb-brand-name{font-size:14px;font-weight:700;color:#23222f;line-height:1.2;}
+    .tb-brand-sub{font-size:10px;color:#a8a8b1;margin-top:1px;}
+    .topbar-right{display:flex;align-items:center;gap:20px;}
+    .tb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0d2145,#4a90c4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+    .tb-uname{font-size:13px;font-weight:500;color:#404656;}
+    .tb-urole{font-size:10px;color:#a8a8b1;}
+    .tb-sep{width:1px;height:30px;background:#f0f0f0;}
+    .btn-tb-logout{background:none;border:1px solid #dee2e6;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;color:#6c757d;cursor:pointer;font-family:'Roboto',sans-serif;transition:all .15s;}
+    .btn-tb-logout:hover{background:#f2f5f7;color:#23222f;}
 
     /* ── SIDEBAR ── */
-    .sidebar{width:230px;flex-shrink:0;background:var(--sb);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;}
-    .sb-brand{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-    .sb-logo-wrap{width:38px;height:38px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .sb-logo-wrap img{height:26px;width:auto;}
-    .sb-brand-name{font-size:13px;font-weight:700;color:var(--text1);line-height:1.3;}
-    .sb-brand-sub{font-size:10px;color:var(--text3);margin-top:1px;}
-    .sb-nav{flex:1;padding:8px 8px;overflow-y:auto;}
-    .sb-sect{font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text3);padding:12px 8px 4px;}
-    .nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;margin-bottom:1px;transition:background .12s,color .12s;text-decoration:none;}
-    .nav-item:hover{background:#f1f5f9;color:var(--text1);}
-    .nav-item.active{background:var(--primary);color:#fff;}
-    .nav-item .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
-    .sb-bottom{padding:10px;border-top:1px solid var(--border);}
-    .sb-user{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:#f8fafc;margin-bottom:6px;}
-    .sb-av{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--primary),#4a90c4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
-    .sb-uname{font-size:12px;font-weight:600;color:var(--text1);}
-    .sb-urole{font-size:10px;color:var(--text3);}
-    .sb-logout{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .12s;}
-    .sb-logout:hover{background:#f1f5f9;color:var(--text1);}
+    .left-sidenav{position:fixed;top:73px;left:0;bottom:0;width:270px;background:#fff;box-shadow:0 0 24px rgba(0,0,0,.06);overflow-y:auto;z-index:998;padding:20px 0 40px;}
+    .menu-title{padding:10px 24px 5px;color:#a8a8b1;font-size:11px;text-transform:uppercase;font-weight:500;letter-spacing:.8px;}
+    .nav-item-f{display:flex;align-items:center;gap:10px;padding:10px 24px;color:#5d5b6f;font-size:13px;font-weight:400;cursor:pointer;border-left:3px solid transparent;transition:all .2s;text-decoration:none;}
+    .nav-item-f:hover{color:#23222f;background:#f8f9fa;text-decoration:none;}
+    .nav-item-f.active{color:#0d2145;background:rgba(13,33,69,.04);border-left-color:#8DC63F;font-weight:600;}
+    .nav-item-f .mdi{font-size:18px;width:22px;text-align:center;flex-shrink:0;}
+    .sb-user-box{margin:16px;padding:12px;background:#f8f9fa;border-radius:8px;display:flex;align-items:center;gap:10px;}
+    .sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0d2145,#4a90c4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+    .sb-uname{font-size:12px;font-weight:600;color:#23222f;}
+    .sb-urole{font-size:10px;color:#a8a8b1;}
 
-    /* ── MAIN ── */
-    .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
-    .main-hdr{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .mhdr-left{display:flex;align-items:center;gap:6px;}
-    .mhdr-crumb{font-size:12px;color:var(--text3);}
-    .mhdr-sep{color:var(--border);font-size:14px;margin:0 2px;}
-    .mhdr-title{font-size:15px;font-weight:700;color:var(--text1);}
-    .mhdr-right{display:flex;align-items:center;gap:8px;}
-    .user-count{font-size:12px;color:var(--text3);}
-    .main-content{flex:1;overflow-y:auto;padding:20px 24px;}
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper{margin-left:270px;padding-top:73px;min-height:100vh;display:flex;flex-direction:column;}
+    .page-header-area{background:linear-gradient(135deg,#0d2145 0%,#1b3a6b 55%,#0d2145 100%);padding:22px 28px 68px;position:relative;}
+    .page-header-area::after{content:'';position:absolute;bottom:0;left:0;right:0;height:32px;background:#f2f5f7;border-radius:18px 18px 0 0;}
+    .breadcrumb{background:transparent;padding:0;margin:0;font-size:12px;}
+    .breadcrumb-item a{color:rgba(255,255,255,.45);}
+    .breadcrumb-item.active{color:rgba(255,255,255,.45);}
+    .breadcrumb-item+.breadcrumb-item::before{color:rgba(255,255,255,.25);}
+    .page-header-row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:5px;}
+    .page-header-title{font-size:20px;font-weight:700;color:#fff;}
+    .page-content-inner{padding:0 24px 40px;margin-top:-46px;position:relative;z-index:1;flex:1;}
+
+    /* ── FROGETOR CARDS ── */
+    .f-card{background:#fff;border:none;border-radius:6px;box-shadow:0 0 24px rgba(0,0,0,.06),0 1px 0 rgba(0,0,0,.02);margin-bottom:24px;overflow:hidden;}
+    .f-card-body{padding:20px;}
+    .f-card-header{padding:14px 20px;border-bottom:1px solid #f3f3f3;display:flex;justify-content:space-between;align-items:center;}
+    .f-card-title{font-size:13px;font-weight:500;color:#6c757d;text-transform:uppercase;letter-spacing:.05em;margin:0;}
 
     /* ── CREATE PANEL ── */
-    .create-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;display:none;}
+    .create-panel{display:none;margin-bottom:20px;}
     .create-panel.open{display:block;}
-    .cp-title{font-size:14px;font-weight:700;color:var(--text1);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
     .form-field{display:flex;flex-direction:column;gap:5px;}
-    .form-label{font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--text3);}
-    .form-input,.form-select{padding:8px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;color:var(--text1);background:#fff;outline:none;transition:border .15s,box-shadow .15s;width:100%;}
-    .form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(94,106,210,.1);}
-    .form-actions{display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
-
-    /* ── CARD ── */
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px;}
-    .card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-    .card-title{font-size:14px;font-weight:700;color:var(--text1);}
+    .form-lbl{font-size:11px;font-weight:600;color:#6c757d;text-transform:uppercase;letter-spacing:.4px;}
+    .f-input{padding:9px 12px;border:1px solid #dee2e6;border-radius:6px;font-size:13px;color:#23222f;background:#fff;outline:none;width:100%;font-family:'Roboto',sans-serif;transition:border .15s,box-shadow .15s;}
+    .f-input:focus{border-color:#0d2145;box-shadow:0 0 0 2px rgba(13,33,69,.07);}
+    .f-select{padding:9px 12px;border:1px solid #dee2e6;border-radius:6px;font-size:13px;color:#23222f;background:#fff;outline:none;width:100%;font-family:'Roboto',sans-serif;cursor:pointer;}
+    .f-select:focus{border-color:#0d2145;}
+    .form-actions{display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid #f3f3f3;}
 
     /* ── TABLE ── */
-    table{width:100%;border-collapse:collapse;font-size:13px;}
-    thead th{color:var(--text3);text-transform:uppercase;font-size:10px;letter-spacing:.5px;font-weight:700;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;text-align:left;position:sticky;top:0;background:var(--card);z-index:2;}
-    tbody td{border-bottom:1px solid #f3f5f9;padding:10px 10px;vertical-align:middle;}
-    tbody tr:last-child td{border-bottom:none;}
-    tbody tr:hover td{background:#f8faff;}
-    .av{width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-right:8px;vertical-align:middle;flex-shrink:0;}
-    .role-badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:600;}
-    .role-admin{background:#eef0fc;color:var(--primary);border:1px solid rgba(94,106,210,.2);}
-    .role-user{background:#f1f5f9;color:var(--text2);border:1px solid var(--border);}
-    .status-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:600;}
-    .status-active{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
-    .status-inactive{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;}
-    .mu{color:var(--text3);}
-    .tbl-input{padding:5px 9px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--text1);outline:none;width:140px;transition:border .15s;}
-    .tbl-input:focus{border-color:var(--primary);}
-    .tbl-select{padding:5px 9px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--text1);background:#fff;outline:none;}
-    .notify{font-size:12px;min-height:16px;margin-top:10px;}
-    .notify.ok{color:#15803d;} .notify.err{color:#be123c;}
+    .table thead th{color:#6c757d;font-size:10px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;border-bottom:2px solid #f3f3f3;border-top:none;padding:10px 12px;background:#fff;}
+    .table tbody td{padding:11px 12px;vertical-align:middle;border-top:1px solid #f3f3f3;font-size:13px;color:#5d5b6f;}
+    .table tbody tr:hover td{background:#f8f9fa;}
+    .av{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+    .nm-cell{display:flex;align-items:center;gap:9px;}
+    .nm-cell strong{color:#23222f;}
+    .mu{color:#a8a8b1;font-size:12px;}
+
+    /* ── BADGES ── */
+    .role-badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+    .role-admin{background:rgba(13,33,69,.08);color:#0d2145;}
+    .role-user{background:#f2f5f7;color:#6c757d;}
+    .status-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+    .status-active{background:rgba(30,202,184,.12);color:#1ecab8;}
+    .status-inactive{background:rgba(249,59,122,.08);color:#f93b7a;}
+
+    /* ── ACTION BUTTONS ── */
+    .act-btn{border:none;border-radius:4px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Roboto',sans-serif;transition:opacity .12s;}
+    .act-btn:hover{opacity:.8;}
+    .act-edit  {background:rgba(13,33,69,.07);color:#0d2145;border:1px solid rgba(13,33,69,.12);}
+    .act-save  {background:#0d2145;color:#fff;}
+    .act-cancel{background:#f2f5f7;color:#6c757d;border:1px solid #dee2e6;}
+    .act-pw    {background:rgba(30,202,184,.1);color:#1ecab8;}
+    .act-off   {background:rgba(249,59,122,.08);color:#f93b7a;}
+    .act-on    {background:rgba(30,202,184,.10);color:#1ecab8;}
+    .act-group {display:flex;gap:4px;flex-wrap:wrap;}
+    .tbl-input {padding:5px 8px;border:1px solid #dee2e6;border-radius:4px;font-size:12px;color:#23222f;outline:none;width:140px;font-family:'Roboto',sans-serif;}
+    .tbl-input:focus{border-color:#0d2145;}
+    .tbl-select{padding:5px 8px;border:1px solid #dee2e6;border-radius:4px;font-size:12px;color:#23222f;background:#fff;outline:none;font-family:'Roboto',sans-serif;}
 
     /* ── BUTTONS ── */
-    .btn-primary{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .12s;}
-    .btn-primary:hover{opacity:.85;}
-    .btn-ghost{background:#fff;color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background .12s;}
-    .btn-ghost:hover{background:#f1f5f9;}
-    .btn-new{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .12s;}
-    .btn-new:hover{opacity:.85;}
-    .act-btn{border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:opacity .12s;white-space:nowrap;}
-    .act-btn:hover{opacity:.8;}
-    .act-edit{background:#eef0fc;color:var(--primary);}
-    .act-save{background:var(--primary);color:#fff;}
-    .act-cancel{background:#f1f5f9;color:var(--text2);border:1px solid var(--border);}
-    .act-pw{background:#f0fdf4;color:#15803d;}
-    .act-off{background:#fff1f2;color:#be123c;}
-    .act-on{background:#f0fdf4;color:#15803d;}
-    .act-group{display:flex;gap:4px;flex-wrap:wrap;}
+    .btn-f-primary{background:#0d2145;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Roboto',sans-serif;transition:opacity .15s;}
+    .btn-f-primary:hover{opacity:.85;}
+    .btn-f-ghost{background:#fff;color:#6c757d;border:1px solid #dee2e6;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Roboto',sans-serif;transition:background .15s;}
+    .btn-f-ghost:hover{background:#f2f5f7;}
+    .btn-f-new{background:#0d2145;color:#fff;border:none;border-radius:6px;padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Roboto',sans-serif;display:flex;align-items:center;gap:6px;transition:opacity .15s;}
+    .btn-f-new:hover{opacity:.85;}
+
+    /* ── NOTIFY ── */
+    .notify-f{font-size:12px;min-height:16px;margin-top:8px;}
+    .notify-f.ok{color:#1ecab8;} .notify-f.err{color:#f93b7a;}
+    .empty-f{text-align:center;padding:48px;color:#a8a8b1;font-size:13px;}
+
+    /* ── TOGGLE SWITCH ── */
+    .toggle-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}
+    .toggle-lbl{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#a8a8b1;}
+    .toggle-sw{position:relative;display:inline-block;width:40px;height:21px;cursor:pointer;}
+    .toggle-sw input{opacity:0;width:0;height:0;position:absolute;}
+    .toggle-track{position:absolute;inset:0;background:#dee2e6;border-radius:21px;transition:background .2s;}
+    .toggle-track::before{content:'';position:absolute;width:15px;height:15px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+    .toggle-sw input:checked + .toggle-track{background:#8DC63F;}
+    .toggle-sw input:checked + .toggle-track::before{transform:translateX(19px);}
+    .col-center{text-align:center;}
 
     /* ── MODAL ── */
-    .modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:9000;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
     .modal-bg.open{display:flex;}
-    .modal{background:var(--card);border-radius:12px;width:100%;max-width:360px;border:1px solid var(--border);box-shadow:0 20px 60px rgba(15,23,42,.15);}
-    .modal-hdr{padding:18px 20px;border-bottom:1px solid var(--border);}
-    .modal-hdr h3{font-size:15px;font-weight:700;color:var(--text1);}
-    .modal-hdr p{font-size:12px;color:var(--text3);margin-top:3px;}
-    .modal-body{padding:18px 20px;}
-    .modal-foot{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--border);}
-    .pw-notify{font-size:12px;min-height:16px;margin-top:8px;}
-    .pw-notify.ok{color:#15803d;} .pw-notify.err{color:#be123c;}
-    .empty-state{text-align:center;padding:40px;color:var(--text3);font-size:13px;}
+    .modal-f{background:#fff;border-radius:8px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+    .modal-f-hdr{padding:18px 22px;border-bottom:1px solid #f3f3f3;display:flex;align-items:flex-start;justify-content:space-between;}
+    .modal-f-title{font-size:16px;font-weight:700;color:#23222f;}
+    .modal-f-sub{font-size:12px;color:#a8a8b1;margin-top:3px;}
+    .modal-f-close{background:none;border:1px solid #dee2e6;color:#6c757d;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:12px;}
+    .modal-f-close:hover{background:#f2f5f7;}
+    .modal-f-body{padding:20px 22px;}
+    .modal-f-foot{display:flex;gap:8px;padding:14px 22px;border-top:1px solid #f3f3f3;}
+    .pw-notify-f{font-size:12px;min-height:14px;margin-top:8px;}
+    .pw-notify-f.ok{color:#1ecab8;} .pw-notify-f.err{color:#f93b7a;}
 
-    /* ── RANDOM FILL TOGGLE ── */
-    .toggle-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
-    .toggle-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);}
-    .toggle-sw{position:relative;display:inline-block;width:42px;height:22px;cursor:pointer;}
-    .toggle-sw input{opacity:0;width:0;height:0;position:absolute;}
-    .toggle-track{position:absolute;inset:0;background:#e2e8f0;border-radius:22px;transition:background .2s;}
-    .toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
-    .toggle-sw input:checked + .toggle-track{background:#8DC63F;}
-    .toggle-sw input:checked + .toggle-track::before{transform:translateX(20px);}
-    .dev-badge{display:inline-flex;align-items:center;gap:4px;background:#fef9c3;color:#854d0e;border:1px solid #fde68a;border-radius:4px;font-size:9px;font-weight:700;padding:1px 6px;letter-spacing:.3px;}
-    .col-randtoggle{text-align:center;}
+    /* ── DEV BADGE ── */
+    .dev-badge{display:inline-flex;align-items:center;gap:3px;background:#fff3cd;color:#856404;border:1px solid #ffc107;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:.3px;}
   </style>
 </head>
 <body>
+<div class="top-stripe"></div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="sb-brand">
-    <div class="sb-logo-wrap"><img src="/fip-logo-white.png" alt="FIP"></div>
-    <div>
-      <div class="sb-brand-name">FIP Sales Program</div>
-      <div class="sb-brand-sub">Onboarding Planner</div>
-    </div>
-  </div>
-  <div class="sb-nav">
-    <div class="sb-sect">Menu</div>
-    <a class="nav-item" href="/admin-dashboard.html"><span class="ni">📊</span> Dashboard</a>
-    <a class="nav-item" href="/admin-dashboard.html#analytics"><span class="ni">📈</span> Analytics</a>
-    <a class="nav-item" href="/admin-dashboard.html#submissions"><span class="ni">📋</span> Submissions</a>
-    <a class="nav-item" href="/admin-dashboard.html#planner"><span class="ni">🗂</span> Planner View</a>
-    <div class="sb-sect">Admin</div>
-    <a class="nav-item active" href="/admin-users.html"><span class="ni">👥</span> Manage Users</a>
-  </div>
-  <div class="sb-bottom">
-    <div class="sb-user">
-      <div class="sb-av" id="adminAvatar">A</div>
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <nav class="navbar-custom">
+    <a class="topbar-left" href="/admin-dashboard.html" style="text-decoration:none;">
+      <div class="tb-logo"><img src="/fip-logo.png" alt="FIP"></div>
       <div>
-        <div class="sb-uname" id="adminName">Admin</div>
-        <div class="sb-urole">Administrator</div>
+        <div class="tb-brand-name">FIP Sales Program</div>
+        <div class="tb-brand-sub">Onboarding Planner Admin</div>
       </div>
+    </a>
+    <div class="topbar-right">
+      <div class="d-flex align-items-center" style="gap:9px;">
+        <div class="tb-av" id="adminAvatar">A</div>
+        <div>
+          <div class="tb-uname" id="adminName">Administrator</div>
+          <div class="tb-urole">Admin Account</div>
+        </div>
+      </div>
+      <div class="tb-sep"></div>
+      <button class="btn-tb-logout" onclick="logout()"><i class="mdi mdi-logout"></i> Logout</button>
     </div>
-    <button class="sb-logout" onclick="logout()"><span style="font-size:14px;">↩</span> Logout</button>
+  </nav>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="left-sidenav">
+  <div class="menu-title">Main</div>
+  <a class="nav-item-f" href="/admin-dashboard.html"><i class="mdi mdi-view-dashboard-outline"></i><span>Dashboard</span></a>
+  <a class="nav-item-f" href="/admin-dashboard.html#analytics"><i class="mdi mdi-chart-bar"></i><span>Analytics</span></a>
+  <a class="nav-item-f" href="/admin-dashboard.html#submissions"><i class="mdi mdi-clipboard-text-outline"></i><span>Submissions</span></a>
+  <a class="nav-item-f" href="/admin-dashboard.html#planner"><i class="mdi mdi-table-large"></i><span>Planner View</span></a>
+  <div class="menu-title" style="margin-top:8px;">Administration</div>
+  <a class="nav-item-f active" href="/admin-users.html"><i class="mdi mdi-account-group-outline"></i><span>Manage Users</span></a>
+  <div class="sb-user-box" style="margin-top:16px;">
+    <div class="sb-av" id="sbAvatar">A</div>
+    <div><div class="sb-uname" id="sbName">Admin</div><div class="sb-urole">Administrator</div></div>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-  <div class="main-hdr">
-    <div class="mhdr-left">
-      <span class="mhdr-crumb">Admin</span>
-      <span class="mhdr-sep">/</span>
-      <span class="mhdr-title">Manage Users</span>
-    </div>
-    <div class="mhdr-right">
-      <span class="user-count" id="userCount"></span>
-      <button class="btn-new" onclick="toggleCreatePanel()">+ New User</button>
+<!-- ══ PAGE WRAPPER ══ -->
+<div class="page-wrapper">
+  <div class="page-header-area">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/admin-dashboard.html">Admin</a></li>
+      <li class="breadcrumb-item active">Manage Users</li>
+    </ol>
+    <div class="page-header-row">
+      <div class="page-header-title">Manage Users</div>
+      <span id="userCount" style="color:rgba(255,255,255,.45);font-size:12px;"></span>
     </div>
   </div>
 
-  <div class="main-content">
+  <div class="page-content-inner">
 
-    <!-- Create Panel -->
+    <!-- Create panel -->
     <div class="create-panel" id="createPanel">
-      <div class="cp-title">➕ Create New User</div>
-      <form id="createForm" onsubmit="createUser(event)">
-        <div class="form-grid">
-          <div class="form-field">
-            <label class="form-label">Username</label>
-            <input class="form-input" id="newUsername" placeholder="e.g. john_lm" required autocomplete="off">
-          </div>
-          <div class="form-field">
-            <label class="form-label">Display Name</label>
-            <input class="form-input" id="newDisplayName" placeholder="e.g. John Smith" required>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Password</label>
-            <input class="form-input" id="newPassword" type="password" placeholder="Minimum 6 characters" required>
-          </div>
-          <div class="form-field">
-            <label class="form-label">Role</label>
-            <select class="form-select" id="newRole">
-              <option value="user">User (Line Manager)</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
+      <div class="f-card">
+        <div class="f-card-header">
+          <h5 class="f-card-title"><i class="mdi mdi-account-plus-outline" style="margin-right:6px;"></i>Create New User</h5>
         </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-primary">Create User</button>
-          <button type="button" class="btn-ghost" onclick="toggleCreatePanel()">Cancel</button>
+        <div class="f-card-body">
+          <form id="createForm" onsubmit="createUser(event)">
+            <div class="form-grid">
+              <div class="form-field"><label class="form-lbl">Username</label><input class="f-input" id="newUsername" placeholder="e.g. john_lm" required autocomplete="off"></div>
+              <div class="form-field"><label class="form-lbl">Display Name</label><input class="f-input" id="newDisplayName" placeholder="e.g. John Smith" required></div>
+              <div class="form-field"><label class="form-lbl">Password</label><input class="f-input" id="newPassword" type="password" placeholder="Minimum 6 characters" required></div>
+              <div class="form-field"><label class="form-lbl">Role</label>
+                <select class="f-select" id="newRole">
+                  <option value="user">User (Line Manager)</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-f-primary">Create User</button>
+              <button type="button" class="btn-f-ghost" onclick="toggleCreatePanel()">Cancel</button>
+            </div>
+            <div class="notify-f" id="createMsg"></div>
+          </form>
         </div>
-        <div class="notify" id="createMsg"></div>
-      </form>
+      </div>
     </div>
 
-    <!-- Users Table -->
-    <div class="card">
-      <div class="card-hdr"><div class="card-title">All Users</div></div>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Display Name</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th class="col-randtoggle">
-              Random Fill
-              <span class="dev-badge" style="display:inline-flex;margin-left:4px;">🧪 DEV</span>
-            </th>
-            <th>Created</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="usersTbody">
-          <tr><td colspan="7"><div class="empty-state">Loading…</div></td></tr>
-        </tbody>
-      </table>
-      <div class="notify" id="listMsg"></div>
+    <!-- Users table -->
+    <div class="f-card">
+      <div class="f-card-header">
+        <h5 class="f-card-title"><i class="mdi mdi-account-group-outline" style="margin-right:6px;"></i>All Users</h5>
+        <button class="btn-f-new" onclick="toggleCreatePanel()"><i class="mdi mdi-plus"></i> New User</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Display Name</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th class="col-center">
+                Random Fill
+                <span class="dev-badge" style="margin-left:4px;">🧪 DEV</span>
+              </th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTbody">
+            <tr><td colspan="7"><div class="empty-f">Loading…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:10px 20px;"><div class="notify-f" id="listMsg"></div></div>
     </div>
 
   </div>
+
+  <footer style="padding:16px 24px;border-top:1px solid #dee2e6;color:#6c757d;font-size:12px;">
+    &copy; 2025 FIP Sales Program — Onboarding Planner
+  </footer>
 </div>
 
-<!-- PASSWORD MODAL -->
+<!-- ══ PASSWORD MODAL ══ -->
 <div class="modal-bg" id="pwModal" onclick="if(event.target===this)closePwModal()">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3>Reset Password</h3>
-      <p id="pwModalUser">—</p>
-    </div>
-    <div class="modal-body">
-      <div class="form-field">
-        <label class="form-label">New Password</label>
-        <input class="form-input" id="newPwInput" type="password" placeholder="Enter new password" autocomplete="new-password">
+  <div class="modal-f">
+    <div class="modal-f-hdr">
+      <div>
+        <div class="modal-f-title">Reset Password</div>
+        <div class="modal-f-sub" id="pwModalUser">—</div>
       </div>
-      <div class="pw-notify" id="pwNotify"></div>
+      <button class="modal-f-close" onclick="closePwModal()">✕</button>
     </div>
-    <div class="modal-foot">
-      <button class="btn-primary" onclick="confirmReset()">Save Password</button>
-      <button class="btn-ghost" onclick="closePwModal()">Cancel</button>
+    <div class="modal-f-body">
+      <div class="form-field">
+        <label class="form-lbl">New Password</label>
+        <input class="f-input" id="newPwInput" type="password" placeholder="Enter new password (min 6 chars)" autocomplete="new-password">
+      </div>
+      <div class="pw-notify-f" id="pwNotify"></div>
+    </div>
+    <div class="modal-f-foot">
+      <button class="btn-f-primary" onclick="confirmReset()">Save Password</button>
+      <button class="btn-f-ghost" onclick="closePwModal()">Cancel</button>
     </div>
   </div>
 </div>
 
 <script>
-  const AV_COLORS=['#5e6ad2','#4a90c4','#1b3a6b','#d97706','#059669','#dc2626','#7c3aed'];
+  const AV_COLORS=['#0d2145','#4a90c4','#1b3a6b','#d97706','#1ecab8','#f93b7a','#7c3aed'];
   let allUsers=[],pwTargetId=null;
 
   function byId(i){return document.getElementById(i);}
@@ -289,27 +325,27 @@
       ?'<span class="status-badge status-active">● Active</span>'
       :'<span class="status-badge status-inactive">● Inactive</span>';
     const roleBadge=u.role==='admin'
-      ?'<span class="role-badge role-admin">Admin</span>'
-      :'<span class="role-badge role-user">User</span>';
+      ?'<span class="role-badge role-admin"><i class="mdi mdi-shield-account-outline" style="font-size:11px;margin-right:3px;"></i>Admin</span>'
+      :'<span class="role-badge role-user"><i class="mdi mdi-account-outline" style="font-size:11px;margin-right:3px;"></i>User</span>';
     const randToggle=`
       <div class="toggle-wrap">
-        <label class="toggle-sw" title="${randOn?'Auto random fill ON — click to disable':'Auto random fill OFF — click to enable'}">
+        <label class="toggle-sw" title="${randOn?'Random fill ON':'Random fill OFF'}">
           <input type="checkbox" ${randOn?'checked':''} onchange="toggleRandomFill(${u.id},this.checked)">
           <span class="toggle-track"></span>
         </label>
-        <span class="toggle-label" style="color:${randOn?'#6ba83a':'var(--text3)'};">${randOn?'ON':'OFF'}</span>
+        <span class="toggle-lbl" style="color:${randOn?'#8DC63F':'#a8a8b1'};">${randOn?'ON':'OFF'}</span>
       </div>`;
 
     if(editing){return`<tr id="row_${u.id}">
-      <td><span class="av" style="background:${col}">${ini}</span><strong>${u.username}</strong></td>
+      <td><div class="nm-cell"><div class="av" style="background:${col}">${ini}</div><strong>${u.username}</strong></div></td>
       <td><input class="tbl-input" id="dn_${u.id}" value="${(u.display_name||'').replace(/"/g,'&quot;')}"></td>
       <td><select class="tbl-select" id="role_${u.id}">
         <option value="user" ${u.role==='user'?'selected':''}>User</option>
         <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
       </select></td>
       <td>${statusBadge}</td>
-      <td class="col-randtoggle">${randToggle}</td>
-      <td class="mu" style="font-size:11px;">${created}</td>
+      <td class="col-center">${randToggle}</td>
+      <td class="mu">${created}</td>
       <td><div class="act-group">
         <button class="act-btn act-save" onclick="saveUser(${u.id})">Save</button>
         <button class="act-btn act-cancel" onclick="loadUsers()">Cancel</button>
@@ -317,24 +353,24 @@
     </tr>`;}
 
     return`<tr id="row_${u.id}">
-      <td><div style="display:flex;align-items:center;"><span class="av" style="background:${col}">${ini}</span><strong>${u.username}</strong></div></td>
+      <td><div class="nm-cell"><div class="av" style="background:${col}">${ini}</div><strong>${u.username}</strong></div></td>
       <td>${u.display_name||'<span class="mu">—</span>'}</td>
       <td>${roleBadge}</td>
       <td>${statusBadge}</td>
-      <td class="col-randtoggle">${randToggle}</td>
-      <td class="mu" style="font-size:11px;">${created}</td>
+      <td class="col-center">${randToggle}</td>
+      <td class="mu">${created}</td>
       <td><div class="act-group">
-        <button class="act-btn act-edit" onclick="editRow(${u.id})">Edit</button>
-        <button class="act-btn act-pw" onclick="openPwModal(${u.id},'${u.username}')">Password</button>
+        <button class="act-btn act-edit" onclick="editRow(${u.id})"><i class="mdi mdi-pencil-outline"></i> Edit</button>
+        <button class="act-btn act-pw" onclick="openPwModal(${u.id},'${u.username}')"><i class="mdi mdi-lock-reset"></i> Password</button>
         <button class="act-btn ${active?'act-off':'act-on'}" onclick="toggleUser(${u.id},${!active})">${active?'Deactivate':'Activate'}</button>
       </div></td>
     </tr>`;
   }
 
-  async function toggleRandomFill(id, enabled){
+  async function toggleRandomFill(id,enabled){
     try{
       await api(`/api/admin/users/${id}`,{method:'PATCH',body:JSON.stringify({randomFill:enabled})});
-      showMsg('listMsg', `✓ Random fill ${enabled?'enabled':'disabled'} for user.`,'ok');
+      showMsg('listMsg',`✓ Random fill ${enabled?'enabled':'disabled'}.`,'ok');
       await loadUsers();
     }catch(e){showMsg('listMsg',e.message,'err');}
   }
@@ -346,7 +382,7 @@
     byId('userCount').textContent=`${total} user${total!==1?'s':''} · ${active} active`;
     byId('usersTbody').innerHTML=allUsers.length
       ?allUsers.map(u=>rowHtml(u)).join('')
-      :`<tr><td colspan="7"><div class="empty-state">No users yet.</div></td></tr>`;
+      :`<tr><td colspan="7"><div class="empty-f">No users yet.</div></td></tr>`;
     byId('listMsg').textContent='';
   }
 
@@ -376,7 +412,7 @@
   async function createUser(e){
     e.preventDefault();
     const msg=byId('createMsg');
-    msg.textContent='';msg.className='notify';
+    msg.textContent='';msg.className='notify-f';
     try{
       await api('/api/admin/users',{method:'POST',body:JSON.stringify({
         username:byId('newUsername').value.trim(),
@@ -403,24 +439,24 @@
 
   async function confirmReset(){
     const pw=byId('newPwInput').value,ntf=byId('pwNotify');
-    if(!pw||pw.length<6){ntf.textContent='Password must be at least 6 characters.';ntf.className='pw-notify err';return;}
+    ntf.className='pw-notify-f';
+    if(!pw||pw.length<6){ntf.textContent='Password must be at least 6 characters.';ntf.className='pw-notify-f err';return;}
     try{
       await api(`/api/admin/users/${pwTargetId}`,{method:'PATCH',body:JSON.stringify({password:pw})});
-      ntf.textContent='✓ Password reset successfully.';ntf.className='pw-notify ok';
+      ntf.textContent='✓ Password reset successfully.';ntf.className='pw-notify-f ok';
       setTimeout(closePwModal,1200);
-    }catch(e){ntf.textContent=e.message;ntf.className='pw-notify err';}
+    }catch(e){ntf.textContent=e.message;ntf.className='pw-notify-f err';}
   }
 
-  function showMsg(id,txt,type){const el=byId(id);el.textContent=txt;el.className='notify '+type;}
+  function showMsg(id,txt,type){const el=byId(id);el.textContent=txt;el.className='notify-f '+type;}
 
   (async function init(){
     const me=await api('/api/auth/me');
     if(!me.user)return window.location.href='/login.html';
     if(me.user.role!=='admin')return window.location.href='/planner.html';
     const uname=me.user.display_name||me.user.username||'Admin';
-    byId('adminName').textContent=uname;
-    byId('adminAvatar').textContent=initials(uname);
-    byId('adminAvatar').style.background=avColor(uname);
+    ['adminName','sbName'].forEach(id=>{const el=byId(id);if(el)el.textContent=uname;});
+    ['adminAvatar','sbAvatar'].forEach(id=>{const el=byId(id);if(el){el.textContent=initials(uname);el.style.background=avColor(uname);}});
     await loadUsers();
   })();
 </script>

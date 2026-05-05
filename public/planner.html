@@ -299,19 +299,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 }
 
 /* ─── PROFILE OVERLAY ─── */
-.profile-overlay{position:fixed;inset:0;background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 60%,#1E4080 100%);z-index:10000;display:none;align-items:center;justify-content:center;}
-.profile-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:44px 48px;width:100%;max-width:420px;text-align:center;backdrop-filter:blur(12px);}
-.profile-card-logo{margin-bottom:20px;}
-.profile-card-logo img{height:68px;width:auto;}
-.profile-card h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:white;margin-bottom:6px;}
-.profile-card p{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:28px;line-height:1.6;}
+.profile-overlay{position:fixed;inset:0;background:rgba(13,33,69,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:10000;display:none;align-items:center;justify-content:center;}
+.profile-card{background:#ffffff;border-radius:24px;padding:40px 44px 36px;width:100%;max-width:440px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.22),0 4px 16px rgba(0,0,0,0.10);}
+.profile-card-accent{height:4px;background:linear-gradient(90deg,var(--green),var(--green-light));border-radius:24px 24px 0 0;margin:-40px -44px 32px;}
+.profile-card-logo{margin-bottom:16px;}
+.profile-card-logo img{height:60px;width:auto;margin:0 auto;}
+.profile-card h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:#0D1E33;margin-bottom:4px;}
+.profile-card p{font-size:13px;color:#8AA0BC;margin-bottom:24px;line-height:1.65;}
 .profile-field{margin-bottom:14px;text-align:left;}
-.profile-field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:5px;}
-.profile-input{width:100%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.22);border-radius:8px;color:white;font-family:'DM Sans',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border 0.2s;box-sizing:border-box;}
-.profile-input::placeholder{color:rgba(255,255,255,0.3);}
-.profile-input:focus{border-color:var(--green-light);background:rgba(255,255,255,0.15);}
-.profile-start-btn{width:100%;background:linear-gradient(135deg,var(--green),var(--green-light));color:white;border:none;border-radius:10px;padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:10px;letter-spacing:0.3px;}
-.profile-start-btn:hover{filter:brightness(1.1);box-shadow:0 6px 24px rgba(107,168,58,0.35);}
+.profile-field label{display:block;font-size:11px;font-weight:600;color:#4A6080;margin-bottom:6px;}
+.profile-input{width:100%;background:#F4F7FB;border:1px solid #D5E0EF;border-radius:10px;color:#0D1E33;font-family:'DM Sans',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border 0.2s,box-shadow 0.2s,background 0.2s;box-sizing:border-box;}
+.profile-input::placeholder{color:#B0C4D8;}
+.profile-input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(13,33,69,0.08);background:#fff;}
+.profile-start-btn{width:100%;background:var(--navy-dark);color:white;border:none;border-radius:10px;padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px;letter-spacing:0.2px;}
+.profile-start-btn:hover{background:#162e5c;box-shadow:0 8px 24px rgba(13,33,69,0.25);}
 
 /* ─── TOOLTIP ─── */
 .sub-info-wrap{display:inline-flex;align-items:center;gap:6px;position:relative;}
@@ -335,11 +336,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 <!-- PROFILE OVERLAY -->
 <div id="profileOverlay" class="profile-overlay">
   <div class="profile-card">
+    <div class="profile-card-accent"></div>
     <div class="profile-card-logo">
-      <img src="/fip-logo-white.png" alt="Food Industries Polytechnic">
+      <img src="/fip-logo.png" alt="Food Industries Polytechnic">
     </div>
     <h2>FIP Sales Program</h2>
-    <h3 style="font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.75);margin-bottom:6px;margin-top:-8px;">Onboarding Planner</h3>
     <p>Enter your details below to begin the Delivery Point planning tool.</p>
     <form onsubmit="startPlanner(event)">
       <div class="profile-field">

@@ -663,7 +663,7 @@
     const ov=document.createElement('div');
     ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
     ov.innerHTML=`
-      <div style="background:#fff;border-radius:10px;padding:32px 36px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;font-family:Roboto,sans-serif;">
+      <div style="background:#fff;border-radius:10px;padding:32px 36px;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;font-family:Roboto,sans-serif;">
         <div style="width:56px;height:56px;border-radius:50%;background:#fff0f5;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px solid #f93b7a;">
           <i class="mdi mdi-delete-sweep-outline" style="font-size:28px;color:#f93b7a;"></i>
         </div>
@@ -671,7 +671,15 @@
         <p style="font-size:13px;color:#6c757d;line-height:1.7;margin-bottom:6px;">
           This will permanently delete <strong style="color:#f93b7a;font-size:20px;">${count}</strong> submission${count!==1?'s':''} and all associated delivery point selections.
         </p>
-        <p style="font-size:12px;color:#a8a8b1;margin-bottom:24px;">This action <strong style="color:#23222f;">cannot be undone.</strong> Use this only before going live.</p>
+        <p style="font-size:12px;color:#a8a8b1;margin-bottom:20px;">This action <strong style="color:#23222f;">cannot be undone.</strong> Enter the admin password to confirm.</p>
+        <div style="text-align:left;margin-bottom:20px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:#6c757d;margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;">Admin Password</label>
+          <input id="clearPwInput" type="password" placeholder="Enter password to confirm"
+            style="width:100%;padding:10px 13px;border:1.5px solid #dee2e6;border-radius:6px;font-size:14px;font-family:Roboto,sans-serif;outline:none;transition:border .15s;"
+            onfocus="this.style.borderColor='#f93b7a'"
+            onblur="this.style.borderColor='#dee2e6'"
+          >
+        </div>
         <div style="display:flex;gap:10px;justify-content:center;">
           <button id="clearCancelBtn" style="flex:1;max-width:160px;padding:10px;border:1px solid #dee2e6;border-radius:6px;background:#fff;color:#6c757d;font-size:13px;font-weight:500;cursor:pointer;font-family:Roboto,sans-serif;">Cancel</button>
           <button id="clearConfirmBtn" style="flex:1;max-width:160px;padding:10px;border:none;border-radius:6px;background:#f93b7a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:Roboto,sans-serif;">Yes, Clear All</button>
@@ -680,12 +688,29 @@
       </div>`;
     document.body.appendChild(ov);
 
+    const pwInput=ov.querySelector('#clearPwInput');
+    setTimeout(()=>pwInput.focus(),100);
+
     ov.querySelector('#clearCancelBtn').onclick=()=>ov.remove();
     ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+
+    // Also allow Enter key in password field
+    pwInput.addEventListener('keydown',e=>{if(e.key==='Enter')ov.querySelector('#clearConfirmBtn').click();});
 
     ov.querySelector('#clearConfirmBtn').onclick=async()=>{
       const btn=ov.querySelector('#clearConfirmBtn');
       const msg=ov.querySelector('#clearMsg');
+      const pw=pwInput.value;
+
+      // Password gate
+      if(pw!=='12345678'){
+        msg.style.color='#f93b7a';
+        msg.textContent='Incorrect password. Please try again.';
+        pwInput.style.borderColor='#f93b7a';
+        pwInput.select();
+        return;
+      }
+
       btn.disabled=true;btn.textContent='Clearing…';
       try{
         const res=await fetch('/api/admin/submissions',{method:'DELETE'});

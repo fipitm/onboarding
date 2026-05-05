@@ -190,7 +190,7 @@
     async function checkSession() {
       const res = await fetch("/api/auth/me");
       const data = await res.json();
-      if (data.user) window.location.href = "/planner.html";
+      if (data.user) window.location.href = data.user.role === "admin" ? "/admin-dashboard.html" : "/planner.html";
     }
     checkSession();
 
@@ -234,7 +234,7 @@
         msg.textContent = data.error || "Login failed.";
         return;
       }
-      window.location.href = "/planner.html";
+      window.location.href = data.user?.role === "admin" ? "/admin-dashboard.html" : "/planner.html";
     });
   </script>
 </body>

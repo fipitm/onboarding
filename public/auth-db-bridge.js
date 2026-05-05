@@ -39,6 +39,9 @@
 
   function roleGuardUi() {
     if (!currentUser) return;
+    // Inside the admin dashboard iframe the outer sidebar handles all navigation —
+    // suppress every progress-bar button so clicking them can't hijack the iframe
+    if (window.self !== window.top) return;
 
     const logoutBtn = document.createElement("button");
     logoutBtn.textContent = "Logout";

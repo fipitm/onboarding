@@ -2984,11 +2984,6 @@ window.addEventListener('load',()=>{
   const d=sel('responderDate');
   if(d&&!d.value)d.value=new Date().toISOString().split('T')[0];
   loadData();
-  try{
-    const raw=localStorage.getItem(SK);
-    const saved=raw?JSON.parse(raw):{};
-    sel('profileOverlay').style.display=saved.name?'none':'flex';
-  }catch(e){sel('profileOverlay').style.display='flex';}
   applyRowHighlights();
   updateGlobal();
   PHASES_DATA.forEach(p=>updatePhaseProgress(p.id));

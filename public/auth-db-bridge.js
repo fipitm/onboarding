@@ -169,6 +169,14 @@
     if (!ok) return;
     roleGuardUi();
     await loadServerData();
+
+    // Show profile overlay only for non-admin users who have no saved profile name
+    if (currentUser.role !== "admin") {
+      const savedName = (byId("responderName") || {}).value || "";
+      const overlay = byId("profileOverlay");
+      if (overlay) overlay.style.display = savedName ? "none" : "flex";
+    }
+
     if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
     if (typeof window.updateGlobal === "function") window.updateGlobal();
     const phaseButtons = document.querySelectorAll(".phase-nav-btn[data-phase]");

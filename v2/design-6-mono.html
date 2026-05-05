@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Design 6 — Ultra Minimal Mono</title>
+<link rel="icon" type="image/png" href="/fip-logo.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#ffffff;color:#000;display:flex;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;}
+
+/* ── SIDEBAR ── */
+.sb{width:220px;flex-shrink:0;background:#fff;display:flex;flex-direction:column;height:100vh;border-right:1px solid #f0f0f0;}
+.sb-brand{padding:22px 18px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f0f0f0;}
+.sb-logo{width:32px;height:32px;border-radius:8px;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-logo img{height:20px;width:auto;}
+.sb-title{font-size:13px;font-weight:700;color:#000;line-height:1.3;}
+.sb-sub{font-size:10px;color:#999;margin-top:1px;}
+.sb-nav{flex:1;padding:16px 8px;overflow-y:auto;}
+.sb-sect{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#ccc;padding:16px 10px 6px;}
+.ni{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:6px;cursor:pointer;color:#666;font-size:13px;font-weight:400;margin-bottom:1px;transition:all .12s;text-decoration:none;}
+.ni:hover{background:#f5f5f5;color:#000;}
+.ni.act{background:#000;color:#fff;font-weight:600;}
+.ni-ico{font-size:13px;width:16px;text-align:center;}
+.ni-badge{margin-left:auto;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:#f0f0f0;color:#666;}
+.ni.act .ni-badge{background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);}
+.sb-bottom{padding:12px;border-top:1px solid #f0f0f0;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:9px;border-radius:6px;background:#f5f5f5;margin-bottom:8px;}
+.sb-av{width:28px;height:28px;border-radius:6px;background:#000;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-uname{font-size:12px;font-weight:600;color:#000;}
+.sb-urole{font-size:10px;color:#999;}
+.sb-logout{width:100%;padding:8px 10px;border-radius:6px;border:1px solid #e8e8e8;background:#fff;color:#666;font-size:12px;font-weight:400;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .12s;}
+.sb-logout:hover{background:#f5f5f5;color:#000;}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.hdr{background:#fff;border-bottom:1px solid #f0f0f0;padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;}
+.hdr-left{display:flex;align-items:center;gap:8px;}
+.hdr-title{font-size:14px;font-weight:700;color:#000;}
+.hdr-crumb{font-size:12px;color:#ccc;}
+.hdr-sep{color:#e0e0e0;margin:0 4px;}
+.hdr-count{font-size:12px;color:#999;}
+.content{flex:1;overflow-y:auto;padding:32px;}
+
+/* ── KPI — PURE TYPOGRAPHY ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#f0f0f0;border:1px solid #f0f0f0;border-radius:12px;overflow:hidden;margin-bottom:32px;}
+.kpi{background:#fff;padding:28px 24px;}
+.kpi-lbl{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#ccc;margin-bottom:12px;}
+.kpi-val{font-size:48px;font-weight:900;line-height:1;color:#000;letter-spacing:-2px;}
+.kpi.k-fip .kpi-val{color:#4a90c4;}
+.kpi.k-alm .kpi-val{color:#1b3a6b;}
+.kpi.k-fld .kpi-val{color:#d97706;}
+.kpi-sub{font-size:12px;color:#999;margin-top:8px;font-weight:400;}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:#f0f0f0;margin-bottom:28px;}
+
+/* ── SECTION LABELS ── */
+.sec-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#ccc;margin-bottom:16px;}
+
+/* ── DIST BAR — minimal ── */
+.dist-wrap{margin-bottom:28px;}
+.dist-bar{display:flex;height:8px;gap:1px;border-radius:4px;overflow:hidden;margin:10px 0 12px;}
+.dseg{height:100%;}.dseg.f{background:#4a90c4;}.dseg.a{background:#1b3a6b;}.dseg.fl{background:#d97706;}
+.legend{display:flex;gap:20px;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#999;}
+.leg-dot{width:6px;height:6px;border-radius:50%;}
+
+/* ── TABLE — ultra clean ── */
+.tbl-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#ccc;margin-bottom:12px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{color:#ccc;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:0 0 10px;text-align:left;border-bottom:1px solid #f0f0f0;}
+tbody td{padding:14px 0;border-bottom:1px solid #f5f5f5;color:#666;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{color:#000;}
+.nm{display:flex;align-items:center;gap:10px;}
+.nm strong{color:#000;font-weight:600;}
+.av{width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;background:#000;}
+.bdg{background:#f5f5f5;color:#999;font-size:11px;padding:2px 8px;border-radius:4px;}
+.mu{color:#ccc;font-size:12px;}
+.fip-v{color:#4a90c4;font-weight:700;}
+.alm-v{color:#1b3a6b;font-weight:700;}
+.fld-v{color:#d97706;font-weight:700;}
+.tot-v{color:#000;font-weight:800;font-size:14px;}
+
+/* ── PHASE OVERVIEW — minimal bars ── */
+.phase-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+.phase-row{display:flex;align-items:center;gap:10px;}
+.phase-name{font-size:12px;color:#666;width:120px;flex-shrink:0;}
+.phase-bar{flex:1;height:3px;background:#f0f0f0;border-radius:2px;overflow:hidden;}
+.phase-fill{height:100%;background:#000;border-radius:2px;}
+.phase-val{font-size:12px;font-weight:700;color:#000;width:30px;text-align:right;flex-shrink:0;}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="sb-logo"><img src="/fip-logo-white.png" alt="FIP"></div>
+    <div><div class="sb-title">FIP Sales</div><div class="sb-sub">Onboarding Planner</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sect">Navigation</div>
+    <a class="ni act"><span class="ni-ico">◼</span> Dashboard <span class="ni-badge">12</span></a>
+    <a class="ni"><span class="ni-ico">◻</span> Analytics</a>
+    <a class="ni"><span class="ni-ico">◻</span> Submissions</a>
+    <a class="ni"><span class="ni-ico">◻</span> Planner View</a>
+    <div class="sb-sect">Admin</div>
+    <a class="ni"><span class="ni-ico">◻</span> Manage Users</a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-user"><div class="sb-av">SA</div><div><div class="sb-uname">System Admin</div><div class="sb-urole">Administrator</div></div></div>
+    <button class="sb-logout">↩ Logout</button>
+  </div>
+</aside>
+<div class="main">
+  <header class="hdr">
+    <div class="hdr-left"><span class="hdr-crumb">Admin</span><span class="hdr-sep">/</span><span class="hdr-title">Dashboard</span></div>
+    <span class="hdr-count">12 submissions · 441h program</span>
+  </header>
+  <div class="content">
+    <div class="kpi-grid">
+      <div class="kpi k-tot"><div class="kpi-lbl">Submissions</div><div class="kpi-val">12</div><div class="kpi-sub">Individual plans</div></div>
+      <div class="kpi k-fip"><div class="kpi-lbl">FIP CTH</div><div class="kpi-val">187</div><div class="kpi-sub">42% avg share</div></div>
+      <div class="kpi k-alm"><div class="kpi-lbl">Almarai CTH</div><div class="kpi-val">156</div><div class="kpi-sub">35% avg share</div></div>
+      <div class="kpi k-fld"><div class="kpi-lbl">Field CTH</div><div class="kpi-val">98</div><div class="kpi-sub">22% avg share</div></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="sec-lbl">CTH Distribution</div>
+    <div class="dist-wrap">
+      <div class="dist-bar"><div class="dseg f" style="width:42%"></div><div class="dseg a" style="width:35%"></div><div class="dseg fl" style="width:22%"></div></div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#4a90c4"></div>FIP — 42%</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#1b3a6b"></div>Almarai — 35%</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#d97706"></div>Field — 22%</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="sec-lbl">Phase Overview</div>
+    <div class="phase-grid" style="margin-bottom:28px;">
+      <div class="phase-row"><span class="phase-name">Job Description</span><div class="phase-bar"><div class="phase-fill" style="width:100%;background:#4a90c4;"></div></div><span class="phase-val" style="color:#4a90c4">24h</span></div>
+      <div class="phase-row"><span class="phase-name">Pre Execution</span><div class="phase-bar"><div class="phase-fill" style="width:100%;background:#1b3a6b;"></div></div><span class="phase-val" style="color:#1b3a6b">84h</span></div>
+      <div class="phase-row"><span class="phase-name">Introduction</span><div class="phase-bar"><div class="phase-fill" style="width:75%;"></div></div><span class="phase-val">58h</span></div>
+      <div class="phase-row"><span class="phase-name">Execution</span><div class="phase-bar"><div class="phase-fill" style="width:100%;background:#d97706;"></div></div><span class="phase-val" style="color:#d97706">197h</span></div>
+      <div class="phase-row"><span class="phase-name">Specialization</span><div class="phase-bar"><div class="phase-fill" style="width:50%;"></div></div><span class="phase-val">44h</span></div>
+      <div class="phase-row"><span class="phase-name">Closing</span><div class="phase-bar"><div class="phase-fill" style="width:40%;"></div></div><span class="phase-val">34h</span></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="tbl-lbl">Recent Submissions</div>
+    <table>
+      <thead><tr><th></th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th><th>Submitted</th><th>FIP</th><th>Almarai</th><th>Field</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td><div class="av">AA</div></td><td><div class="nm"><strong>Ahmed Al-Rashid</strong></div></td><td class="mu">Senior LM</td><td class="mu">Riyadh</td><td><span class="bdg">TT-North</span></td><td class="mu">2025-05-01</td><td class="fip-v">186</td><td class="alm-v">155</td><td class="fld-v">100</td><td class="tot-v">441</td></tr>
+        <tr><td><div class="av">MA</div></td><td><div class="nm"><strong>Mohammed Al-Qahtani</strong></div></td><td class="mu">LM – HoReCa</td><td class="mu">Jeddah</td><td><span class="bdg">HoReCa-W</span></td><td class="mu">2025-04-29</td><td class="fip-v">200</td><td class="alm-v">140</td><td class="fld-v">101</td><td class="tot-v">441</td></tr>
+        <tr><td><div class="av">SA</div></td><td><div class="nm"><strong>Sara Abdullah</strong></div></td><td class="mu">Line Manager</td><td class="mu">Dammam</td><td><span class="bdg">MT-East</span></td><td class="mu">2025-04-28</td><td class="fip-v">175</td><td class="alm-v">166</td><td class="fld-v">100</td><td class="tot-v">441</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

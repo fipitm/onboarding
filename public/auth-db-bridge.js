@@ -294,7 +294,15 @@
       if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
       setupAdminPlanner();
     } else {
-      // Normal user: show blank profile overlay on every login
+      // Normal user: always start completely fresh on every login.
+      // planner.html's own load handler calls loadData() which restores
+      // localStorage — we must wipe both the DOM and localStorage here
+      // so stale selections (e.g. from a previous random-fill session)
+      // never bleed into a new submission.
+      document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
+      try { localStorage.removeItem("fip_onboarding_v2"); } catch (_) {}
+      if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();
+
       ["responderName", "responderDesig", "responderRegion"].forEach(id => {
         const el = byId(id);
         if (el) el.value = "";

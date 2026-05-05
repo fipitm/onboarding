@@ -593,6 +593,9 @@
     const title=SECTION_TITLES[id]||id;
     byId('pageTitle').textContent=title;
     byId('breadcrumbPage').textContent=title;
+    // Hide header stats on Planner View — they relate to submissions, not the planner
+    const hs=byId('headerStats');
+    if(hs)hs.style.display=id==='planner'?'none':'flex';
     if(id==='analytics'&&!chartsBuilt){buildCharts();chartsBuilt=true;}
     if(id==='planner'){const fr=byId('plannerIframe');if(fr&&!fr.getAttribute('data-loaded')){fr.src='/planner.html';fr.setAttribute('data-loaded','1');}}
   }

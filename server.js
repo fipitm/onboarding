@@ -45,6 +45,25 @@ CREATE TABLE IF NOT EXISTS planner_selections (
   UNIQUE(user_id, row_idx),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS submissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  responder_name TEXT DEFAULT '',
+  responder_desig TEXT DEFAULT '',
+  responder_region TEXT DEFAULT '',
+  submitted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS submission_selections (
+  submission_id INTEGER NOT NULL,
+  row_idx INTEGER NOT NULL,
+  delivery_point TEXT NOT NULL CHECK(delivery_point IN ('FIP', 'Almarai', 'Field Training')),
+  PRIMARY KEY (submission_id, row_idx),
+  FOREIGN KEY (submission_id) REFERENCES submissions(id) ON DELETE CASCADE
+);
 `);
 
 const profileColumns = db.prepare("PRAGMA table_info(planner_profiles)").all();
@@ -215,6 +234,73 @@ app.put("/api/planner", requireAuth, (req, res) => {
   tx();
 
   return res.json({ ok: true });
+});
+
+// ── Submissions: one record per person per session ──
+
+app.post("/api/submissions", requireAuth, (req, res) => {
+  const userId = req.session.user.id;
+  const { name, desig, region } = req.body || {};
+  const info = db.prepare(
+    `INSERT INTO submissions (user_id, responder_name, responder_desig, responder_region, submitted_at, updated_at)
+     VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+  ).run(userId, String(name || ""), String(desig || ""), String(region || ""));
+  return res.status(201).json({ submissionId: info.lastInsertRowid });
+});
+
+app.put("/api/submissions/:id", requireAuth, (req, res) => {
+  const submissionId = Number(req.params.id);
+  const userId = req.session.user.id;
+  const { selections } = req.body || {};
+  const sub = db.prepare("SELECT id FROM submissions WHERE id = ? AND user_id = ?").get(submissionId, userId);
+  if (!sub) return res.status(403).json({ error: "Not found." });
+  const del = db.prepare("DELETE FROM submission_selections WHERE submission_id = ?");
+  const ins = db.prepare("INSERT INTO submission_selections (submission_id, row_idx, delivery_point) VALUES (?, ?, ?)");
+  const upd = db.prepare("UPDATE submissions SET updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+  db.transaction(() => {
+    del.run(submissionId);
+    Object.entries(selections || {}).forEach(([idx, val]) => {
+      if (val === "FIP" || val === "Almarai" || val === "Field Training") {
+        ins.run(submissionId, Number(idx), val);
+      }
+    });
+    upd.run(submissionId);
+  })();
+  return res.json({ ok: true });
+});
+
+app.get("/api/admin/submissions", requireAuth, requireAdmin, (req, res) => {
+  const rows = db.prepare(`
+    SELECT s.id, s.responder_name, s.responder_desig, s.responder_region,
+           s.submitted_at, s.updated_at, u.username, u.display_name
+    FROM submissions s
+    JOIN users u ON s.user_id = u.id
+    ORDER BY s.submitted_at DESC
+  `).all();
+  const result = rows.map(s => {
+    const sels = db.prepare(
+      "SELECT row_idx, delivery_point FROM submission_selections WHERE submission_id = ?"
+    ).all(s.id);
+    let fip = 0, almarai = 0, field = 0;
+    sels.forEach(r => {
+      if (r.delivery_point === "FIP") fip++;
+      else if (r.delivery_point === "Almarai") almarai++;
+      else field++;
+    });
+    return {
+      id: s.id,
+      name: s.responder_name,
+      desig: s.responder_desig,
+      region: s.responder_region,
+      submittedAt: s.submitted_at,
+      updatedAt: s.updated_at,
+      account: s.username,
+      displayName: s.display_name,
+      assigned: sels.length,
+      fip, almarai, field
+    };
+  });
+  return res.json({ submissions: result });
 });
 
 app.get("/api/report", requireAuth, requireAdmin, (req, res) => {

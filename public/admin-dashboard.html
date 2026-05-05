@@ -60,20 +60,23 @@
     </div>
 
     <div class="card">
-      <h2>Line Manager Status</h2>
+      <h2>Individual Submissions <span id="subCount" style="font-size:13px;font-weight:400;color:#7b8397;"></span></h2>
       <table>
         <thead>
           <tr>
-            <th>User</th>
-            <th>Manager Name</th>
+            <th>#</th>
+            <th>Name</th>
             <th>Designation</th>
             <th>Region</th>
-            <th>Date</th>
-            <th>Assigned Topics</th>
-            <th>Assigned CTH</th>
+            <th>Account</th>
+            <th>Submitted</th>
+            <th>Topics Assigned</th>
+            <th style="color:#4a90c4;">FIP</th>
+            <th style="color:#1b3a6b;">Almarai</th>
+            <th style="color:#c27c0a;">Field</th>
           </tr>
         </thead>
-        <tbody id="tbody"></tbody>
+        <tbody id="subTbody"></tbody>
       </table>
     </div>
   </div>
@@ -97,9 +100,10 @@
       if (!me.user) return window.location.href = "/login.html";
       if (me.user.role !== "admin") return window.location.href = "/planner.html";
 
-      const [usersData, reportData] = await Promise.all([
+      const [usersData, reportData, subData] = await Promise.all([
         api("/api/admin/users"),
-        api("/api/report")
+        api("/api/report"),
+        api("/api/admin/submissions")
       ]);
 
       const activeUsers = usersData.users.filter(u => u.is_active === 1 && u.role === "user");
@@ -139,7 +143,23 @@
       byId("kStarted").textContent = started;
       byId("kAssigned").textContent = totalAssigned;
       byId("kHours").textContent = totalHours;
-      byId("tbody").innerHTML = rows.join("") || "<tr><td colspan='7'>No active user records.</td></tr>";
+
+      // Submissions table
+      const subs = subData.submissions || [];
+      byId("subCount").textContent = `(${subs.length} total)`;
+      byId("subTbody").innerHTML = subs.length ? subs.map((s, i) => `
+        <tr>
+          <td style="color:#8aa0bc;">${i + 1}</td>
+          <td><strong>${s.name || "-"}</strong></td>
+          <td>${s.desig || "-"}</td>
+          <td>${s.region || "-"}</td>
+          <td><span style="background:#eef3fb;padding:2px 8px;border-radius:4px;font-size:11px;">${s.account}</span></td>
+          <td style="color:#8aa0bc;font-size:12px;">${s.submittedAt ? s.submittedAt.slice(0,16).replace("T"," ") : "-"}</td>
+          <td>${s.assigned} / 73</td>
+          <td style="color:#4a90c4;font-weight:700;">${s.fip}</td>
+          <td style="color:#1b3a6b;font-weight:700;">${s.almarai}</td>
+          <td style="color:#c27c0a;font-weight:700;">${s.field}</td>
+        </tr>`).join("") : "<tr><td colspan='10' style='color:#8aa0bc;'>No submissions yet.</td></tr>";
 
       const totalDist = fip + almarai + field;
       const pF = totalDist ? Math.round((fip / totalDist) * 100) : 0;

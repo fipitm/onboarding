@@ -6,6 +6,7 @@
 
   let currentUser = null;
   let saveTimer = null;
+  let currentSubmissionId = null;
 
   function byId(id) {
     return document.getElementById(id);
@@ -95,29 +96,33 @@
   }
 
   async function persistPlanner() {
-    const dateInput = byId("responderDate");
-    if (dateInput && !dateInput.value) {
-      dateInput.value = new Date().toISOString().split("T")[0];
-    }
-    const profile = {
-      name: byId("responderName")?.value || "",
-      desig: byId("responderDesig")?.value || "",
-      region: byId("responderRegion")?.value || "",
-      date: byId("responderDate")?.value || new Date().toISOString().split("T")[0]
-    };
+    if (!currentSubmissionId) return;
     const selections = gatherSelections();
-    await api("/api/planner", {
+    await api(`/api/submissions/${currentSubmissionId}`, {
       method: "PUT",
-      body: JSON.stringify({ profile, selections })
+      body: JSON.stringify({ selections })
     });
-    const saveText = byId("saveText");
-    if (saveText) {
-      saveText.textContent = "Saved to server";
-      setTimeout(() => {
-        saveText.textContent = "Auto-saving";
-      }, 1200);
-    }
   }
+
+  // Override startPlanner: create a new submission then open the planner
+  window.startPlanner = async function (e) {
+    e.preventDefault();
+    const name   = (byId("responderName")  || {}).value.trim();
+    const desig  = (byId("responderDesig") || {}).value.trim();
+    const region = (byId("responderRegion")|| {}).value.trim();
+    if (!name || !desig || !region) return;
+    try {
+      const result = await api("/api/submissions", {
+        method: "POST",
+        body: JSON.stringify({ name, desig, region })
+      });
+      currentSubmissionId = result.submissionId;
+      const overlay = byId("profileOverlay");
+      if (overlay) overlay.style.display = "none";
+    } catch (err) {
+      console.error("Failed to create submission:", err);
+    }
+  };
 
   function debouncedSave() {
     if (saveTimer) clearTimeout(saveTimer);

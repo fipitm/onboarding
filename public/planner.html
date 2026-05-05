@@ -95,7 +95,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
 /* Phase header */
-.phase-panel-header{border-radius:var(--r);padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,var(--ph-color),rgba(255,255,255,0.05));border:1px solid rgba(0,0,0,0.06);box-shadow:var(--shadow-sm);}
+.phase-panel-header{border-radius:var(--r);padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,var(--ph-color),rgba(255,255,255,0.05));border:1px solid rgba(0,0,0,0.06);box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:20;}
 .phase-header-left{display:flex;align-items:center;gap:16px;}
 .phase-icon-lg{font-size:36px;}
 .phase-panel-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:4px;}
@@ -2794,7 +2794,8 @@ function goToPhase(phaseId){
   document.querySelectorAll('.phase-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.phase-nav-btn').forEach(b=>b.classList.remove('active'));
   const panel=sel(`panel_${phaseId}`);
-  if(panel){panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});}
+  if(panel){panel.classList.add('active');}
+  const ca=document.querySelector('.content-area');if(ca)ca.scrollTop=0;
   const btn=document.querySelector(`.phase-nav-btn[data-phase="${phaseId}"]`);
   if(btn)btn.classList.add('active');
 }

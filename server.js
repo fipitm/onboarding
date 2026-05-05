@@ -76,6 +76,10 @@ const hasIsActiveColumn = userColumns.some((c) => c.name === "is_active");
 if (!hasIsActiveColumn) {
   db.exec("ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1");
 }
+const hasRandomFill = userColumns.some((c) => c.name === "random_fill");
+if (!hasRandomFill) {
+  db.exec("ALTER TABLE users ADD COLUMN random_fill INTEGER NOT NULL DEFAULT 0");
+}
 
 function ensureUser(username, password, role, displayName) {
   const exists = db.prepare("SELECT id FROM users WHERE username = ?").get(username);
@@ -164,7 +168,10 @@ app.post("/api/auth/logout", requireAuth, (req, res) => {
 });
 
 app.get("/api/auth/me", (req, res) => {
-  return res.json({ user: req.session.user || null });
+  if (!req.session.user) return res.json({ user: null });
+  const fresh = db.prepare("SELECT random_fill FROM users WHERE id = ?").get(req.session.user.id);
+  const user = { ...req.session.user, random_fill: fresh ? fresh.random_fill : 0 };
+  return res.json({ user });
 });
 
 app.get("/api/planner", requireAuth, (req, res) => {
@@ -365,7 +372,7 @@ app.post("/api/admin/users", requireAuth, requireAdmin, (req, res) => {
 app.get("/api/admin/users", requireAuth, requireAdmin, (req, res) => {
   const users = db
     .prepare(`
-      SELECT id, username, role, display_name, is_active, created_at
+      SELECT id, username, role, display_name, is_active, random_fill, created_at
       FROM users
       ORDER BY id
     `)
@@ -375,7 +382,7 @@ app.get("/api/admin/users", requireAuth, requireAdmin, (req, res) => {
 
 app.patch("/api/admin/users/:id", requireAuth, requireAdmin, (req, res) => {
   const id = Number(req.params.id);
-  const { displayName, role, isActive, password } = req.body || {};
+  const { displayName, role, isActive, password, randomFill } = req.body || {};
   if (!Number.isInteger(id)) {
     return res.status(400).json({ error: "Invalid user id." });
   }
@@ -409,6 +416,10 @@ app.patch("/api/admin/users/:id", requireAuth, requireAdmin, (req, res) => {
   if (typeof password === "string" && password.trim()) {
     updates.push("password_hash = ?");
     params.push(bcrypt.hashSync(password.trim(), 10));
+  }
+  if (typeof randomFill === "boolean") {
+    updates.push("random_fill = ?");
+    params.push(randomFill ? 1 : 0);
   }
 
   if (updates.length === 0) {

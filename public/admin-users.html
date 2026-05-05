@@ -112,6 +112,18 @@
     .pw-notify{font-size:12px;min-height:16px;margin-top:8px;}
     .pw-notify.ok{color:#15803d;} .pw-notify.err{color:#be123c;}
     .empty-state{text-align:center;padding:40px;color:var(--text3);font-size:13px;}
+
+    /* ── RANDOM FILL TOGGLE ── */
+    .toggle-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+    .toggle-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);}
+    .toggle-sw{position:relative;display:inline-block;width:42px;height:22px;cursor:pointer;}
+    .toggle-sw input{opacity:0;width:0;height:0;position:absolute;}
+    .toggle-track{position:absolute;inset:0;background:#e2e8f0;border-radius:22px;transition:background .2s;}
+    .toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+    .toggle-sw input:checked + .toggle-track{background:#8DC63F;}
+    .toggle-sw input:checked + .toggle-track::before{transform:translateX(20px);}
+    .dev-badge{display:inline-flex;align-items:center;gap:4px;background:#fef9c3;color:#854d0e;border:1px solid #fde68a;border-radius:4px;font-size:9px;font-weight:700;padding:1px 6px;letter-spacing:.3px;}
+    .col-randtoggle{text-align:center;}
   </style>
 </head>
 <body>
@@ -205,12 +217,16 @@
             <th>Display Name</th>
             <th>Role</th>
             <th>Status</th>
+            <th class="col-randtoggle">
+              Random Fill
+              <span class="dev-badge" style="display:inline-flex;margin-left:4px;">🧪 DEV</span>
+            </th>
             <th>Created</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody id="usersTbody">
-          <tr><td colspan="6"><div class="empty-state">Loading…</div></td></tr>
+          <tr><td colspan="7"><div class="empty-state">Loading…</div></td></tr>
         </tbody>
       </table>
       <div class="notify" id="listMsg"></div>
@@ -265,6 +281,7 @@
 
   function rowHtml(u,editing=false){
     const active=u.is_active===1||u.is_active===true;
+    const randOn=u.random_fill===1||u.random_fill===true;
     const ini=initials(u.display_name||u.username);
     const col=avColor(u.display_name||u.username);
     const created=u.created_at?u.created_at.slice(0,10):'—';
@@ -274,6 +291,14 @@
     const roleBadge=u.role==='admin'
       ?'<span class="role-badge role-admin">Admin</span>'
       :'<span class="role-badge role-user">User</span>';
+    const randToggle=`
+      <div class="toggle-wrap">
+        <label class="toggle-sw" title="${randOn?'Auto random fill ON — click to disable':'Auto random fill OFF — click to enable'}">
+          <input type="checkbox" ${randOn?'checked':''} onchange="toggleRandomFill(${u.id},this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+        <span class="toggle-label" style="color:${randOn?'#6ba83a':'var(--text3)'};">${randOn?'ON':'OFF'}</span>
+      </div>`;
 
     if(editing){return`<tr id="row_${u.id}">
       <td><span class="av" style="background:${col}">${ini}</span><strong>${u.username}</strong></td>
@@ -283,6 +308,7 @@
         <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
       </select></td>
       <td>${statusBadge}</td>
+      <td class="col-randtoggle">${randToggle}</td>
       <td class="mu" style="font-size:11px;">${created}</td>
       <td><div class="act-group">
         <button class="act-btn act-save" onclick="saveUser(${u.id})">Save</button>
@@ -295,6 +321,7 @@
       <td>${u.display_name||'<span class="mu">—</span>'}</td>
       <td>${roleBadge}</td>
       <td>${statusBadge}</td>
+      <td class="col-randtoggle">${randToggle}</td>
       <td class="mu" style="font-size:11px;">${created}</td>
       <td><div class="act-group">
         <button class="act-btn act-edit" onclick="editRow(${u.id})">Edit</button>
@@ -304,6 +331,14 @@
     </tr>`;
   }
 
+  async function toggleRandomFill(id, enabled){
+    try{
+      await api(`/api/admin/users/${id}`,{method:'PATCH',body:JSON.stringify({randomFill:enabled})});
+      showMsg('listMsg', `✓ Random fill ${enabled?'enabled':'disabled'} for user.`,'ok');
+      await loadUsers();
+    }catch(e){showMsg('listMsg',e.message,'err');}
+  }
+
   async function loadUsers(){
     const data=await api('/api/admin/users');
     allUsers=data.users||[];
@@ -311,7 +346,7 @@
     byId('userCount').textContent=`${total} user${total!==1?'s':''} · ${active} active`;
     byId('usersTbody').innerHTML=allUsers.length
       ?allUsers.map(u=>rowHtml(u)).join('')
-      :`<tr><td colspan="6"><div class="empty-state">No users yet.</div></td></tr>`;
+      :`<tr><td colspan="7"><div class="empty-state">No users yet.</div></td></tr>`;
     byId('listMsg').textContent='';
   }
 

@@ -268,6 +268,10 @@
     <i class="mdi mdi-table-large"></i>
     <span>Planner View</span>
   </div>
+  <div class="nav-item-f" data-section="activity" onclick="showSection('activity',this)">
+    <i class="mdi mdi-shield-account-outline"></i>
+    <span>Login Activity</span>
+  </div>
 
   <div class="menu-title" style="margin-top:8px;">Administration</div>
   <div class="nav-item-f" onclick="window.location.href='/admin-users.html'">
@@ -500,7 +504,7 @@
           <table class="table mb-0">
             <thead><tr>
               <th>#</th><th>Name</th><th>Designation</th><th>Region</th><th>Account</th>
-              <th>Submitted</th><th>Topics</th>
+              <th>Submitted</th><th>IP Address</th><th>Topics</th>
               <th style="color:#4a90c4">FIP</th>
               <th style="color:#1b3a6b">Almarai</th>
               <th style="color:#d97706">Field</th>
@@ -511,6 +515,25 @@
         </div>
       </div>
     </div><!-- /submissions -->
+
+    <!-- ── LOGIN ACTIVITY ────────────────────────────────────── -->
+    <div class="section" id="sec-activity">
+      <div class="f-card">
+        <div class="f-card-header">
+          <h5 class="f-card-title"><i class="mdi mdi-shield-account-outline" style="margin-right:6px;"></i>Login Activity</h5>
+          <small class="text-muted">Last 200 login attempts</small>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="table mb-0">
+            <thead><tr>
+              <th>#</th><th>Username</th><th>Status</th>
+              <th>IP Address</th><th>Device / Browser</th><th>Timestamp</th>
+            </tr></thead>
+            <tbody id="activityTbody"><tr><td colspan="6"><div class="empty-f">Loading…</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <!-- ── PLANNER IFRAME ─────────────────────────────────────── -->
     <div class="section" id="sec-planner">
@@ -581,7 +604,7 @@
     img.src = '/fip-logo-white.png';
   })();
   const AV_COLORS=['#0d2145','#4a90c4','#1b3a6b','#d97706','#1ecab8','#f93b7a','#7c3aed'];
-  const SECTION_TITLES={dashboard:'Dashboard',analytics:'Analytics',submissions:'Submissions',planner:'Planner View'};
+  const SECTION_TITLES={dashboard:'Dashboard',analytics:'Analytics',submissions:'Submissions',planner:'Planner View',activity:'Login Activity'};
 
   let allSubs=[],currentSub=null,chartsBuilt=false;
 
@@ -617,6 +640,7 @@
     const hs=byId('headerStats');
     if(hs)hs.style.display=id==='planner'?'none':'flex';
     if(id==='analytics'&&!chartsBuilt){buildCharts();chartsBuilt=true;}
+    if(id==='activity'){loadActivity();}
     if(id==='planner'){const fr=byId('plannerIframe');if(fr&&!fr.getAttribute('data-loaded')){fr.src='/planner.html';fr.setAttribute('data-loaded','1');}}
   }
 
@@ -753,8 +777,8 @@
     byId('subCount').textContent=`${allSubs.length} submission${allSubs.length!==1?'s':''}`;
     byId('subTbody').innerHTML=filtered.length?filtered.map((s,i)=>{
       const fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training'),tot=fC+aC+flC;
-      return`<tr><td class="mu">${i+1}</td><td><div class="nm-cell"><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span><strong>${s.name||'-'}</strong></div></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td>${topicProg(s.assigned)}</td><td style="color:#4a90c4;font-weight:700">${fC}</td><td style="color:#1b3a6b;font-weight:700">${aC}</td><td style="color:#d97706;font-weight:700">${flC}</td><td style="font-weight:700;color:#23222f">${tot}</td><td>${propBar(fC,aC,flC)}</td><td style="display:flex;gap:4px"><button class="btn-act btn-view" onclick="openModal(${s.id})">View</button><button class="btn-act btn-pdf" onclick="openAndPrint(${s.id})">PDF</button><button class="btn-act btn-csv" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button><button class="btn-act btn-del" onclick="deleteSubmission(${s.id},'${(s.name||'').replace(/'/g,'\\\'')}')" title="Delete this submission"><i class="mdi mdi-trash-can-outline"></i></button></td></tr>`;
-    }).join(''):`<tr><td colspan="13"><div class="empty-f">No results.</div></td></tr>`;
+      return`<tr><td class="mu">${i+1}</td><td><div class="nm-cell"><span class="av" style="background:${avColor(s.name)}">${initials(s.name)}</span><strong>${s.name||'-'}</strong></div></td><td class="mu">${s.desig||'-'}</td><td class="mu">${s.region||'-'}</td><td><span class="bdg-f badge-soft-gray">${s.account}</span></td><td class="mu">${fmt(s.submittedAt)}</td><td class="mu" style="font-size:11px;font-family:monospace;">${s.ip||'—'}</td><td>${topicProg(s.assigned)}</td><td style="color:#4a90c4;font-weight:700">${fC}</td><td style="color:#1b3a6b;font-weight:700">${aC}</td><td style="color:#d97706;font-weight:700">${flC}</td><td style="font-weight:700;color:#23222f">${tot}</td><td>${propBar(fC,aC,flC)}</td><td style="display:flex;gap:4px"><button class="btn-act btn-view" onclick="openModal(${s.id})">View</button><button class="btn-act btn-pdf" onclick="openAndPrint(${s.id})">PDF</button><button class="btn-act btn-csv" onclick="exportSubCSV(allSubs.find(x=>x.id===${s.id}))">CSV</button><button class="btn-act btn-del" onclick="deleteSubmission(${s.id},'${(s.name||'').replace(/'/g,'\\\'')}')" title="Delete this submission"><i class="mdi mdi-trash-can-outline"></i></button></td></tr>`;
+    }).join(''):`<tr><td colspan="14"><div class="empty-f">No results.</div></td></tr>`;
   }
 
   /* ── Modal ── */
@@ -762,7 +786,9 @@
     currentSub=allSubs.find(s=>s.id===id);if(!currentSub)return;
     const s=currentSub,fC=cth(s.selections,'FIP'),aC=cth(s.selections,'Almarai'),flC=cth(s.selections,'Field Training');
     byId('mName').textContent=s.name||'—';
-    byId('mMeta').textContent=[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)].filter(Boolean).join(' · ');
+    const metaParts=[s.desig,s.region,'Account: '+s.account,fmt(s.submittedAt)];
+    if(s.ip) metaParts.push('IP: '+s.ip);
+    byId('mMeta').textContent=metaParts.filter(Boolean).join(' · ');
     byId('mFip').textContent=fC;byId('mAlm').textContent=aC;byId('mFld').textContent=flC;
     byId('mTot').textContent=fC+aC+flC;byId('mTopics').textContent=s.assigned;
     byId('mPhaseBody').innerHTML=PHASES.map(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e),pf=cth(ps,'FIP'),pa=cth(ps,'Almarai'),pfl=cth(ps,'Field Training');return`<tr><td><strong>${ph.n}</strong></td><td style="color:#4a90c4;font-weight:700">${pf}</td><td style="color:#1b3a6b;font-weight:700">${pa}</td><td style="color:#d97706;font-weight:700">${pfl}</td><td style="font-weight:700">${pf+pa+pfl}</td><td class="mu">${ps.length}/${ph.e-ph.s+1}</td></tr>`;}).join('');
@@ -1027,6 +1053,33 @@
   function exportSubCSV(s){if(!s)return;const rows=[['Name','Designation','Region','Account','Submitted'],[s.name,s.desig,s.region,s.account,fmt(s.submittedAt)],[],['Phase','FIP CTH','Almarai CTH','Field CTH','Total','Assigned']];PHASES.forEach(ph=>{const ps=(s.selections||[]).filter(r=>r.row_idx>=ph.s&&r.row_idx<=ph.e);rows.push([ph.n,cth(ps,'FIP'),cth(ps,'Almarai'),cth(ps,'Field Training'),cth(ps,'FIP')+cth(ps,'Almarai')+cth(ps,'Field Training'),`${ps.length}/${ph.e-ph.s+1}`]);});dl(rows,`FIP_${(s.name||'sub').replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.csv`);}
   function exportAllCSV(){if(!allSubs.length){alert('No submissions.');return;}const h=['#','Name','Designation','Region','Account','Submitted','Topics','FIP CTH','Almarai CTH','Field CTH','Total CTH'];const r=allSubs.map((s,i)=>[i+1,s.name,s.desig,s.region,s.account,fmt(s.submittedAt),s.assigned,cth(s.selections,'FIP'),cth(s.selections,'Almarai'),cth(s.selections,'Field Training'),cth(s.selections,'FIP')+cth(s.selections,'Almarai')+cth(s.selections,'Field Training')]);dl([h,...r],`FIP_Submissions_${new Date().toISOString().split('T')[0]}.csv`);}
   function dl(rows,fn){const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=fn;a.click();}
+
+  /* ── Login Activity ── */
+  async function loadActivity(){
+    byId('activityTbody').innerHTML='<tr><td colspan="6"><div class="empty-f">Loading…</div></td></tr>';
+    try{
+      const data=await api('/api/admin/login-logs');
+      const logs=data.logs||[];
+      if(!logs.length){byId('activityTbody').innerHTML='<tr><td colspan="6"><div class="empty-f">No login activity yet.</div></td></tr>';return;}
+      byId('activityTbody').innerHTML=logs.map((l,i)=>{
+        const success=l.success===1||l.success===true;
+        const statusBadge=success
+          ?'<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(30,202,184,.12);color:#1ecab8;">✓ Success</span>'
+          :'<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(249,59,122,.10);color:#f93b7a;">✗ Failed</span>';
+        const ua=l.user_agent||'';
+        const browser=ua.includes('Chrome')?'Chrome':ua.includes('Firefox')?'Firefox':ua.includes('Safari')?'Safari':ua.includes('Edge')?'Edge':ua.includes('curl')?'API/curl':'Unknown';
+        const device=ua.includes('Mobile')||ua.includes('Android')||ua.includes('iPhone')?'Mobile':'Desktop';
+        return`<tr>
+          <td class="mu">${i+1}</td>
+          <td><strong style="color:#23222f;">${l.username||'—'}</strong></td>
+          <td>${statusBadge}</td>
+          <td style="font-family:monospace;font-size:12px;color:#5d5b6f;">${l.ip_address||'—'}</td>
+          <td style="font-size:12px;color:#a8a8b1;" title="${ua}">${browser} · ${device}</td>
+          <td style="font-size:11px;color:#a8a8b1;">${fmt(l.logged_at)}</td>
+        </tr>`;
+      }).join('');
+    }catch(e){byId('activityTbody').innerHTML=`<tr><td colspan="6"><div class="empty-f">Error: ${e.message}</div></td></tr>`;}
+  }
 
   /* ── Init ── */
   async function init(){

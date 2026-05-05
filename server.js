@@ -81,6 +81,35 @@ if (!hasRandomFill) {
   db.exec("ALTER TABLE users ADD COLUMN random_fill INTEGER NOT NULL DEFAULT 0");
 }
 
+// Add IP / user-agent tracking to submissions
+const subCols = db.prepare("PRAGMA table_info(submissions)").all();
+if (!subCols.some(c => c.name === "ip_address")) {
+  db.exec("ALTER TABLE submissions ADD COLUMN ip_address TEXT DEFAULT ''");
+}
+if (!subCols.some(c => c.name === "user_agent")) {
+  db.exec("ALTER TABLE submissions ADD COLUMN user_agent TEXT DEFAULT ''");
+}
+
+// Login activity log table
+db.exec(`
+CREATE TABLE IF NOT EXISTS login_logs (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id     INTEGER,
+  username    TEXT NOT NULL,
+  success     INTEGER NOT NULL DEFAULT 1,
+  ip_address  TEXT DEFAULT '',
+  user_agent  TEXT DEFAULT '',
+  logged_at   TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
+// Helper: extract real client IP (handles proxy / X-Forwarded-For)
+function clientIP(req) {
+  const fwd = req.headers["x-forwarded-for"];
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.ip || req.socket?.remoteAddress || "unknown";
+}
+
 function ensureUser(username, password, role, displayName) {
   const exists = db.prepare("SELECT id FROM users WHERE username = ?").get(username);
   if (exists) return;
@@ -144,12 +173,25 @@ app.post("/api/auth/login", (req, res) => {
     .prepare("SELECT id, username, password_hash, role, display_name, is_active FROM users WHERE username = ?")
     .get(username.trim());
 
+  const ip = clientIP(req);
+  const ua = req.headers["user-agent"] || "";
+
   if (!user || !bcrypt.compareSync(password, user.password_hash)) {
+    db.prepare(
+      "INSERT INTO login_logs (user_id, username, success, ip_address, user_agent) VALUES (?, ?, 0, ?, ?)"
+    ).run(user ? user.id : null, username.trim(), ip, ua);
     return res.status(401).json({ error: "Invalid credentials." });
   }
   if (!user.is_active) {
+    db.prepare(
+      "INSERT INTO login_logs (user_id, username, success, ip_address, user_agent) VALUES (?, ?, 0, ?, ?)"
+    ).run(user.id, user.username, ip, ua);
     return res.status(403).json({ error: "This account is deactivated. Contact admin." });
   }
+
+  db.prepare(
+    "INSERT INTO login_logs (user_id, username, success, ip_address, user_agent) VALUES (?, ?, 1, ?, ?)"
+  ).run(user.id, user.username, ip, ua);
 
   req.session.user = {
     id: user.id,
@@ -267,10 +309,12 @@ app.get("/api/submissions/:id", requireAuth, (req, res) => {
 app.post("/api/submissions", requireAuth, (req, res) => {
   const userId = req.session.user.id;
   const { name, desig, region } = req.body || {};
+  const ip = clientIP(req);
+  const ua = req.headers["user-agent"] || "";
   const info = db.prepare(
-    `INSERT INTO submissions (user_id, responder_name, responder_desig, responder_region, submitted_at, updated_at)
-     VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
-  ).run(userId, String(name || ""), String(desig || ""), String(region || ""));
+    `INSERT INTO submissions (user_id, responder_name, responder_desig, responder_region, ip_address, user_agent, submitted_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+  ).run(userId, String(name || ""), String(desig || ""), String(region || ""), ip, ua);
   return res.status(201).json({ submissionId: info.lastInsertRowid });
 });
 
@@ -298,6 +342,7 @@ app.put("/api/submissions/:id", requireAuth, (req, res) => {
 app.get("/api/admin/submissions", requireAuth, requireAdmin, (req, res) => {
   const rows = db.prepare(`
     SELECT s.id, s.responder_name, s.responder_desig, s.responder_region,
+           s.ip_address, s.user_agent,
            s.submitted_at, s.updated_at, u.username, u.display_name
     FROM submissions s
     JOIN users u ON s.user_id = u.id
@@ -323,6 +368,8 @@ app.get("/api/admin/submissions", requireAuth, requireAdmin, (req, res) => {
       account: s.username,
       displayName: s.display_name,
       assigned: sels.length,
+      ip: s.ip_address || "",
+      ua: s.user_agent || "",
       fip, almarai, field,
       selections: sels
     };
@@ -345,6 +392,13 @@ app.delete("/api/admin/submissions/:id", requireAuth, requireAdmin, (req, res) =
   db.prepare("DELETE FROM submission_selections WHERE submission_id = ?").run(id);
   db.prepare("DELETE FROM submissions WHERE id = ?").run(id);
   return res.json({ ok: true });
+});
+
+app.get("/api/admin/login-logs", requireAuth, requireAdmin, (req, res) => {
+  const logs = db.prepare(
+    "SELECT id, user_id, username, success, ip_address, user_agent, logged_at FROM login_logs ORDER BY logged_at DESC LIMIT 200"
+  ).all();
+  return res.json({ logs });
 });
 
 app.get("/api/report", requireAuth, requireAdmin, (req, res) => {

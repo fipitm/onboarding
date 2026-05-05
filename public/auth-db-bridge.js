@@ -170,13 +170,13 @@
     const ok = await requireSession();
     if (!ok) return;
     roleGuardUi();
-    const serverProfile = await loadServerData();
+    await loadServerData();
 
-    // Show profile overlay only for non-admin users with no profile saved on server
+    // Always show profile overlay for non-admin users on every login
+    // Fields are pre-filled with existing server data so returning users just click Start Planning
     if (currentUser.role !== "admin") {
       const overlay = byId("profileOverlay");
-      const hasProfile = serverProfile.name && serverProfile.name.trim();
-      if (overlay) overlay.style.display = hasProfile ? "none" : "flex";
+      if (overlay) overlay.style.display = "flex";
     }
 
     if (typeof window.applyRowHighlights === "function") window.applyRowHighlights();

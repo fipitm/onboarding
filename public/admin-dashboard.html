@@ -316,7 +316,10 @@
     if(id==='analytics'&&!chartsBuilt){buildCharts();chartsBuilt=true;}
     if(id==='planner'){
       const fr=byId('plannerIframe');
-      if(fr&&!fr.src)fr.src='/planner.html'; // lazy-load on first visit
+      if(fr&&!fr.getAttribute('data-loaded')){
+        fr.src='/planner.html';
+        fr.setAttribute('data-loaded','1');
+      }
     }
   }
 
@@ -467,7 +470,14 @@
     buildDashboard();
     buildTable();
   }
-  init().catch(e=>console.error(e));
+  init().then(()=>{
+    // Hash routing — e.g. /admin-dashboard.html#planner from other admin pages
+    const hash=location.hash.slice(1);
+    if(hash&&TITLES[hash]){
+      const el=document.querySelector(`[data-section="${hash}"]`);
+      showSection(hash,el);
+    }
+  }).catch(e=>console.error(e));
 </script>
 </body>
 </html>

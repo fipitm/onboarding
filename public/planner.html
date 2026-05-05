@@ -241,13 +241,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .warn-bar.show{display:flex;}
 
 /* Instruction banner */
-.instr-banner{background:linear-gradient(135deg,var(--navy-dark),#1a2f5a);border-left:5px solid var(--green-light);margin:0 44px;margin-top:20px;border-radius:var(--r);padding:22px 26px;display:flex;align-items:flex-start;gap:16px;}
-.instr-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
-.instr-text h3{font-size:15px;font-weight:800;color:var(--green-light);letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;font-family:'Playfair Display',serif;}
-.instr-text p{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.75;}
+.instr-banner{background:linear-gradient(135deg,var(--navy-dark),#1a2f5a);border-left:5px solid var(--green-light);margin:0 44px;margin-top:20px;border-radius:var(--r);padding:16px 22px;display:flex;align-items:flex-start;gap:14px;}
+.instr-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.instr-text h3{font-size:13px;font-weight:800;color:var(--green-light);letter-spacing:0.5px;margin-bottom:5px;text-transform:uppercase;font-family:'Playfair Display',serif;}
+.instr-text p{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;margin:0;}
 .instr-text strong{color:white;}
-.instr-pills{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.instr-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;}
+.instr-pills{display:flex;gap:8px;margin-top:8px;flex-wrap:nowrap;}
+.instr-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
 .instr-pill.fip{background:rgba(74,144,196,0.2);color:#90CDF4;border:1px solid rgba(74,144,196,0.3);}
 .instr-pill.almarai{background:rgba(99,179,237,0.15);color:#BEE3F8;border:1px solid rgba(99,179,237,0.25);}
 .instr-pill.field{background:rgba(194,124,10,0.2);color:#F6AD55;border:1px solid rgba(194,124,10,0.3);}
@@ -376,16 +376,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 
 <!-- INSTRUCTION BANNER -->
 <div class="instr-banner" id="instrBanner">
-  <div class="instr-icon" style="font-size:28px;">📋</div>
+  <div class="instr-icon" style="font-size:20px;">📋</div>
   <div class="instr-text">
-    <h3>Instructions to Fill</h3>
-    <p>For each sub-topic listed in the phases below, select <strong>one delivery point</strong> to indicate where that topic will be delivered. Work through each phase using the left sidebar. All selections are <strong>automatically saved</strong> in your browser — you can close and return at any time without losing your work.</p>
+    <h3>Delivery Point Instructions</h3>
+    <p>For each sub-topic, select <strong>one delivery point</strong> from the sidebar phases. Selections are <strong>auto-saved</strong> — you can return anytime without losing your work.</p>
     <div class="instr-pills">
-      <span class="instr-pill fip">🏛 FIP — Delivered at Food Industries Polytechnic Site</span>
-      <span class="instr-pill almarai">🏢 Almarai — Delivered at Almarai Premises by FIP Trainers</span>
-      <span class="instr-pill field">🚗 Field Based Training — On-the-Job, field based delivery</span>
+      <span class="instr-pill fip">🏛 FIP Premises</span>
+      <span class="instr-pill almarai">🏢 Almarai Premises</span>
+      <span class="instr-pill field">🚗 Field Training</span>
     </div>
-    <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.75);">Once all phases are complete, click <strong style="color:white;">View Summary &amp; Export</strong> to review the full plan. Download the summary report, then share the PDF file directly with FIP.</p>
+    <p style="margin-top:8px;color:rgba(255,255,255,0.6);">Once complete, click <strong style="color:white;">View Summary &amp; Export</strong> to download and share your plan with FIP.</p>
   </div>
 </div>
 <div style="height:16px;"></div>

@@ -431,7 +431,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     </div>
   </div>
 </div>
-<div style="height:16px;"></div>
+<div style="height:16px;" id="formSpacer"></div>
 <div class="global-prog" id="globalProg">
   <span class="gp-label">Overall Progress</span>
   <div class="gp-track"><div class="gp-fill" id="gpFill"></div></div>
@@ -2870,6 +2870,9 @@ function goToPhase(phaseId){
 function showSummaryPage(){
   sel('formView').style.display='none';
   sel('globalProg').style.display='none';
+  const hdr=document.querySelector('.hdr'); if(hdr)hdr.style.display='none';
+  if(sel('instrBanner'))sel('instrBanner').style.display='none';
+  if(sel('formSpacer'))sel('formSpacer').style.display='none';
   const sp=sel('summaryPage');
   sp.classList.add('active');
   window.scrollTo(0,0);
@@ -2880,6 +2883,9 @@ function hideSummaryPage(){
   sel('summaryPage').classList.remove('active');
   sel('formView').style.display='flex';
   sel('globalProg').style.display='flex';
+  const hdr=document.querySelector('.hdr'); if(hdr)hdr.style.display='';
+  if(sel('instrBanner'))sel('instrBanner').style.display='';
+  if(sel('formSpacer'))sel('formSpacer').style.display='';
 }
 
 function buildSummary(){

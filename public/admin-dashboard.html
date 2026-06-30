@@ -989,11 +989,11 @@
         <p style="font-size:13px;color:#6c757d;line-height:1.7;margin-bottom:6px;">
           This will permanently delete <strong style="color:#f93b7a;font-size:20px;">${count}</strong> submission${count!==1?'s':''} and all associated delivery point selections.
         </p>
-        <p style="font-size:12px;color:#a8a8b1;margin-bottom:20px;">This action <strong style="color:#23222f;">cannot be undone.</strong> Enter the admin password to confirm.</p>
+        <p style="font-size:12px;color:#a8a8b1;margin-bottom:20px;">This action <strong style="color:#23222f;">cannot be undone.</strong> Type <strong style="color:#f93b7a;">DELETE</strong> below to confirm.</p>
         <div style="text-align:left;margin-bottom:20px;">
-          <label style="display:block;font-size:11px;font-weight:600;color:#6c757d;margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;">Admin Password</label>
-          <input id="clearPwInput" type="password" placeholder="Enter password to confirm"
-            style="width:100%;padding:10px 13px;border:1.5px solid #dee2e6;border-radius:6px;font-size:14px;font-family:Roboto,sans-serif;outline:none;transition:border .15s;"
+          <label style="display:block;font-size:11px;font-weight:600;color:#6c757d;margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;">Type DELETE to confirm</label>
+          <input id="clearPwInput" type="text" autocomplete="off" placeholder="Type DELETE here"
+            style="width:100%;padding:10px 13px;border:1.5px solid #dee2e6;border-radius:6px;font-size:14px;font-family:Roboto,sans-serif;outline:none;transition:border .15s;letter-spacing:1px;"
             onfocus="this.style.borderColor='#f93b7a'"
             onblur="this.style.borderColor='#dee2e6'"
           >
@@ -1020,10 +1020,10 @@
       const msg=ov.querySelector('#clearMsg');
       const pw=pwInput.value;
 
-      // Password gate
-      if(pw!=='12345678'){
+      // Typed-confirmation gate — admin must type DELETE
+      if(pw.trim().toUpperCase()!=='DELETE'){
         msg.style.color='#f93b7a';
-        msg.textContent='Incorrect password. Please try again.';
+        msg.textContent='Please type DELETE to confirm.';
         pwInput.style.borderColor='#f93b7a';
         pwInput.select();
         return;

@@ -3167,8 +3167,62 @@ var _fipLogo = null;
   img.src = '/fip-logo-white.png';
 })();
 
-// ─── PDF DOWNLOAD (jsPDF) ───
+// ─── PDF DOWNLOAD (html2canvas snapshot of the themed summary page) ───
 function downloadPDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF || !window.html2canvas) { window.print(); return; }
+
+  const btn = document.getElementById('downloadPdfBtn');
+  if (btn) { btn.textContent = '⏳ Generating…'; btn.disabled = true; }
+
+  const node = document.getElementById('summaryPage');
+  // Temporarily hide interactive controls so they don't appear in the PDF
+  const hidden = [];
+  ['.rep-actions', '.rep-back-btn', '.submit-bar'].forEach(s => {
+    node.querySelectorAll(s).forEach(el => { hidden.push([el, el.style.display]); el.style.display = 'none'; });
+  });
+
+  function restore() {
+    hidden.forEach(([el, d]) => { el.style.display = d; });
+    if (btn) { btn.textContent = '⬇ Download PDF'; btn.disabled = false; }
+  }
+
+  setTimeout(function () {
+    window.html2canvas(node, { scale: 2, backgroundColor: '#f4f7fb', useCORS: true, scrollX: 0, scrollY: -window.scrollY })
+      .then(function (canvas) {
+        try {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('l', 'mm', 'a4');
+          const pw = 297, ph = 210;
+          const imgW = pw, imgH = canvas.height * pw / canvas.width;
+          const imgData = canvas.toDataURL('image/jpeg', 0.92);
+          let heightLeft = imgH, position = 0;
+          pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+          heightLeft -= ph;
+          while (heightLeft > 0) {
+            position -= ph;
+            pdf.addPage();
+            pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+            heightLeft -= ph;
+          }
+          const nm = ((document.getElementById('responderName') || {}).value || 'plan').trim().replace(/\s+/g, '_') || 'plan';
+          pdf.save('FIP_' + nm + '_' + new Date().toISOString().split('T')[0] + '.pdf');
+        } catch (e) {
+          console.error('PDF build failed:', e);
+          window.print();
+        } finally {
+          restore();
+        }
+      })
+      .catch(function (e) {
+        console.error('html2canvas failed:', e);
+        restore();
+        window.print();
+      });
+  }, 60);
+}
+
+// ─── (legacy jsPDF report — kept for reference, no longer called) ───
+function downloadPDF_legacy() {
   if (!window.jspdf || !window.jspdf.jsPDF) { window.print(); return; }
 
   const btn = document.getElementById('downloadPdfBtn');
@@ -3440,6 +3494,7 @@ function doReset() {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="/auth-db-bridge.js"></script>
 </body>
 </html>

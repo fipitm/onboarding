@@ -251,8 +251,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .instr-text p{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;margin:0;}
 .instr-text strong{color:white;}
 .instr-note{font-size:12px;font-weight:800;color:var(--green-light);letter-spacing:0.4px;margin:12px 0 7px;text-transform:uppercase;}
-.instr-pills{display:flex;gap:10px;margin-top:0;flex-wrap:wrap;}
-.instr-box{flex:1;min-width:180px;display:flex;flex-direction:column;gap:3px;padding:12px 15px;border-radius:9px;font-size:11px;line-height:1.45;border:1px solid;border-left-width:4px;box-shadow:0 4px 14px rgba(0,0,0,0.18);}
+.instr-pills{display:flex;gap:10px;margin-top:0;flex-wrap:wrap;align-items:stretch;}
+.instr-box{flex:1;min-width:170px;display:flex;flex-direction:column;gap:3px;padding:12px 15px;border-radius:9px;font-size:11px;line-height:1.45;border:1px solid;border-left-width:4px;box-shadow:0 4px 14px rgba(0,0,0,0.18);}
+.instr-box.fip,.instr-box.almarai,.instr-box.field{align-items:center;text-align:center;justify-content:center;}
+.instr-box.purpose-box{flex:1.9;min-width:260px;background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.18);border-left-color:#8DC63F;box-shadow:none;justify-content:center;}
+.instr-box.purpose-box strong{font-size:13px;color:var(--green-light);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:2px;}
+.instr-box.purpose-box span{color:rgba(255,255,255,0.85);line-height:1.55;}
 .instr-box strong{font-size:12.5px;font-weight:800;}
 .instr-box span{color:rgba(255,255,255,0.9);}
 .instr-box strong{color:#fff;}
@@ -387,10 +391,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 <div class="instr-banner" id="instrBanner">
   <div class="instr-icon" style="font-size:20px;">📋</div>
   <div class="instr-text">
-    <h3>Purpose</h3>
-    <p>This tool helps line managers plan the onboarding journey by assigning each sub-topic to the most suitable <strong>delivery point</strong>. For every sub-topic, choose <strong>one delivery point</strong> from the sidebar phases. Selections are <strong>auto-saved</strong> — you can return anytime without losing your work.</p>
-    <h4 class="instr-note">Delivering Points &amp; Planning</h4>
     <div class="instr-pills">
+      <div class="instr-box purpose-box">
+        <strong>Purpose</strong>
+        <span>This platform is built to help Almarai's Sales Team design a comprehensive onboarding training plan for their new hires — choosing what to deliver, and where and how it gets delivered, across FIP and Almarai.</span>
+      </div>
       <div class="instr-box fip"><strong>🏛 FIP</strong><span>Delivered at Food Industries Polytechnic Site</span></div>
       <div class="instr-box almarai"><strong>🏢 Almarai</strong><span>Delivered at Almarai Premises by FIP Trainers</span></div>
       <div class="instr-box field"><strong>🚗 Field Based Training</strong><span>On-the-Job, field based delivery</span></div>

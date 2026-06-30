@@ -519,9 +519,12 @@
     <!-- ── LOGIN ACTIVITY ────────────────────────────────────── -->
     <div class="section" id="sec-activity">
       <div class="f-card">
-        <div class="f-card-header">
-          <h5 class="f-card-title"><i class="mdi mdi-shield-account-outline" style="margin-right:6px;"></i>Login Activity</h5>
-          <small class="text-muted">Last 200 login attempts</small>
+        <div class="f-card-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <h5 class="f-card-title"><i class="mdi mdi-shield-account-outline" style="margin-right:6px;"></i>Login Activity</h5>
+            <small class="text-muted">Last 200 login attempts</small>
+          </div>
+          <button class="btn-clear-all" onclick="confirmClearActivity()"><i class="mdi mdi-delete-sweep-outline"></i> Clear Log</button>
         </div>
         <div style="overflow-x:auto;">
           <table class="table mb-0">
@@ -1042,6 +1045,68 @@
         setTimeout(()=>ov.remove(),1400);
       }catch(err){
         btn.disabled=false;btn.textContent='Yes, Clear All';
+        msg.style.color='#f93b7a';
+        msg.textContent='Error: '+err.message;
+      }
+    };
+  }
+
+  function confirmClearActivity(){
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);';
+    ov.innerHTML=`
+      <div style="background:#fff;border-radius:10px;padding:32px 36px;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;font-family:Roboto,sans-serif;">
+        <div style="width:56px;height:56px;border-radius:50%;background:#fff0f5;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px solid #f93b7a;">
+          <i class="mdi mdi-shield-remove-outline" style="font-size:28px;color:#f93b7a;"></i>
+        </div>
+        <h3 style="font-size:18px;font-weight:700;color:#23222f;margin-bottom:8px;">Clear Login Activity?</h3>
+        <p style="font-size:13px;color:#6c757d;line-height:1.7;margin-bottom:6px;">
+          This will permanently delete <strong style="color:#f93b7a;">all login activity records</strong> (the full audit trail).
+        </p>
+        <p style="font-size:12px;color:#a8a8b1;margin-bottom:20px;">This action <strong style="color:#23222f;">cannot be undone.</strong> Type <strong style="color:#f93b7a;">DELETE</strong> below to confirm.</p>
+        <div style="text-align:left;margin-bottom:20px;">
+          <label style="display:block;font-size:11px;font-weight:600;color:#6c757d;margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase;">Type DELETE to confirm</label>
+          <input id="clearActInput" type="text" autocomplete="off" placeholder="Type DELETE here"
+            style="width:100%;padding:10px 13px;border:1.5px solid #dee2e6;border-radius:6px;font-size:14px;font-family:Roboto,sans-serif;outline:none;transition:border .15s;letter-spacing:1px;"
+            onfocus="this.style.borderColor='#f93b7a'"
+            onblur="this.style.borderColor='#dee2e6'"
+          >
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button id="clearActCancel" style="flex:1;max-width:160px;padding:10px;border:1px solid #dee2e6;border-radius:6px;background:#fff;color:#6c757d;font-size:13px;font-weight:500;cursor:pointer;font-family:Roboto,sans-serif;">Cancel</button>
+          <button id="clearActConfirm" style="flex:1;max-width:160px;padding:10px;border:none;border-radius:6px;background:#f93b7a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:Roboto,sans-serif;">Clear Log</button>
+        </div>
+        <div id="clearActMsg" style="margin-top:12px;font-size:12px;min-height:16px;"></div>
+      </div>`;
+    document.body.appendChild(ov);
+
+    const input=ov.querySelector('#clearActInput');
+    setTimeout(()=>input.focus(),100);
+    ov.querySelector('#clearActCancel').onclick=()=>ov.remove();
+    ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+    input.addEventListener('keydown',e=>{if(e.key==='Enter')ov.querySelector('#clearActConfirm').click();});
+
+    ov.querySelector('#clearActConfirm').onclick=async()=>{
+      const btn=ov.querySelector('#clearActConfirm');
+      const msg=ov.querySelector('#clearActMsg');
+      if(input.value.trim().toUpperCase()!=='DELETE'){
+        msg.style.color='#f93b7a';
+        msg.textContent='Please type DELETE to confirm.';
+        input.style.borderColor='#f93b7a';
+        input.select();
+        return;
+      }
+      btn.disabled=true;btn.textContent='Clearing…';
+      try{
+        const res=await fetch('/api/admin/login-logs',{method:'DELETE'});
+        const data=await res.json();
+        if(!res.ok)throw new Error(data.error||'Failed');
+        msg.style.color='#1ecab8';
+        msg.textContent=`✓ ${data.cleared} record${data.cleared!==1?'s':''} cleared successfully.`;
+        loadActivity();
+        setTimeout(()=>ov.remove(),1400);
+      }catch(err){
+        btn.disabled=false;btn.textContent='Clear Log';
         msg.style.color='#f93b7a';
         msg.textContent='Error: '+err.message;
       }

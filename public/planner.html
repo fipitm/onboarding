@@ -198,6 +198,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .rep-rephdr{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;}
 .rep-title{font-family:'Playfair Display',serif;font-weight:800;font-size:30px;color:#0f172a;letter-spacing:-0.01em;}
 .rep-subtitle{color:#64748b;font-size:14px;margin-top:4px;}
+.rep-responder{margin-top:12px;font-size:13.5px;color:#334155;line-height:1.7;background:#fff;border:1px solid #e6eaf0;border-left:4px solid #1e3a5f;border-radius:8px;padding:10px 16px;display:inline-block;}
+.rep-responder strong{color:#0f172a;font-weight:700;}
+.rep-responder .rr-lbl{font-size:10px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#94a3b8;margin-right:3px;}
+.rep-responder .rr-sep{color:#cbd5e1;margin:0 9px;}
 .rep-back-btn{background:#fff;color:#1e3a5f;border:1px solid #cdd6e0;border-radius:9px;padding:10px 16px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:background .15s;}
 .rep-back-btn:hover{background:#eef2f8;}
 .rep-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
@@ -2618,7 +2622,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
       <div>
         <div class="rep-title">Program Summary Report</div>
         <div class="rep-subtitle">FIP Almarai Sales Onboarding — Delivery Point Distribution</div>
-        <div id="pdfResponderInfo" style="margin-top:8px;font-size:12px;color:#64748b;display:none;"></div>
+        <div id="pdfResponderInfo" class="rep-responder" style="display:none;"></div>
       </div>
       <button class="rep-back-btn" onclick="hideSummaryPage()">← Back to Planning Form</button>
     </div>
@@ -3009,14 +3013,15 @@ function buildSummary(){
   const rRegion = (sel('responderRegion')||{}).value||'';
   const rDate = (sel('responderDate')||{}).value||'';
   const rInfo = sel('pdfResponderInfo');
-  if(rInfo && (rName||rDesig||rDate)){
-    const parts=[];
-    if(rName)parts.push(rName);
-    if(rDesig)parts.push(rDesig);
-    if(rRegion)parts.push(rRegion);
-    if(rDate)parts.push(new Date(rDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}));
-    rInfo.textContent=parts.join(' · ');
-    rInfo.style.display='block';
+  if(rInfo){
+    const dateStr=(rDate?new Date(rDate):new Date()).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    const segs=[];
+    segs.push('<span class="rr-lbl">Prepared by</span><strong>'+(rName||'—')+'</strong>');
+    if(rDesig)segs.push('<span class="rr-lbl">Designation</span>'+rDesig);
+    if(rRegion)segs.push('<span class="rr-lbl">Region</span>'+rRegion);
+    segs.push('<span class="rr-lbl">Date</span>'+dateStr);
+    rInfo.innerHTML=segs.join('<span class="rr-sep">·</span>');
+    rInfo.style.display='inline-block';
   }
 
   // Unassigned alert
@@ -3178,31 +3183,47 @@ function downloadPDF() {
   // Temporarily hide interactive controls so they don't appear in the PDF
   const hidden = [];
   ['.rep-actions', '.rep-back-btn', '.submit-bar'].forEach(s => {
-    node.querySelectorAll(s).forEach(el => { hidden.push([el, el.style.display]); el.style.display = 'none'; });
+    node.querySelectorAll(s).forEach(el => { hidden.push([el, el.style.cssText]); el.style.display = 'none'; });
   });
+  // Lock the report to a fixed document width so the PDF is consistent on any screen
+  const prevCss = node.style.cssText;
+  const CAP_W = 1245;
+  node.style.width = CAP_W + 'px';
+  node.style.maxWidth = CAP_W + 'px';
 
   function restore() {
-    hidden.forEach(([el, d]) => { el.style.display = d; });
+    node.style.cssText = prevCss;
+    hidden.forEach(([el, css]) => { el.style.cssText = css; });
     if (btn) { btn.textContent = '⬇ Download PDF'; btn.disabled = false; }
   }
 
   setTimeout(function () {
-    window.html2canvas(node, { scale: 2, backgroundColor: '#f4f7fb', useCORS: true, scrollX: 0, scrollY: -window.scrollY })
+    window.html2canvas(node, { scale: 2, backgroundColor: '#f4f7fb', useCORS: true, width: CAP_W, windowWidth: CAP_W })
       .then(function (canvas) {
         try {
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF('l', 'mm', 'a4');
-          const pw = 297, ph = 210;
-          const imgW = pw, imgH = canvas.height * pw / canvas.width;
-          const imgData = canvas.toDataURL('image/jpeg', 0.92);
-          let heightLeft = imgH, position = 0;
-          pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
-          heightLeft -= ph;
-          while (heightLeft > 0) {
-            position -= ph;
-            pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
-            heightLeft -= ph;
+          const pw = 297, ph = 210, margin = 8;
+          const imgW = pw - margin * 2;
+          const imgH = canvas.height * imgW / canvas.width;
+          const contentH = ph - margin * 2;
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+          let rendered = 0, page = 0;
+          while (rendered < imgH - 0.5) {
+            if (page > 0) pdf.addPage();
+            // page background
+            pdf.setFillColor(244, 247, 251);
+            pdf.rect(0, 0, pw, ph, 'F');
+            // sliced report image (offset upward per page)
+            pdf.addImage(imgData, 'JPEG', margin, margin - rendered, imgW, imgH);
+            // clean white margins (mask any bleed)
+            pdf.setFillColor(255, 255, 255);
+            pdf.rect(0, 0, pw, margin, 'F');
+            pdf.rect(0, ph - margin, pw, margin, 'F');
+            pdf.rect(0, 0, margin, ph, 'F');
+            pdf.rect(pw - margin, 0, margin, ph, 'F');
+            rendered += contentH;
+            page++;
           }
           const nm = ((document.getElementById('responderName') || {}).value || 'plan').trim().replace(/\s+/g, '_') || 'plan';
           pdf.save('FIP_' + nm + '_' + new Date().toISOString().split('T')[0] + '.pdf');
@@ -3218,7 +3239,7 @@ function downloadPDF() {
         restore();
         window.print();
       });
-  }, 60);
+  }, 80);
 }
 
 // ─── (legacy jsPDF report — kept for reference, no longer called) ───

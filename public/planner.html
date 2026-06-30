@@ -181,20 +181,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 /* KPI Cards */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:0;}
 .kpi-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r);padding:20px 22px;backdrop-filter:blur(10px);}
-.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:8px;}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.72);margin-bottom:8px;}
 .kpi-value{font-family:'Playfair Display',serif;font-size:40px;font-weight:800;color:white;line-height:1;margin-bottom:2px;}
 .kpi-unit{font-size:13px;font-weight:400;color:rgba(255,255,255,0.5);font-family:'DM Sans',sans-serif;}
 .kpi-days{font-size:12px;color:rgba(255,255,255,0.6);margin-top:6px;}
 .kpi-days strong{color:rgba(255,255,255,0.9);}
 .kpi-pct{font-size:14px;font-weight:700;margin-top:6px;}
 .kpi-bar{height:3px;border-radius:2px;margin-top:10px;transition:width 0.5s ease;}
-.kpi-card.total-kpi{border-left:4px solid #8DC63F;background:linear-gradient(135deg,rgba(141,198,63,0.34),rgba(141,198,63,0.10));}
-.kpi-card.fip-kpi{border-left:4px solid #4A90C4;background:linear-gradient(135deg,rgba(74,144,196,0.40),rgba(74,144,196,0.12));}
-.kpi-card.almarai-kpi{border-left:4px solid #2B6CB0;background:linear-gradient(135deg,rgba(43,108,176,0.50),rgba(27,58,107,0.18));}
-.kpi-card.field-kpi{border-left:4px solid #E0922A;background:linear-gradient(135deg,rgba(194,124,10,0.42),rgba(194,124,10,0.12));}
-.kpi-card.fip-kpi .kpi-bar{background:var(--fip-blue);}
-.kpi-card.almarai-kpi .kpi-bar{background:#2B6CB0;}
-.kpi-card.field-kpi .kpi-bar{background:var(--field-amber);}
+.kpi-card.total-kpi{border-left:4px solid #9FD356;background:#2F7D4A;}
+.kpi-card.fip-kpi{border-left:4px solid #7FB6E8;background:#1E6FC4;}
+.kpi-card.almarai-kpi{border-left:4px solid #7986CB;background:#2A3F8F;}
+.kpi-card.field-kpi{border-left:4px solid #E8B260;background:#B7791F;}
+.kpi-card.fip-kpi .kpi-bar,
+.kpi-card.almarai-kpi .kpi-bar,
+.kpi-card.field-kpi .kpi-bar{background:rgba(255,255,255,0.65);}
 
 /* Distribution strip */
 .dist-strip{background:var(--navy-dark);padding:20px 44px;}
@@ -255,12 +255,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .instr-box{flex:1;min-width:180px;display:flex;flex-direction:column;gap:3px;padding:12px 15px;border-radius:9px;font-size:11px;line-height:1.45;border:1px solid;border-left-width:4px;box-shadow:0 4px 14px rgba(0,0,0,0.18);}
 .instr-box strong{font-size:12.5px;font-weight:800;}
 .instr-box span{color:rgba(255,255,255,0.9);}
-.instr-box.fip{background:linear-gradient(135deg,rgba(74,144,196,0.40),rgba(74,144,196,0.14));border-color:#4A90C4;}
-.instr-box.fip strong{color:#BEE3F8;}
-.instr-box.almarai{background:linear-gradient(135deg,rgba(43,108,176,0.50),rgba(27,58,107,0.20));border-color:#2B6CB0;}
-.instr-box.almarai strong{color:#C3DAFE;}
-.instr-box.field{background:linear-gradient(135deg,rgba(194,124,10,0.42),rgba(194,124,10,0.14));border-color:#E0922A;}
-.instr-box.field strong{color:#FBD38D;}
+.instr-box strong{color:#fff;}
+.instr-box span{color:rgba(255,255,255,0.92);}
+.instr-box.fip{background:#1E6FC4;border-color:#7FB6E8;}
+.instr-box.almarai{background:#2A3F8F;border-color:#7986CB;}
+.instr-box.field{background:#B7791F;border-color:#E8B260;}
 
 /* PDF print styles */
 @media screen{
@@ -2567,21 +2566,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
         <div class="kpi-label">FIP Delivery</div>
         <div class="kpi-value" id="sFipCTH">0<span class="kpi-unit"> CTH</span></div>
         <div class="kpi-days">Duration: <strong id="sFipDays">0.0</strong> days</div>
-        <div class="kpi-pct" id="sFipPct" style="color:#90CDF4;">—</div>
+        <div class="kpi-pct" id="sFipPct" style="color:#fff;">—</div>
         <div class="kpi-bar" id="sFipBar" style="width:0%"></div>
       </div>
       <div class="kpi-card almarai-kpi">
         <div class="kpi-label">Almarai Delivery</div>
         <div class="kpi-value" id="sAlmaraiCTH">0<span class="kpi-unit"> CTH</span></div>
         <div class="kpi-days">Duration: <strong id="sAlmaraiDays">0.0</strong> days</div>
-        <div class="kpi-pct" id="sAlmaraiPct" style="color:#90CDF4;">—</div>
+        <div class="kpi-pct" id="sAlmaraiPct" style="color:#fff;">—</div>
         <div class="kpi-bar" id="sAlmaraiBar" style="width:0%"></div>
       </div>
       <div class="kpi-card field-kpi">
         <div class="kpi-label">Field Training</div>
         <div class="kpi-value" id="sFieldCTH">0<span class="kpi-unit"> CTH</span></div>
         <div class="kpi-days">Duration: <strong id="sFieldDays">0.0</strong> days</div>
-        <div class="kpi-pct" id="sFieldPct" style="color:#F6AD55;">—</div>
+        <div class="kpi-pct" id="sFieldPct" style="color:#fff;">—</div>
         <div class="kpi-bar" id="sFieldBar" style="width:0%"></div>
       </div>
     </div>

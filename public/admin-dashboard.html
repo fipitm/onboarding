@@ -798,32 +798,43 @@
     buildDetailedPhaseAnalytics();
   }
 
+  let detailChartType='bar';
+  function setDetailChart(t){ detailChartType=t; buildDetailedPhaseAnalytics(); }
+
   function buildDetailedPhaseAnalytics(){
     const wrap=byId('detailedPhaseBody');
     const n=allSubs.length;
     if(!n){ wrap.innerHTML='<div class="empty-f">No submissions yet — detailed analytics will appear once people submit their plans.</div>'; return; }
 
-    wrap.innerHTML=
-      `<p style="font-size:12px;color:#6c757d;margin:0 0 18px;font-family:Roboto;">Each bar is one sub-topic. Segments show how many of the <strong>${n}</strong> submission${n!==1?'s':''} assigned it to FIP / Almarai / Field Training. Longer dominant segment = stronger consensus for that delivery point.</p>`+
-      PHASES.map((ph,i)=>
-        `<div style="margin-bottom:24px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:2px;border-left:4px solid #0d2145;padding-left:10px;">
-            <h6 style="margin:0;font-size:14px;font-weight:700;color:#0d2145;font-family:Roboto;">Phase ${i+1}: ${ph.n}</h6>
-            <span id="phMeta${i}" style="font-size:12px;color:#6c757d;font-family:Roboto;"></span>
-          </div>
-          <div id="phChart${i}"></div>
-        </div>`
-      ).join('');
+    const TYPES=[['bar','Stacked Bars'],['pct','Proportion %'],['heatmap','Heatmap'],['donut','Phase Donut']];
+    const desc={
+      bar:'Each bar is one sub-topic — segment lengths show how many of the '+n+' submission'+(n!==1?'s':'')+' chose each delivery point.',
+      pct:'Each sub-topic shown as 100% proportion — instantly see the majority delivery point per sub-topic.',
+      heatmap:'Rows are sub-topics, columns are delivery points. Darker cell = more submissions chose it (stronger consensus).',
+      donut:'One donut per phase — the overall delivery-point split across all sub-topics in that phase.'
+    };
+    const toolbar='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+
+      TYPES.map(([k,lbl])=>`<button onclick="setDetailChart('${k}')" style="border:1px solid ${detailChartType===k?'#0d2145':'#d8dee6'};background:${detailChartType===k?'#0d2145':'#fff'};color:${detailChartType===k?'#fff':'#445'};border-radius:7px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:Roboto;">${lbl}</button>`).join('')+
+      '</div>'+
+      `<p style="font-size:12px;color:#6c757d;margin:0 0 18px;font-family:Roboto;">${desc[detailChartType]}</p>`;
+
+    wrap.innerHTML=toolbar+PHASES.map((ph,i)=>
+      `<div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:2px;border-left:4px solid #0d2145;padding-left:10px;">
+          <h6 style="margin:0;font-size:14px;font-weight:700;color:#0d2145;font-family:Roboto;">Phase ${i+1}: ${ph.n}</h6>
+          <span id="phMeta${i}" style="font-size:12px;color:#6c757d;font-family:Roboto;"></span>
+        </div>
+        <div id="phChart${i}"></div>
+      </div>`).join('');
 
     PHASES.forEach((ph,i)=>{
       const subs=ROWS.filter(r=>r.idx>=ph.s&&r.idx<=ph.e);
-      const cats=subs.map(r=>r.sub);
       const fip=[],alm=[],fld=[],unas=[];
       subs.forEach(r=>{
         let f=0,a=0,fl=0,u=0;
         allSubs.forEach(s=>{
-          const sel=(s.selections||[]).find(x=>x.row_idx===r.idx);
-          const v=sel?sel.delivery_point:null;
+          const sl=(s.selections||[]).find(x=>x.row_idx===r.idx);
+          const v=sl?sl.delivery_point:null;
           if(v==='FIP')f++; else if(v==='Almarai')a++; else if(v==='Field Training')fl++; else u++;
         });
         fip.push(f);alm.push(a);fld.push(fl);unas.push(u);
@@ -832,19 +843,47 @@
       let meta=subs.length+' sub-topics';
       if(tot){ const m=Math.max(tf,ta,tfl); const name=m===tf?'FIP':(m===ta?'Almarai':'Field Training'); meta+=' · Leaning '+name+' ('+Math.round(m/tot*100)+'%)'; }
       byId('phMeta'+i).textContent=meta;
-      const h=Math.max(150, subs.length*36+70);
-      new ApexCharts(byId('phChart'+i),{
-        chart:{type:'bar',height:h,stacked:true,toolbar:{show:false},fontFamily:'Roboto',animations:{speed:500}},
-        plotOptions:{bar:{horizontal:true,barHeight:'62%'}},
-        series:[{name:'FIP',data:fip},{name:'Almarai',data:alm},{name:'Field Training',data:fld},{name:'Unassigned',data:unas}],
-        colors:['#4a90c4','#1b3a6b','#d97706','#dfe3e8'],
-        xaxis:{max:n,tickAmount:Math.min(n,6),labels:{style:{fontSize:'10px'}},title:{text:'Number of submissions',style:{fontSize:'10px',color:'#a8a8b1'}}},
-        yaxis:{labels:{style:{fontSize:'11px',fontFamily:'Roboto'},maxWidth:340}},
-        legend:{position:'top',fontSize:'12px',fontFamily:'Roboto',itemMargin:{horizontal:7}},
-        dataLabels:{enabled:true,formatter:v=>v>0?v:'',style:{fontSize:'10px',fontWeight:700,colors:['#fff']}},
-        grid:{borderColor:'rgba(0,0,0,.04)',strokeDashArray:4},
-        tooltip:{y:{formatter:v=>v+' of '+n+' submission'+(n!==1?'s':'')}}
-      }).render();
+      const el=byId('phChart'+i);
+      const COL=['#4a90c4','#1b3a6b','#d97706','#dfe3e8'];
+
+      if(detailChartType==='donut'){
+        new ApexCharts(el,{
+          chart:{type:'donut',height:270,fontFamily:'Roboto'},
+          series:[tf,ta,tfl],labels:['FIP','Almarai','Field Training'],colors:COL,
+          legend:{position:'bottom',fontSize:'12px',fontFamily:'Roboto'},
+          dataLabels:{enabled:true,formatter:v=>Math.round(v)+'%'},
+          plotOptions:{pie:{donut:{labels:{show:true,total:{show:true,label:'Assignments',fontSize:'11px',formatter:()=>tot}}}}},
+          stroke:{width:2,colors:['#fff']},
+          tooltip:{y:{formatter:v=>v+' assignments'}},
+          noData:{text:'No assignments yet'}
+        }).render();
+      } else if(detailChartType==='heatmap'){
+        const series=subs.map((r,ri)=>({name:r.sub,data:[{x:'FIP',y:fip[ri]},{x:'Almarai',y:alm[ri]},{x:'Field',y:fld[ri]}]}));
+        new ApexCharts(el,{
+          chart:{type:'heatmap',height:Math.max(170,subs.length*30+70),toolbar:{show:false},fontFamily:'Roboto'},
+          series:series,
+          colors:['#1b3a6b'],
+          dataLabels:{enabled:true,style:{fontSize:'11px',colors:['#16203a']}},
+          plotOptions:{heatmap:{radius:3,enableShades:true,shadeIntensity:0.55,colorScale:{ranges:[{from:0,to:0,color:'#eef1f5'}]}}},
+          yaxis:{labels:{style:{fontSize:'11px',fontFamily:'Roboto'},maxWidth:360}},
+          xaxis:{labels:{style:{fontSize:'12px',fontFamily:'Roboto'}}},
+          tooltip:{y:{formatter:v=>v+' of '+n+' submission'+(n!==1?'s':'')}}
+        }).render();
+      } else {
+        const isPct=detailChartType==='pct';
+        new ApexCharts(el,{
+          chart:{type:'bar',height:Math.max(150,subs.length*36+70),stacked:true,stackType:isPct?'100%':'normal',toolbar:{show:false},fontFamily:'Roboto',animations:{speed:400}},
+          plotOptions:{bar:{horizontal:true,barHeight:'62%'}},
+          series:[{name:'FIP',data:fip},{name:'Almarai',data:alm},{name:'Field Training',data:fld},{name:'Unassigned',data:unas}],
+          colors:COL,
+          xaxis:isPct?{labels:{formatter:v=>Math.round(v)+'%',style:{fontSize:'10px'}}}:{max:n,tickAmount:Math.min(n,6),labels:{style:{fontSize:'10px'}},title:{text:'Number of submissions',style:{fontSize:'10px',color:'#a8a8b1'}}},
+          yaxis:{labels:{style:{fontSize:'11px',fontFamily:'Roboto'},maxWidth:340}},
+          legend:{position:'top',fontSize:'12px',fontFamily:'Roboto',itemMargin:{horizontal:7}},
+          dataLabels:{enabled:true,formatter:(v,o)=>{ const raw=[fip,alm,fld,unas][o.seriesIndex][o.dataPointIndex]; return raw>0?raw:''; },style:{fontSize:'10px',fontWeight:700,colors:['#fff']}},
+          grid:{borderColor:'rgba(0,0,0,.04)',strokeDashArray:4},
+          tooltip:{y:{formatter:v=>v+' of '+n+' submission'+(n!==1?'s':'')}}
+        }).render();
+      }
     });
   }
 

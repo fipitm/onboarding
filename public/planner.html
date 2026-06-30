@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIP Sales Program — Onboarding Planning Tool</title>
+<title>FIP Almarai Sales Program — Onboarding Plan Tool</title>
 <link rel="icon" type="image/png" href="/fip-logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -188,8 +188,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .kpi-days strong{color:rgba(255,255,255,0.9);}
 .kpi-pct{font-size:14px;font-weight:700;margin-top:6px;}
 .kpi-bar{height:3px;border-radius:2px;margin-top:10px;transition:width 0.5s ease;}
+.kpi-card.fip-kpi{border-left:4px solid #4A90C4;background:rgba(74,144,196,0.14);}
+.kpi-card.almarai-kpi{border-left:4px solid #2B6CB0;background:rgba(43,108,176,0.18);}
+.kpi-card.field-kpi{border-left:4px solid #C27C0A;background:rgba(194,124,10,0.14);}
 .kpi-card.fip-kpi .kpi-bar{background:var(--fip-blue);}
-.kpi-card.almarai-kpi .kpi-bar{background:#63B3ED;}
+.kpi-card.almarai-kpi .kpi-bar{background:#2B6CB0;}
 .kpi-card.field-kpi .kpi-bar{background:var(--field-amber);}
 
 /* Distribution strip */
@@ -246,11 +249,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .instr-text h3{font-size:13px;font-weight:800;color:var(--green-light);letter-spacing:0.5px;margin-bottom:5px;text-transform:uppercase;font-family:'Playfair Display',serif;}
 .instr-text p{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;margin:0;}
 .instr-text strong{color:white;}
-.instr-pills{display:flex;gap:8px;margin-top:8px;flex-wrap:nowrap;}
-.instr-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
-.instr-pill.fip{background:rgba(74,144,196,0.2);color:#90CDF4;border:1px solid rgba(74,144,196,0.3);}
-.instr-pill.almarai{background:rgba(99,179,237,0.15);color:#BEE3F8;border:1px solid rgba(99,179,237,0.25);}
-.instr-pill.field{background:rgba(194,124,10,0.2);color:#F6AD55;border:1px solid rgba(194,124,10,0.3);}
+.instr-note{font-size:12px;font-weight:800;color:var(--green-light);letter-spacing:0.4px;margin:12px 0 7px;text-transform:uppercase;}
+.instr-pills{display:flex;gap:10px;margin-top:0;flex-wrap:wrap;}
+.instr-box{flex:1;min-width:180px;display:flex;flex-direction:column;gap:3px;padding:11px 14px;border-radius:8px;font-size:11px;line-height:1.45;border:1px solid;border-left-width:4px;}
+.instr-box strong{font-size:12.5px;font-weight:800;}
+.instr-box span{color:rgba(255,255,255,0.78);}
+.instr-box.fip{background:rgba(74,144,196,0.16);border-color:#4A90C4;}
+.instr-box.fip strong{color:#90CDF4;}
+.instr-box.almarai{background:rgba(27,58,107,0.4);border-color:#1B3A6B;}
+.instr-box.almarai strong{color:#BEE3F8;}
+.instr-box.field{background:rgba(194,124,10,0.16);border-color:#C27C0A;}
+.instr-box.field strong{color:#F6AD55;}
 
 /* PDF print styles */
 @media screen{
@@ -338,7 +347,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     <div class="profile-card-logo">
       <img src="/fip-logo.png" alt="Food Industries Polytechnic">
     </div>
-    <h2>FIP Sales Program</h2>
+    <h2>FIP Almarai Sales Program</h2>
     <p>Enter your details below to begin the Delivery Point planning tool.</p>
     <form onsubmit="startPlanner(event)">
       <div class="profile-field">
@@ -367,8 +376,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
       </div>
     </div>
     <div class="hdr-titles">
-      <div class="hdr-h1">FIP Sales Program</div>
-      <div class="hdr-sub">Onboarding Plan — Delivery Point Assignment</div>
+      <div class="hdr-h1">FIP Almarai Sales Program</div>
+      <div class="hdr-sub">Onboarding Plan Tool</div>
     </div>
   </div>
   <div class="hdr-stripe"></div>
@@ -378,14 +387,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 <div class="instr-banner" id="instrBanner">
   <div class="instr-icon" style="font-size:20px;">📋</div>
   <div class="instr-text">
-    <h3>Delivery Point Instructions</h3>
-    <p>For each sub-topic, select <strong>one delivery point</strong> from the sidebar phases. Selections are <strong>auto-saved</strong> — you can return anytime without losing your work.</p>
+    <h3>Purpose</h3>
+    <p>This tool helps line managers plan the onboarding journey by assigning each sub-topic to the most suitable <strong>delivery point</strong>. For every sub-topic, choose <strong>one delivery point</strong> from the sidebar phases. Selections are <strong>auto-saved</strong> — you can return anytime without losing your work.</p>
+    <h4 class="instr-note">Delivering Points &amp; Planning</h4>
     <div class="instr-pills">
-      <span class="instr-pill fip">🏛 FIP — Delivered at Food Industries Polytechnic Site</span>
-      <span class="instr-pill almarai">🏢 Almarai — Delivered at Almarai Premises by FIP Trainers</span>
-      <span class="instr-pill field">🚗 Field Based Training — On-the-Job, field based delivery</span>
+      <div class="instr-box fip"><strong>🏛 FIP</strong><span>Delivered at Food Industries Polytechnic Site</span></div>
+      <div class="instr-box almarai"><strong>🏢 Almarai</strong><span>Delivered at Almarai Premises by FIP Trainers</span></div>
+      <div class="instr-box field"><strong>🚗 Field Based Training</strong><span>On-the-Job, field based delivery</span></div>
     </div>
-    <p style="margin-top:8px;color:rgba(255,255,255,0.6);">Once complete, click <strong style="color:white;">View Summary &amp; Export</strong> to download and share your plan with FIP.</p>
+    <p style="margin-top:10px;color:rgba(255,255,255,0.6);">Once complete, click <strong style="color:white;">View Summary &amp; Export</strong> to download and share your plan with FIP.</p>
   </div>
 </div>
 <div style="height:16px;"></div>
@@ -2531,7 +2541,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
     <div class="sh-top">
       <div>
         <div class="sh-title">Program Summary Report</div>
-        <div class="sh-subtitle">FIP Sales Onboarding — Delivery Point Distribution</div>
+        <div class="sh-subtitle">FIP Almarai Sales Onboarding — Delivery Point Distribution</div>
         <div id="pdfResponderInfo" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.6);display:none;"></div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
@@ -3083,13 +3093,13 @@ function downloadPDF() {
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(13);
-      doc.text('FIP Sales Program', textStartX, 11);
+      doc.text('FIP Almarai Sales Program', textStartX, 11);
       doc.setFontSize(10);
       doc.text('Onboarding Planning Report', textStartX, 19);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(141, 198, 63);
-      doc.text('FIP Sales Program', textStartX, 26);
+      doc.text('FIP Almarai Sales Program', textStartX, 26);
 
       // Responder info — one line per field, right-aligned, vertically centred in header
       if (respFields.length > 0) {
@@ -3168,7 +3178,7 @@ function downloadPDF() {
       doc.setTextColor(150, 160, 180);
       doc.text('Generated: ' + todayStr, MARGIN, PH - 6);
       if (isAdmin) doc.text('Page 1 of 2', PW / 2, PH - 6, { align: 'center' });
-      doc.text('FIP Sales Program — Onboarding Planner', PW - MARGIN, PH - 6, { align: 'right' });
+      doc.text('FIP Almarai Sales Program — Onboarding Plan Tool', PW - MARGIN, PH - 6, { align: 'right' });
 
       // ── PAGE 2: FULL DETAIL TABLE (admin only) ──
       if (isAdmin) {
@@ -3231,7 +3241,7 @@ function downloadPDF() {
         doc.setTextColor(150, 160, 180);
         doc.text('Generated: ' + todayStr, MARGIN, PH - 6);
         doc.text('Page 2 of 2', PW / 2, PH - 6, { align: 'center' });
-        doc.text('FIP Sales Program — Onboarding Planner', PW - MARGIN, PH - 6, { align: 'right' });
+        doc.text('FIP Almarai Sales Program — Onboarding Plan Tool', PW - MARGIN, PH - 6, { align: 'right' });
       }
 
       // ── Save ──

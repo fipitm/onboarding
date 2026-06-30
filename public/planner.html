@@ -240,6 +240,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .ds-item strong{color:#0f172a;}
 .ds-dot{width:9px;height:9px;border-radius:50%;}
 
+/* Submit bar + success modal */
+.submit-bar{margin-top:32px;padding-top:24px;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;}
+.submit-note{font-size:14px;color:#5a6b80;margin:0;}
+.submit-btn{background:linear-gradient(135deg,#2f7d4a,#246c3d);color:#fff;border:none;border-radius:10px;padding:15px 56px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:800;letter-spacing:0.3px;cursor:pointer;box-shadow:0 8px 20px -8px rgba(36,108,61,0.7);transition:filter .15s,transform .1s;}
+.submit-btn:hover{filter:brightness(1.07);}
+.submit-btn:active{transform:translateY(1px);}
+.submit-btn:disabled{opacity:0.6;cursor:default;}
+.submit-modal-overlay{position:fixed;inset:0;background:rgba(13,33,69,0.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;}
+.submit-modal-overlay.show{display:flex;animation:fadeIn 0.25s ease;}
+.submit-modal{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:38px 34px 30px;text-align:center;box-shadow:0 30px 70px -24px rgba(13,33,69,0.6);}
+.submit-modal-icon{width:72px;height:72px;border-radius:50%;background:#e7f6ec;color:#2f7d4a;font-size:38px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.submit-modal-title{font-family:'Playfair Display',serif;font-size:23px;font-weight:800;color:#0f172a;margin-bottom:10px;}
+.submit-modal-text{font-size:14.5px;color:#475569;line-height:1.6;margin-bottom:24px;}
+.submit-modal-btn{background:#1e3a5f;color:#fff;border:none;border-radius:9px;padding:12px 40px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;}
+.submit-modal-btn:hover{background:#16304e;}
+
 /* Phase breakdown section */
 .summary-body{padding:32px 44px;}
 .section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy-dark);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--green);display:flex;align-items:center;gap:8px;}
@@ -294,6 +310,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
   /* Hide interactive UI controls and instructional text */
   #summaryPage .rep-back-btn,
   #summaryPage .rep-actions,
+  #summaryPage .submit-bar,
   #summaryPage .warn-bar,
   .no-print,
   .instr-banner,
@@ -2669,6 +2686,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
       </table>
     </div>
     </div><!-- end print-only -->
+
+    <!-- SUBMIT -->
+    <div class="submit-bar">
+      <p class="submit-note">Review your plan above, then submit to record it with FIP.</p>
+      <button class="submit-btn" id="submitPlanBtn" onclick="submitPlan()">✓ Submit Plan</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT SUCCESS MODAL -->
+<div class="submit-modal-overlay" id="submitModal">
+  <div class="submit-modal">
+    <div class="submit-modal-icon">✓</div>
+    <div class="submit-modal-title">Response Submitted Successfully</div>
+    <div class="submit-modal-text">Your onboarding delivery-point plan has been saved and recorded with FIP. Thank you!</div>
+    <button class="submit-modal-btn" onclick="closeSubmitModal()">Done</button>
   </div>
 </div>
 
@@ -2872,6 +2905,22 @@ function hideSummaryPage(){
   if(sel('instrBanner'))sel('instrBanner').style.display='';
   if(sel('formSpacer'))sel('formSpacer').style.display='';
 }
+
+async function submitPlan(){
+  const btn=sel('submitPlanBtn');
+  const orig=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Submitting…';}
+  try{
+    if(typeof window.submitPlanner==='function'){ await window.submitPlanner(); }
+    showSubmitModal();
+  }catch(e){
+    alert('Could not submit your plan: '+((e&&e.message)||'please check your connection and try again.'));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=orig;}
+  }
+}
+function showSubmitModal(){ const m=sel('submitModal'); if(m)m.classList.add('show'); }
+function closeSubmitModal(){ const m=sel('submitModal'); if(m)m.classList.remove('show'); }
 
 function buildSummary(){
   const sels=getSelections();

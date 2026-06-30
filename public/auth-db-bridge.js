@@ -178,6 +178,13 @@
     ORIGINAL_RESET();
     debouncedSave();
   };
+  // Explicit final save (used by the Submit button on the summary page).
+  // Flushes any pending debounce and awaits the PUT so the caller knows it persisted.
+  window.submitPlanner = async function () {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    await persistPlanner();
+  };
+
   window.showSummaryPage = function () {
     ORIGINAL_SHOW_SUMMARY();
   };

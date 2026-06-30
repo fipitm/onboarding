@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const express = require("express");
 const session = require("express-session");
+const SqliteStore = require("better-sqlite3-session-store")(session);
 const bcrypt = require("bcryptjs");
 const Database = require("better-sqlite3");
 require("dotenv").config();
@@ -129,6 +130,10 @@ db.prepare(
 app.use(express.json({ limit: "1mb" }));
 app.use(
   session({
+    store: new SqliteStore({
+      client: db,
+      expired: { clear: true, intervalMs: 15 * 60 * 1000 }
+    }),
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

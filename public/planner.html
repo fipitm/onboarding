@@ -275,26 +275,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .warn-bar{background:linear-gradient(90deg,#744210,#975A16);color:white;padding:10px 44px;font-size:12px;font-weight:600;display:none;align-items:center;gap:8px;}
 .warn-bar.show{display:flex;}
 
-/* Instruction banner */
-.instr-banner{background:linear-gradient(135deg,var(--navy-dark),#1a2f5a);border-left:5px solid var(--green-light);margin:0 44px;margin-top:20px;border-radius:var(--r);padding:16px 22px;display:flex;align-items:flex-start;gap:14px;}
-.instr-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
-.instr-text h3{font-size:13px;font-weight:800;color:var(--green-light);letter-spacing:0.5px;margin-bottom:5px;text-transform:uppercase;font-family:'Playfair Display',serif;}
-.instr-text p{font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;margin:0;}
-.instr-text strong{color:white;}
-.instr-note{font-size:12px;font-weight:800;color:var(--green-light);letter-spacing:0.4px;margin:12px 0 7px;text-transform:uppercase;}
-.instr-pills{display:flex;gap:10px;margin-top:0;flex-wrap:wrap;align-items:stretch;}
-.instr-box{flex:1;min-width:170px;display:flex;flex-direction:column;gap:3px;padding:12px 15px;border-radius:9px;font-size:11px;line-height:1.45;border:1px solid;border-left-width:4px;box-shadow:0 4px 14px rgba(0,0,0,0.18);}
-.instr-box.fip,.instr-box.almarai,.instr-box.field{align-items:center;text-align:center;justify-content:center;}
-.instr-box.purpose-box{flex:1.9;min-width:260px;background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.18);border-left-color:#8DC63F;box-shadow:none;justify-content:center;}
-.instr-box.purpose-box strong{font-size:13px;color:var(--green-light);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:2px;}
-.instr-box.purpose-box span{color:rgba(255,255,255,0.85);line-height:1.55;}
-.instr-box strong{font-size:12.5px;font-weight:800;}
-.instr-box span{color:rgba(255,255,255,0.9);}
-.instr-box strong{color:#fff;}
-.instr-box span{color:rgba(255,255,255,0.92);}
-.instr-box.fip{background:#1E6FC4;border-color:#7FB6E8;}
-.instr-box.almarai{background:#2A3F8F;border-color:#7986CB;}
-.instr-box.field{background:#B7791F;border-color:#E8B260;}
+/* Instruction banner (light — matches summary report design) */
+.instr-banner{margin:20px 44px 0;display:block;}
+.instr-banner .rep-dp-grid{margin-top:14px;}
 
 /* PDF print styles */
 @media screen{
@@ -418,16 +401,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 
 <!-- INSTRUCTION BANNER -->
 <div class="instr-banner" id="instrBanner">
-  <div class="instr-text">
-    <div class="instr-pills">
-      <div class="instr-box purpose-box">
-        <strong>Purpose</strong>
-        <span>This platform is built to help Almarai's Sales Team design a comprehensive onboarding training plan for their new hires — choosing what to deliver, and where and how it gets delivered, across FIP and Almarai.</span>
-      </div>
-      <div class="instr-box fip"><strong>🏛 FIP</strong><span>Delivered at Food Industries Polytechnic Site</span></div>
-      <div class="instr-box almarai"><strong>🏢 Almarai</strong><span>Delivered at Almarai Premises by FIP Trainers</span></div>
-      <div class="instr-box field"><strong>🚗 Field Based Training</strong><span>On-the-Job, field based delivery</span></div>
+  <div class="rep-purpose">
+    <div class="rep-purpose-accent"></div>
+    <div>
+      <div class="rep-purpose-label">PURPOSE</div>
+      <div class="rep-purpose-text">This platform is built to help Almarai's Sales Team design a comprehensive onboarding training plan for their new hires — choosing what to deliver, and where and how it gets delivered, across FIP and Almarai.</div>
     </div>
+  </div>
+  <div class="rep-dp-grid">
+    <div class="rep-dp fip"><div class="rep-dp-t">FIP</div><div class="rep-dp-d">Delivered at Food Industries Polytechnic Site</div></div>
+    <div class="rep-dp almarai"><div class="rep-dp-t">Almarai</div><div class="rep-dp-d">Delivered at Almarai Premises by FIP Trainers</div></div>
+    <div class="rep-dp field"><div class="rep-dp-t">Field Based Training</div><div class="rep-dp-d">On-the-Job, field based delivery</div></div>
   </div>
 </div>
 <div style="height:16px;" id="formSpacer"></div>

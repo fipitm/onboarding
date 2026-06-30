@@ -165,48 +165,79 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 /* ─── SUMMARY PAGE ─── */
 .summary-page{display:none;padding:0;}
 .summary-page.active{display:block;animation:fadeIn 0.4s ease;}
-.summary-hero{background:linear-gradient(160deg,var(--navy-dark),var(--navy));padding:40px 44px;color:white;}
-.sh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
-.sh-back-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:8px 18px;border-radius:20px;cursor:pointer;transition:all 0.2s;}
-.sh-back-btn:hover{background:rgba(255,255,255,0.2);}
-.sh-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:800;}
-.sh-subtitle{font-size:14px;color:rgba(255,255,255,0.6);margin-top:4px;}
-.sh-export-btns{display:flex;gap:10px;}
-.sh-btn{padding:10px 22px;border-radius:var(--r-sm);border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
-.sh-btn.outline{background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.3);color:white;}
-.sh-btn.outline:hover{background:rgba(255,255,255,0.2);}
-.sh-btn.csv{background:var(--green);color:white;}
-.sh-btn.csv:hover{background:#5A9030;}
+/* Report header bar (navy) */
+.rep-topbar{background:linear-gradient(180deg,#1e3a5f,#16304e);padding:24px 44px;display:flex;align-items:center;gap:24px;}
+.rep-logo{width:128px;max-height:60px;height:auto;object-fit:contain;flex:none;}
+.rep-topbar-titles{flex:1;text-align:center;}
+.rep-topbar-h1{font-family:'Playfair Display',serif;font-weight:800;font-size:27px;color:#fff;letter-spacing:-0.01em;}
+.rep-topbar-sub{color:#aebfd4;font-size:14px;margin-top:3px;letter-spacing:0.02em;}
+.rep-topbar-spacer{width:128px;flex:none;}
 
-/* KPI Cards */
+/* Light report body */
+.rep-light{background:#f7f9fc;padding:28px 44px 34px;}
+.rep-light > * + *{margin-top:16px;}
+
+/* Purpose recap */
+.rep-purpose{background:#fff;border:1px solid #e6eaf0;border-radius:12px;padding:20px 24px;display:flex;gap:16px;align-items:flex-start;}
+.rep-purpose-accent{width:4px;align-self:stretch;border-radius:3px;background:#1e3a5f;}
+.rep-purpose-label{font-size:11px;font-weight:800;letter-spacing:0.14em;color:#1e3a5f;}
+.rep-purpose-text{color:#334155;font-size:14px;line-height:1.6;margin-top:8px;max-width:980px;}
+.rep-dp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.rep-dp{border-radius:11px;padding:16px 18px;border:1px solid;}
+.rep-dp-t{font-weight:700;font-size:15px;}
+.rep-dp-d{font-size:13px;margin-top:4px;}
+.rep-dp.fip{background:#eef3fc;border-color:#d7e3f8;}
+.rep-dp.fip .rep-dp-t{color:#1d4ed8;} .rep-dp.fip .rep-dp-d{color:#4a6088;}
+.rep-dp.almarai{background:#e7f4f2;border-color:#cce8e3;}
+.rep-dp.almarai .rep-dp-t{color:#0b7d73;} .rep-dp.almarai .rep-dp-d{color:#3f6b65;}
+.rep-dp.field{background:#f8efe1;border-color:#ecdcc1;}
+.rep-dp.field .rep-dp-t{color:#a4490a;} .rep-dp.field .rep-dp-d{color:#7a5a37;}
+
+/* Report title + actions */
+.rep-rephdr{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;}
+.rep-title{font-family:'Playfair Display',serif;font-weight:800;font-size:30px;color:#0f172a;letter-spacing:-0.01em;}
+.rep-subtitle{color:#64748b;font-size:14px;margin-top:4px;}
+.rep-back-btn{background:#fff;color:#1e3a5f;border:1px solid #cdd6e0;border-radius:9px;padding:10px 16px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.rep-back-btn:hover{background:#eef2f8;}
+.rep-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+.rep-act{background:#fff;color:#1e3a5f;border:1px solid #cdd6e0;border-radius:8px;padding:9px 15px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .15s;}
+.rep-act:hover{background:#eef2f8;}
+.rep-act.reset{color:#a4490a;border-color:#ecd2bb;}
+.rep-act.reset:hover{background:#fbf2e8;}
+.rep-act.primary{background:#1e3a5f;color:#fff;border-color:#1e3a5f;font-weight:700;}
+.rep-act.primary:hover{background:#16304e;}
+
+/* KPI stat cards (light) */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:0;}
-.kpi-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r);padding:20px 22px;backdrop-filter:blur(10px);}
-.kpi-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.72);margin-bottom:8px;}
-.kpi-value{font-family:'Playfair Display',serif;font-size:40px;font-weight:800;color:white;line-height:1;margin-bottom:2px;}
-.kpi-unit{font-size:13px;font-weight:400;color:rgba(255,255,255,0.5);font-family:'DM Sans',sans-serif;}
-.kpi-days{font-size:12px;color:rgba(255,255,255,0.6);margin-top:6px;}
-.kpi-days strong{color:rgba(255,255,255,0.9);}
-.kpi-pct{font-size:14px;font-weight:700;margin-top:6px;}
-.kpi-bar{height:3px;border-radius:2px;margin-top:10px;transition:width 0.5s ease;}
-.kpi-card.total-kpi{border-left:4px solid #9FD356;background:#2F7D4A;}
-.kpi-card.fip-kpi{border-left:4px solid #7FB6E8;background:#1E6FC4;}
-.kpi-card.almarai-kpi{border-left:4px solid #7986CB;background:#2A3F8F;}
-.kpi-card.field-kpi{border-left:4px solid #E8B260;background:#B7791F;}
-.kpi-card.fip-kpi .kpi-bar,
-.kpi-card.almarai-kpi .kpi-bar,
-.kpi-card.field-kpi .kpi-bar{background:rgba(255,255,255,0.65);}
+.kpi-card{border-radius:13px;padding:20px;border:1px solid #dbe2ec;}
+.kpi-label{font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
+.kpi-value{font-family:'Playfair Display',serif;font-size:42px;font-weight:800;line-height:1;margin-bottom:0;}
+.kpi-unit{font-size:13px;font-weight:700;color:#7e93ad;font-family:'DM Sans',sans-serif;margin-left:4px;}
+.kpi-days{font-size:13px;color:#5a6b80;margin-top:12px;}
+.kpi-days strong{color:#27384d;}
+.kpi-pct{font-size:13px;font-weight:700;margin-top:6px;}
+.kpi-bar{display:none;}
+.kpi-card.total-kpi{background:#eef2f7;border-color:#dbe2ec;border-left:4px solid #1e3a5f;}
+.kpi-card.total-kpi .kpi-label,.kpi-card.total-kpi .kpi-value{color:#1e3a5f;}
+.kpi-card.fip-kpi{background:#eef3fc;border-color:#d7e3f8;border-left:4px solid #2563eb;}
+.kpi-card.fip-kpi .kpi-label,.kpi-card.fip-kpi .kpi-value,.kpi-card.fip-kpi .kpi-pct{color:#1d4ed8;}
+.kpi-card.almarai-kpi{background:#e7f4f2;border-color:#cce8e3;border-left:4px solid #0d9488;}
+.kpi-card.almarai-kpi .kpi-label,.kpi-card.almarai-kpi .kpi-value,.kpi-card.almarai-kpi .kpi-pct{color:#0b7d73;}
+.kpi-card.field-kpi{background:#f8efe1;border-color:#ecdcc1;border-left:4px solid #b45309;}
+.kpi-card.field-kpi .kpi-label,.kpi-card.field-kpi .kpi-value,.kpi-card.field-kpi .kpi-pct{color:#a4490a;}
 
-/* Distribution strip */
-.dist-strip{background:var(--navy-dark);padding:20px 44px;}
-.ds-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;}
-.ds-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin-bottom:10px;}
+/* Distribution strip (light) */
+.dist-strip{background:transparent;padding:6px 0 0;}
+.ds-label{font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin-bottom:12px;}
+.ds-bar{display:flex;height:12px;border-radius:7px;overflow:hidden;margin-bottom:14px;}
 .ds-seg{height:100%;transition:width 0.6s ease;}
-.ds-seg.fip{background:var(--fip-blue);}
-.ds-seg.almarai{background:#2B6CB0;}
-.ds-seg.field{background:var(--field-amber);}
-.ds-legend{display:flex;gap:24px;}
-.ds-item{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.6);font-weight:500;}
-.ds-dot{width:10px;height:10px;border-radius:50%;}
+.ds-seg.fip{background:#2563eb;}
+.ds-seg.almarai{background:#0d9488;}
+.ds-seg.field{background:#b45309;}
+.ds-legend{display:flex;gap:22px;align-items:center;flex-wrap:wrap;}
+.ds-item{display:flex;align-items:center;gap:7px;font-size:13px;color:#475569;font-weight:500;}
+.ds-item strong{color:#0f172a;}
+.ds-dot{width:9px;height:9px;border-radius:50%;}
 
 /* Phase breakdown section */
 .summary-body{padding:32px 44px;}
@@ -277,17 +308,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
   #summaryPage{display:block!important;}
 
   /* Hide interactive UI controls and instructional text */
-  #summaryPage .sh-back-btn,
-  #summaryPage .sh-export-btns,
+  #summaryPage .rep-back-btn,
+  #summaryPage .rep-actions,
   #summaryPage .warn-bar,
   .no-print,
   .instr-banner,
   .global-prog{display:none!important;}
 
-  /* PAGE 1 — Summary: KPIs, distribution, phase breakdown */
-  .summary-hero{background:linear-gradient(160deg,#0D2145,#1B3A6B)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .dist-strip{background:#0D2145!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .kpi-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  /* PAGE 1 — Summary: header, KPIs, distribution, phase breakdown */
+  .rep-topbar,.rep-light,.rep-purpose,.rep-purpose-accent,.rep-dp,
+  .kpi-card,.ds-seg{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .kpi-grid{grid-template-columns:repeat(4,1fr)!important;}
   .phase-breakdown-grid{grid-template-columns:repeat(3,1fr)!important;}
   .summary-body{padding:16px 24px;}
@@ -2539,25 +2569,50 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 
 <!-- SUMMARY PAGE -->
 <div class="summary-page" id="summaryPage">
-  <!-- HERO -->
-  <div class="summary-hero">
-    <div class="sh-top">
+  <!-- REPORT HEADER BAR -->
+  <div class="rep-topbar">
+    <img class="rep-logo" src="/fip-logo-white.png" alt="FIP">
+    <div class="rep-topbar-titles">
+      <div class="rep-topbar-h1">FIP Almarai Sales Program</div>
+      <div class="rep-topbar-sub">Onboarding Plan Tool</div>
+    </div>
+    <div class="rep-topbar-spacer"></div>
+  </div>
+
+  <div class="rep-light">
+    <!-- PURPOSE RECAP -->
+    <div class="rep-purpose">
+      <div class="rep-purpose-accent"></div>
       <div>
-        <div class="sh-title">Program Summary Report</div>
-        <div class="sh-subtitle">FIP Almarai Sales Onboarding — Delivery Point Distribution</div>
-        <div id="pdfResponderInfo" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.6);display:none;"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
-        <button class="sh-back-btn" onclick="hideSummaryPage()">← Back to Planning Form</button>
-        <div class="sh-export-btns">
-          <button class="sh-btn outline" onclick="resetAll()" style="background:rgba(197,48,48,0.2);border-color:rgba(197,48,48,0.4);">↺ Reset</button>
-          
-          <button class="sh-btn outline" onclick="exportCSV()">⬇ Export CSV</button>
-          <button class="sh-btn outline" onclick="printPlan()" style="background:rgba(107,168,58,0.25);border-color:rgba(107,168,58,0.5);">🖨 Print</button>
-          <button class="sh-btn outline" id="downloadPdfBtn" onclick="downloadPDF()" style="background:rgba(27,58,107,0.3);border-color:rgba(99,179,237,0.5);">⬇ Download PDF</button>
-        </div>
+        <div class="rep-purpose-label">PURPOSE</div>
+        <div class="rep-purpose-text">This platform helps Almarai's Sales Team design a comprehensive onboarding training plan for new hires — choosing what to deliver, and where and how it gets delivered, across FIP and Almarai.</div>
       </div>
     </div>
+    <div class="rep-dp-grid">
+      <div class="rep-dp fip"><div class="rep-dp-t">FIP</div><div class="rep-dp-d">Delivered at Food Industries Polytechnic site</div></div>
+      <div class="rep-dp almarai"><div class="rep-dp-t">Almarai</div><div class="rep-dp-d">Delivered at Almarai premises by FIP trainers</div></div>
+      <div class="rep-dp field"><div class="rep-dp-t">Field Based Training</div><div class="rep-dp-d">On-the-job, field based delivery</div></div>
+    </div>
+
+    <!-- REPORT TITLE + BACK -->
+    <div class="rep-rephdr">
+      <div>
+        <div class="rep-title">Program Summary Report</div>
+        <div class="rep-subtitle">FIP Almarai Sales Onboarding — Delivery Point Distribution</div>
+        <div id="pdfResponderInfo" style="margin-top:8px;font-size:12px;color:#64748b;display:none;"></div>
+      </div>
+      <button class="rep-back-btn" onclick="hideSummaryPage()">← Back to Planning Form</button>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="rep-actions">
+      <button class="rep-act reset" onclick="resetAll()">↺ Reset</button>
+      <button class="rep-act" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="rep-act" onclick="printPlan()">🖨 Print</button>
+      <button class="rep-act primary" id="downloadPdfBtn" onclick="downloadPDF()">⬇ Download PDF</button>
+    </div>
+
+    <!-- STAT CARDS -->
     <div class="kpi-grid">
       <div class="kpi-card total-kpi">
         <div class="kpi-label">Total Program</div>
@@ -2569,39 +2624,39 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
         <div class="kpi-label">FIP Delivery</div>
         <div class="kpi-value" id="sFipCTH">0<span class="kpi-unit"> CTH</span></div>
         <div class="kpi-days">Duration: <strong id="sFipDays">0.0</strong> days</div>
-        <div class="kpi-pct" id="sFipPct" style="color:#fff;">—</div>
+        <div class="kpi-pct" id="sFipPct">—</div>
         <div class="kpi-bar" id="sFipBar" style="width:0%"></div>
       </div>
       <div class="kpi-card almarai-kpi">
         <div class="kpi-label">Almarai Delivery</div>
         <div class="kpi-value" id="sAlmaraiCTH">0<span class="kpi-unit"> CTH</span></div>
         <div class="kpi-days">Duration: <strong id="sAlmaraiDays">0.0</strong> days</div>
-        <div class="kpi-pct" id="sAlmaraiPct" style="color:#fff;">—</div>
+        <div class="kpi-pct" id="sAlmaraiPct">—</div>
         <div class="kpi-bar" id="sAlmaraiBar" style="width:0%"></div>
       </div>
       <div class="kpi-card field-kpi">
         <div class="kpi-label">Field Training</div>
         <div class="kpi-value" id="sFieldCTH">0<span class="kpi-unit"> CTH</span></div>
         <div class="kpi-days">Duration: <strong id="sFieldDays">0.0</strong> days</div>
-        <div class="kpi-pct" id="sFieldPct" style="color:#fff;">—</div>
+        <div class="kpi-pct" id="sFieldPct">—</div>
         <div class="kpi-bar" id="sFieldBar" style="width:0%"></div>
       </div>
     </div>
-  </div>
 
-  <!-- DISTRIBUTION STRIP -->
-  <div class="dist-strip">
-    <div class="ds-label">Hours Distribution</div>
-    <div class="ds-bar">
-      <div class="ds-seg fip" id="dsFip" style="width:0%"></div>
-      <div class="ds-seg almarai" id="dsAlmarai" style="width:0%"></div>
-      <div class="ds-seg field" id="dsField" style="width:0%"></div>
-    </div>
-    <div class="ds-legend">
-      <div class="ds-item"><div class="ds-dot" style="background:var(--fip-blue)"></div> FIP — <strong id="dsFipLbl" style="color:white;">0%</strong></div>
-      <div class="ds-item"><div class="ds-dot" style="background:#2B6CB0"></div> Almarai — <strong id="dsAlmaraiLbl" style="color:white;">0%</strong></div>
-      <div class="ds-item"><div class="ds-dot" style="background:var(--field-amber)"></div> Field Training — <strong id="dsFieldLbl" style="color:white;">0%</strong></div>
-      <div class="ds-item" style="margin-left:auto;"><span id="dsUnassignedLbl" style="color:rgba(255,255,255,0.4);">0 unassigned</span></div>
+    <!-- DISTRIBUTION -->
+    <div class="dist-strip">
+      <div class="ds-label">Hours Distribution</div>
+      <div class="ds-bar">
+        <div class="ds-seg fip" id="dsFip" style="width:0%"></div>
+        <div class="ds-seg almarai" id="dsAlmarai" style="width:0%"></div>
+        <div class="ds-seg field" id="dsField" style="width:0%"></div>
+      </div>
+      <div class="ds-legend">
+        <div class="ds-item"><div class="ds-dot" style="background:#2563eb"></div> FIP — <strong id="dsFipLbl">0%</strong></div>
+        <div class="ds-item"><div class="ds-dot" style="background:#0d9488"></div> Almarai — <strong id="dsAlmaraiLbl">0%</strong></div>
+        <div class="ds-item"><div class="ds-dot" style="background:#b45309"></div> Field Training — <strong id="dsFieldLbl">0%</strong></div>
+        <div class="ds-item" style="margin-left:auto;"><span id="dsUnassignedLbl" style="color:#64748b;">0 unassigned</span></div>
+      </div>
     </div>
   </div>
 

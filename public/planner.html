@@ -3004,10 +3004,10 @@ function buildSummary(){
   sel('dsUnassignedLbl').style.color=unassigned>0?'#FC8181':'#68D391';
 
   // Populate PDF responder info line
-  const rName = sel('responderName').value;
-  const rDesig = sel('responderDesig').value;
-  const rRegion = sel('responderRegion') ? sel('responderRegion').value : '';
-  const rDate = sel('responderDate').value;
+  const rName = (sel('responderName')||{}).value||'';
+  const rDesig = (sel('responderDesig')||{}).value||'';
+  const rRegion = (sel('responderRegion')||{}).value||'';
+  const rDate = (sel('responderDate')||{}).value||'';
   const rInfo = sel('pdfResponderInfo');
   if(rInfo && (rName||rDesig||rDate)){
     const parts=[];

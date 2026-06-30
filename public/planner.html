@@ -260,6 +260,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .summary-body{padding:32px 44px;}
 .section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy-dark);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--green);display:flex;align-items:center;gap:8px;}
 .phase-breakdown-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;}
+/* Phase breakdown table (delivery breakdown by phase) */
+.phase-breakdown-wrap{margin-bottom:32px;}
+.pbt-title{font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin-bottom:12px;}
+.pbt{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e6eaf0;border-radius:12px;overflow:hidden;}
+.pbt thead th{background:#f1f5fa;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;color:#64748b;padding:12px 18px;text-align:left;border-bottom:1px solid #e6eaf0;}
+.pbt th.num{text-align:right;}
+.pbt tbody td{padding:13px 18px;font-size:14px;border-bottom:1px solid #eef1f5;color:#334155;}
+.pbt td.num{text-align:right;font-weight:700;}
+.pbt td.mut{color:#64748b;font-weight:600;}
+.pbt td.pbt-phase{font-weight:700;color:#1e293b;}
+.pbt th.fip,.pbt td.fip{color:#1d4ed8;}
+.pbt th.alm,.pbt td.alm{color:#0b7d73;}
+.pbt th.fld,.pbt td.fld{color:#a4490a;}
+.pbt tbody tr:last-child td{border-bottom:none;}
+.pbt-total td{padding:14px 18px;font-size:14px;font-weight:800;background:#f7f9fc;border-top:2px solid #e6eaf0;color:#0f172a;}
+.pbt-total td.num{text-align:right;}
+.pbt-total td.fip{color:#1d4ed8;}.pbt-total td.alm{color:#0b7d73;}.pbt-total td.fld{color:#a4490a;}
 .pb-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
 .pb-card-hdr{padding:12px 16px;color:white;display:flex;align-items:center;gap:8px;}
 .pb-card-hdr-icon{font-size:18px;}
@@ -2666,7 +2683,32 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
   <div class="summary-body">
     <div class="unassigned-alert" id="unassignedAlert"></div>
 
-    <div class="phase-breakdown-grid" id="phaseBreakdownGrid"></div>
+    <div class="phase-breakdown-wrap">
+      <div class="pbt-title">Delivery Breakdown by Phase</div>
+      <table class="pbt">
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th class="num">Topics</th>
+            <th class="num">CTH</th>
+            <th class="num fip">FIP</th>
+            <th class="num alm">Almarai</th>
+            <th class="num fld">Field</th>
+          </tr>
+        </thead>
+        <tbody id="phaseBreakdownBody"></tbody>
+        <tfoot>
+          <tr class="pbt-total">
+            <td>Total</td>
+            <td class="num" id="pbtTopics">73</td>
+            <td class="num" id="pbtCTH">441</td>
+            <td class="num fip" id="pbtFip">0</td>
+            <td class="num alm" id="pbtAlm">0</td>
+            <td class="num fld" id="pbtFld">0</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
 
     <!-- Full detail table -->
     <div class="print-only">
@@ -2982,43 +3024,31 @@ function buildSummary(){
   if(unassigned>0){ua.classList.add('show');ua.textContent=`⚠ ${unassigned} sub-topic(s) have not been assigned a delivery point. Please review before submitting.`;}
   else ua.classList.remove('show');
 
-  // Phase breakdown cards
-  const grid=sel('phaseBreakdownGrid');
-  grid.innerHTML='';
+  // Phase breakdown table
+  const pbBody=sel('phaseBreakdownBody');
+  pbBody.innerHTML='';
+  let sumFip=0,sumAlm=0,sumFld=0,sumTopics=0,sumCTH=0;
   PHASES_DATA.forEach(pd=>{
-    const pc=PHASE_COLORS[pd.id];
-    let pfip=0,palmarai=0,pfield=0,passigned=0;
+    let pfip=0,palmarai=0,pfield=0;
     pd.rows.forEach(([idx,cth])=>{
       const v=sels[idx];
-      if(v){passigned++;if(v==='FIP')pfip+=cth;else if(v==='Almarai')palmarai+=cth;else pfield+=cth;}
+      if(v==='FIP')pfip+=cth;else if(v==='Almarai')palmarai+=cth;else if(v==='Field Training')pfield+=cth;
     });
-    const ptotal=pfip+palmarai+pfield;
-    grid.innerHTML+=`
-    <div class="pb-card">
-      <div class="pb-card-hdr" style="background:linear-gradient(135deg,${pc.color},${pc.accent})">
-        <span class="pb-card-hdr-icon">${pc.icon}</span>
-        <span class="pb-card-hdr-name">${pd.name}</span>
-      </div>
-      <div class="pb-card-body">
-        <div class="pb-row">
-          <div class="pb-dp"><div class="pb-dp-dot" style="background:var(--fip-blue)"></div> FIP</div>
-          <div class="pb-dp-val">${pfip} CTH &nbsp;<span style="color:var(--text-3);font-size:11px;">(${(pfip/HPD).toFixed(1)}d)</span></div>
-        </div>
-        <div class="pb-row">
-          <div class="pb-dp"><div class="pb-dp-dot" style="background:var(--almarai-navy)"></div> Almarai</div>
-          <div class="pb-dp-val">${palmarai} CTH &nbsp;<span style="color:var(--text-3);font-size:11px;">(${(palmarai/HPD).toFixed(1)}d)</span></div>
-        </div>
-        <div class="pb-row">
-          <div class="pb-dp"><div class="pb-dp-dot" style="background:var(--field-amber)"></div> Field</div>
-          <div class="pb-dp-val">${pfield} CTH &nbsp;<span style="color:var(--text-3);font-size:11px;">(${(pfield/HPD).toFixed(1)}d)</span></div>
-        </div>
-        <div class="pb-row" style="background:var(--surface-2);margin:0 -16px -16px;padding:8px 16px;border-bottom:none;">
-          <div style="font-size:11px;font-weight:700;color:var(--text-2);">Phase Total</div>
-          <div class="pb-dp-val">${ptotal} CTH &nbsp;<span style="color:var(--text-3);font-size:11px;">(${(ptotal/HPD).toFixed(1)}d)</span></div>
-        </div>
-      </div>
-    </div>`;
+    sumFip+=pfip;sumAlm+=palmarai;sumFld+=pfield;sumTopics+=pd.rows.length;sumCTH+=pd.total;
+    pbBody.innerHTML+=`<tr>
+      <td class="pbt-phase">${pd.name}</td>
+      <td class="num mut">${pd.rows.length}</td>
+      <td class="num mut">${pd.total}</td>
+      <td class="num fip">${pfip}</td>
+      <td class="num alm">${palmarai}</td>
+      <td class="num fld">${pfield}</td>
+    </tr>`;
   });
+  sel('pbtTopics').textContent=sumTopics;
+  sel('pbtCTH').textContent=sumCTH;
+  sel('pbtFip').textContent=sumFip;
+  sel('pbtAlm').textContent=sumAlm;
+  sel('pbtFld').textContent=sumFld;
 
   // Full detail table
   const tbody=sel('fullDetailBody');

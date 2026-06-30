@@ -479,6 +479,18 @@
           </table>
         </div>
       </div>
+
+      <!-- Detailed phase analytics — decision view -->
+      <div class="f-card">
+        <div class="f-card-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div>
+            <h5 class="f-card-title"><i class="mdi mdi-chart-box-outline" style="margin-right:6px;"></i>Detailed Phase Analytics — Decision View</h5>
+            <small class="text-muted">Per sub-topic delivery-point consensus across all submissions — to support management decisions</small>
+          </div>
+          <button id="detailAnalyticsBtn" onclick="toggleDetailedPhase()" style="background:#0d2145;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:Roboto,sans-serif;white-space:nowrap;"><i class="mdi mdi-chart-bar" style="margin-right:5px;"></i>Show Detailed Phase Analytics</button>
+        </div>
+        <div class="f-card-body" id="detailedPhaseBody" style="display:none;"></div>
+      </div>
     </div><!-- /analytics -->
 
     <!-- ── SUBMISSIONS ────────────────────────────────────────── -->
@@ -770,6 +782,70 @@
       const pt=phF[i]+phA[i]+phFl[i],pct=gT?Math.round(pt/gT*100):0;
       return`<tr><td><strong style="color:#23222f">${ph.n}</strong></td><td style="color:#4a90c4;font-weight:700">${phF[i]}</td><td style="color:#1b3a6b;font-weight:700">${phA[i]}</td><td style="color:#d97706;font-weight:700">${phFl[i]}</td><td style="font-weight:700;color:#23222f">${pt}</td><td class="mu">${pct}%</td></tr>`;
     }).join('');
+  }
+
+  /* ── Detailed phase analytics (decision view) ── */
+  function toggleDetailedPhase(){
+    const body=byId('detailedPhaseBody'), btn=byId('detailAnalyticsBtn');
+    const showing=body.style.display!=='none';
+    if(showing){
+      body.style.display='none';
+      btn.innerHTML='<i class="mdi mdi-chart-bar" style="margin-right:5px;"></i>Show Detailed Phase Analytics';
+      return;
+    }
+    body.style.display='block';
+    btn.innerHTML='<i class="mdi mdi-chart-bar" style="margin-right:5px;"></i>Hide Detailed Phase Analytics';
+    buildDetailedPhaseAnalytics();
+  }
+
+  function buildDetailedPhaseAnalytics(){
+    const wrap=byId('detailedPhaseBody');
+    const n=allSubs.length;
+    if(!n){ wrap.innerHTML='<div class="empty-f">No submissions yet — detailed analytics will appear once people submit their plans.</div>'; return; }
+
+    wrap.innerHTML=
+      `<p style="font-size:12px;color:#6c757d;margin:0 0 18px;font-family:Roboto;">Each bar is one sub-topic. Segments show how many of the <strong>${n}</strong> submission${n!==1?'s':''} assigned it to FIP / Almarai / Field Training. Longer dominant segment = stronger consensus for that delivery point.</p>`+
+      PHASES.map((ph,i)=>
+        `<div style="margin-bottom:24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:2px;border-left:4px solid #0d2145;padding-left:10px;">
+            <h6 style="margin:0;font-size:14px;font-weight:700;color:#0d2145;font-family:Roboto;">Phase ${i+1}: ${ph.n}</h6>
+            <span id="phMeta${i}" style="font-size:12px;color:#6c757d;font-family:Roboto;"></span>
+          </div>
+          <div id="phChart${i}"></div>
+        </div>`
+      ).join('');
+
+    PHASES.forEach((ph,i)=>{
+      const subs=ROWS.filter(r=>r.idx>=ph.s&&r.idx<=ph.e);
+      const cats=subs.map(r=>r.sub);
+      const fip=[],alm=[],fld=[],unas=[];
+      subs.forEach(r=>{
+        let f=0,a=0,fl=0,u=0;
+        allSubs.forEach(s=>{
+          const sel=(s.selections||[]).find(x=>x.row_idx===r.idx);
+          const v=sel?sel.delivery_point:null;
+          if(v==='FIP')f++; else if(v==='Almarai')a++; else if(v==='Field Training')fl++; else u++;
+        });
+        fip.push(f);alm.push(a);fld.push(fl);unas.push(u);
+      });
+      const tf=fip.reduce((x,y)=>x+y,0),ta=alm.reduce((x,y)=>x+y,0),tfl=fld.reduce((x,y)=>x+y,0),tot=tf+ta+tfl;
+      let meta=subs.length+' sub-topics';
+      if(tot){ const m=Math.max(tf,ta,tfl); const name=m===tf?'FIP':(m===ta?'Almarai':'Field Training'); meta+=' · Leaning '+name+' ('+Math.round(m/tot*100)+'%)'; }
+      byId('phMeta'+i).textContent=meta;
+      const h=Math.max(150, subs.length*36+70);
+      new ApexCharts(byId('phChart'+i),{
+        chart:{type:'bar',height:h,stacked:true,toolbar:{show:false},fontFamily:'Roboto',animations:{speed:500}},
+        plotOptions:{bar:{horizontal:true,barHeight:'62%'}},
+        series:[{name:'FIP',data:fip},{name:'Almarai',data:alm},{name:'Field Training',data:fld},{name:'Unassigned',data:unas}],
+        colors:['#4a90c4','#1b3a6b','#d97706','#dfe3e8'],
+        xaxis:{max:n,tickAmount:Math.min(n,6),labels:{style:{fontSize:'10px'}},title:{text:'Number of submissions',style:{fontSize:'10px',color:'#a8a8b1'}}},
+        yaxis:{labels:{style:{fontSize:'11px',fontFamily:'Roboto'},maxWidth:340}},
+        legend:{position:'top',fontSize:'12px',fontFamily:'Roboto',itemMargin:{horizontal:7}},
+        dataLabels:{enabled:true,formatter:v=>v>0?v:'',style:{fontSize:'10px',fontWeight:700,colors:['#fff']}},
+        grid:{borderColor:'rgba(0,0,0,.04)',strokeDashArray:4},
+        tooltip:{y:{formatter:v=>v+' of '+n+' submission'+(n!==1?'s':'')}}
+      }).render();
+    });
   }
 
   /* ── Submissions table ── */

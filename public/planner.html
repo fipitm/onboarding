@@ -188,9 +188,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
 .kpi-days strong{color:rgba(255,255,255,0.9);}
 .kpi-pct{font-size:14px;font-weight:700;margin-top:6px;}
 .kpi-bar{height:3px;border-radius:2px;margin-top:10px;transition:width 0.5s ease;}
-.kpi-card.fip-kpi{border-left:4px solid #4A90C4;background:rgba(74,144,196,0.14);}
-.kpi-card.almarai-kpi{border-left:4px solid #2B6CB0;background:rgba(43,108,176,0.18);}
-.kpi-card.field-kpi{border-left:4px solid #C27C0A;background:rgba(194,124,10,0.14);}
+.kpi-card.total-kpi{border-left:4px solid #8DC63F;background:linear-gradient(135deg,rgba(141,198,63,0.34),rgba(141,198,63,0.10));}
+.kpi-card.fip-kpi{border-left:4px solid #4A90C4;background:linear-gradient(135deg,rgba(74,144,196,0.40),rgba(74,144,196,0.12));}
+.kpi-card.almarai-kpi{border-left:4px solid #2B6CB0;background:linear-gradient(135deg,rgba(43,108,176,0.50),rgba(27,58,107,0.18));}
+.kpi-card.field-kpi{border-left:4px solid #E0922A;background:linear-gradient(135deg,rgba(194,124,10,0.42),rgba(194,124,10,0.12));}
 .kpi-card.fip-kpi .kpi-bar{background:var(--fip-blue);}
 .kpi-card.almarai-kpi .kpi-bar{background:#2B6CB0;}
 .kpi-card.field-kpi .kpi-bar{background:var(--field-amber);}
@@ -2556,7 +2557,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
       </div>
     </div>
     <div class="kpi-grid">
-      <div class="kpi-card">
+      <div class="kpi-card total-kpi">
         <div class="kpi-label">Total Program</div>
         <div class="kpi-value" id="sTotalCTH">0<span class="kpi-unit"> CTH</span></div>
         <div class="kpi-days">Duration: <strong id="sTotalDays">0.0</strong> days</div>

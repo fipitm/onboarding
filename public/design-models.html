@@ -17,6 +17,21 @@
       This page requires JavaScript to display.
     </div>
   </noscript>
+  <script>
+  (function(){
+    function ensureBackBtn(){
+      if(document.getElementById('__ceo_back')) return;
+      var a=document.createElement('a');
+      a.id='__ceo_back';
+      a.href='/admin-dashboard.html';
+      a.innerHTML='&#8592; Back to Dashboard';
+      a.style.cssText='position:fixed;top:16px;left:16px;z-index:2147483647;background:#1e3a5f;color:#fff;font:600 13px/1 -apple-system,BlinkMacSystemFont,sans-serif;padding:11px 16px;border-radius:8px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.28);';
+      (document.body||document.documentElement).appendChild(a);
+    }
+    setInterval(ensureBackBtn, 400);
+    document.addEventListener('DOMContentLoaded', ensureBackBtn);
+  })();
+  </script>
 </head>
 <body>
   <div id="__bundler_thumbnail">

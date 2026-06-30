@@ -34,17 +34,17 @@
 body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text-1);font-size:14px;line-height:1.5;}
 
 /* ─── HEADER ─── */
-.hdr{background:linear-gradient(160deg,var(--navy-dark) 0%,var(--navy) 60%,#1E4080 100%);padding:0;position:relative;overflow:hidden;}
-.hdr::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 70% 50%,rgba(107,168,58,0.08) 0%,transparent 70%);pointer-events:none;}
-.hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:24px 44px;position:relative;z-index:1;gap:24px;}
-.hdr-logos{display:flex;flex-direction:column;align-items:flex-start;gap:8px;flex-shrink:0;}
+.hdr{background:linear-gradient(180deg,#1e3a5f,#16304e);padding:0;position:relative;overflow:hidden;}
+.hdr::after{display:none;}
+.hdr-inner{display:flex;align-items:center;justify-content:center;padding:24px 44px;position:relative;z-index:1;}
+.hdr-logos{position:absolute;left:44px;top:50%;transform:translateY(-50%);display:flex;align-items:center;}
 .logo-box{background:transparent;padding:4px 0;display:flex;align-items:center;justify-content:center;}
 .logo-box img{height:80px;width:auto;display:block;}
 .logo-sep{width:1px;height:52px;background:rgba(255,255,255,0.2);}
 .hdr-titles{text-align:center;flex:1;}
 .hdr-eyebrow{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--green-light);margin-bottom:6px;}
 .hdr-h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:white;letter-spacing:-0.3px;line-height:1.15;}
-.hdr-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px;letter-spacing:0.3px;}
+.hdr-sub{font-size:14px;color:#aebfd4;margin-top:3px;letter-spacing:0.3px;}
 .hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
 .responder-fields{display:flex;flex-direction:column;gap:6px;}
 .hdr-input{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.22);border-radius:6px;color:white;font-family:'DM Sans',sans-serif;font-size:12px;padding:7px 12px;width:210px;outline:none;transition:border 0.2s;}
@@ -414,7 +414,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text
       <div class="hdr-sub">Onboarding Plan Tool</div>
     </div>
   </div>
-  <div class="hdr-stripe"></div>
 </header>
 
 <!-- INSTRUCTION BANNER -->

@@ -131,10 +131,8 @@
       try { sessionStorage.setItem("fip_sub_id", String(currentSubmissionId)); } catch (_) {}
       const overlay = byId("profileOverlay");
       if (overlay) overlay.style.display = "none";
-      // Auto random-fill if enabled for this user (dev/testing mode)
-      if (currentUser.random_fill === 1 && typeof window.devRandomFill === "function") {
-        setTimeout(() => window.devRandomFill(), 200);
-      }
+      // Random fill is manual only — fires when the user clicks the Random Fill
+      // button (#devRandomFillBtn), never automatically on Start Planning.
     } catch (err) {
       // Restore button
       if (btn) { btn.disabled = false; btn.textContent = origText; }
